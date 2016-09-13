@@ -41,12 +41,14 @@ class Entity(TableTemplate, db.Model, CRUD):
     first_name               = db.Column(db.String(20), nullable=False)
     last_name                = db.Column(db.String(20), nullable=False)
     phone_number             = db.Column(db.String(20))
+    birthday_id              = db.Column(db.Integer, db.ForeignKey('date.id'))
     is_active                = db.Column(db.Boolean, nullable=False, server_default='true')
     role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
     admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     
     #Relationships
+    birthday              = db.relationship('Date')
     role                  = db.relationship('Role', backref=db.backref('entities', lazy='dynamic'))
     local_adviosr_profile = db.relationship('LocalAdvsiorProfile', backref=db.backref('entity', lazy='dynamic'))
     admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
@@ -80,7 +82,8 @@ class Role(db.Model, CRUD):
 #Join table of local advisor profile and date
 local_advisor_available_date = db.Table( 'local_advisor_available_date',
     db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
-    db.Column('date_id', db.Integer, db.ForeignKey('date.id'))
+    db.Column('date_id', db.Integer, db.ForeignKey('date.id'), unique=True),
+    db.UniqueConstraint('local_advisor_profile_id', 'date_id')
 )
 
 class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
@@ -115,30 +118,31 @@ class City(db.Model, CRUD):
     #Relationships
     state    = db.relationship('State', backref=db.backref('cities', lazy='dynamic'))
 
+    #Constraints
+    __table_args__ = (
+        db.UniqueConstraint('label', 'state_id'),
+        {})
+
 class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
-    county_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+    country_id = db.Column(db.Integer, db.ForeignKey('state.id'))
 
     #Relationships
     country   = db.relationship('Country', backref=db.backref('states', lazy='dynamic'))
 
+    #Constraints
+    __table_args__ = (
+        db.UniqueConstraint('label', 'country_id'),
+        {})
+
 class Country(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
-    label = db.Column(db.String(32), nullable=False)
+    label = db.Column(db.String(32), nullable=False, unique=True)
 
 class Date(db.Model, CRUD):
-    id       = db.Column(db.Integer, primary_key=True)
-    year     = db.Column(db.String(4), nullable=False)
-    month_id = db.Column(db.Integer, db.ForeignKey('month.id'), nullable=False)
-    day      = db.Column(db.Integer, nullable=False)
-
-    #Relationships
-    month    = db.relationship('Month', backref=db.backref('dates', lazy='dynamic'))
-
-class Month(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
-    label = db.Column(db.String(32), nullable=False)
+    date  = db.Column(db.Date, nullable=False)
 
 class Review(TableTemplate, db.Model, CRUD):
     id                       = db.Column(db.Integer, primary_key=True)
@@ -187,11 +191,11 @@ class EntityRecommendation(TableTemplate, db.Model, CRUD):
 
 class EntityRecommendationType(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
-    label= db.Column(db.String(32), nullable=False)
+    label= db.Column(db.String(32), nullable=False, unique=True)
 
 class RecommendationCategory(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
-    label= db.Column(db.String(32), nullable=False)
+    label= db.Column(db.String(32), nullable=False, unique=True)
 
 class EntityPhoto(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
@@ -224,4 +228,4 @@ class File(TableTemplate, db.Model, CRUD):
 
 class FileType(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
-    label = db.Column(db.String(64))
+    label = db.Column(db.String(64), unique=True)
