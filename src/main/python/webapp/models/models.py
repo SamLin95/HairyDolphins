@@ -54,18 +54,6 @@ class Entity(TableTemplate, db.Model, CRUD):
     admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
     sent_messages         = db.relationship('Message', foreign_keys='[Message.sender_id]', backref=db.backref('sender', lazy='joined'), lazy='joined')
 
-    def __init__(self, username, password, email, first_name, last_name, phone_number=None, is_active=True, role_id=None, local_advisor_profile_id=None, admin_profile_id=None):
-        self.username                 = username
-        self.password                 = password
-        self.email                    = email
-        self.first_name               = first_name
-        self.last_name                = last_name
-        self.phone_number             = phone_number
-        self.is_active                = is_active
-        self.role_id                  = role_id
-        self.local_advisor_profile_id = local_advisor_profile_id
-        self.admin_id                 = admin_id
-
     def __repr__(self):
         return '<User %r>' % self.username
 
