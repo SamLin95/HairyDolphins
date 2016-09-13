@@ -21,7 +21,7 @@ class CRUD():
         db.session.delete(resource)
         return db.session.commit()
 
-# All tables must have those four columns
+# Editable tables must have those four columns
 # The inheritance approach is from: http://docs.sqlalchemy.org/en/rel_1_0/orm/extensions/declarative/mixins.html#mixing-in-columns
 class TableTemplate():
     @declared_attr
@@ -80,7 +80,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     def __repr__(self):
         return '<User %r>' % self.username
 
-class Role(TableTemplate, db.Model, CRUD):
+class Role(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(20), unique=True, nullable=False)
 
@@ -90,21 +90,59 @@ class Role(TableTemplate, db.Model, CRUD):
     def __repr__(self):
         return '<Role %r>' % self.label
 
+#Join table of local advisor profile and date
+local_advisor_available_dates = db.Table( 'local_advisor_available_dates',
+    db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
+    db.Column('date_id', db.Integer, db.ForeignKey('date.id'))
+)
+
 class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
-    id = db.Column(db.Integer, primary_key=True)
+    id          = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(1024))
+    city_id     = db.Column(db.Integer, db.ForeignKey('city.id'), nullable=False)
+    city        = db.relationship('City', backref='local_advisor_profiles')
+    available_dates = db.relationship('Date', secondary=local_advisor_available_dates, backref=db.backref('local_advisor_profiles'), lazy='dynamic')
 
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
 
 class Message(db.Model, CRUD):
-    id = db.Column(db.Integer, primary_key=True) 
+    id           = db.Column(db.Integer, primary_key=True)
     message_body = db.Column(db.String(1024), nullable=False)
-    sent_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     delivered_at = db.Column(db.DateTime)
-    read_at = db.Column(db.DateTime)
+    read_at      = db.Column(db.DateTime)
     
     #Foreign Keys
-    sender_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    sender_id   = db.Column(db.Integer, db.ForeignKey('entity.id'))
     receiver_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     receiver = db.relationship('Entity', backref='received_messages')
+
+class City(db.Model, CRUD):
+    id       = db.Column(db.Integer, primary_key=True)
+    label    = db.Column(db.String(32), nullable=False)
+    state_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+    state    = db.relationship('State', backref='cities')
+
+class State(db.Model, CRUD):
+    id        = db.Column(db.Integer, primary_key=True)
+    label     = db.Column(db.String(32), nullable=False)
+    county_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+    country   = db.relationship('Country', backref='states')
+
+class Country(db.Model, CRUD):
+    id    = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String(32), nullable=False)
+
+class Date(db.Model, CRUD):
+    id       = db.Column(db.Integer, primary_key=True)
+    year     = db.Column(db.String(4), nullable=False)
+    month_id = db.Column(db.Integer, db.ForeignKey('month.id'), nullable=False)
+    month    = db.relationship('Month', backref='dates')
+    day      = db.Column(db.Integer, nullable=False)
+
+class Month(db.Model, CRUD):
+    id    = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String(32), nullable=False)
+
