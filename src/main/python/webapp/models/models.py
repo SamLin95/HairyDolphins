@@ -146,3 +146,18 @@ class Month(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(32), nullable=False)
 
+class Review(TableTemplate, db.Model, CRUD):
+    id     = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer, nullable=False)
+    title  = db.Column(db.String(64), nullable=False)
+    posted = db.Column(db.DateTime, nullable=False)
+
+    local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    local_avsisor_profile    = db.relationship('LocalAdvisorProfile', backref='reviews')
+
+    __table_args__ = (
+        db.CheckConstraint('rating <= 5 and rating >= 0'),
+        {})
+    
+    
+
