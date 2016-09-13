@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declared_attr
 import datetime
 
 app = Flask(__name__)
+#TODO Hard coded here for now, will be placed somewhere else in the future
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/dev'
 db = SQLAlchemy(app)
 
