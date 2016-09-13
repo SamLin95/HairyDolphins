@@ -68,7 +68,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     admin_profile_id = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     admin_profile    = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
 
-    message_receivers = db.relationship('Message', backref='sender')
+    sent_messages = db.relationship('Message', backref='sender')
 
     def __init__(self, username, password, email, first_name, last_name):
         self.username   = username
