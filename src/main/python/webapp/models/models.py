@@ -68,9 +68,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     admin_profile_id = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     admin_profile    = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
 
-    message_senders = db.relationship('Message', backref='receiver')
-
-    
+    message_receivers = db.relationship('Message', backref='sender')
 
     def __init__(self, username, password, email, first_name, last_name):
         self.username   = username
@@ -109,4 +107,4 @@ class Message(db.Model, CRUD):
     sender_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
     receiver_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
-    sender = db.relationship('Entity', backref='sent_messages')
+    receiver = db.relationship('Entity', backref='received_messages')
