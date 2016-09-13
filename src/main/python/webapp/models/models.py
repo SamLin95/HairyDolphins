@@ -21,6 +21,7 @@ class CRUD():
         db.session.delete(resource)
         return db.session.commit()
 
+# All tables must have those four columns
 # The inheritance approach is from: http://docs.sqlalchemy.org/en/rel_1_0/orm/extensions/declarative/mixins.html#mixing-in-columns
 class TableTemplate():
     @declared_attr
@@ -67,6 +68,10 @@ class Entity(TableTemplate, db.Model, CRUD):
     admin_profile_id = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     admin_profile    = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
 
+    message_senders = db.relationship('Message', backref='receiver')
+
+    
+
     def __init__(self, username, password, email, first_name, last_name):
         self.username   = username
         self.password   = password
@@ -88,7 +93,20 @@ class Role(TableTemplate, db.Model, CRUD):
         return '<Role %r>' % self.label
 
 class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
-    id    = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
 class AdminProfile(TableTemplate, db.Model, CRUD):
-    id    = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+
+class Message(db.Model, CRUD):
+    id = db.Column(db.Integer, primary_key=True) 
+    message_body = db.Column(db.String(1024), nullable=False)
+    sent_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    delivered_at = db.Column(db.DateTime)
+    read_at = db.Column(db.DateTime)
+    
+    #Foreign Keys
+    sender_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
+
+    sender = db.relationship('Entity', backref='sent_messages')
