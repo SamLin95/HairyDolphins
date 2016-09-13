@@ -26,11 +26,11 @@ class CRUD():
 class TableTemplate():
     @declared_attr
     def created_at(cls):
-        return db.Column(db.DateTime, default=datetime.datetime.now)
+        return db.Column(db.DateTime, default=datetime.datetime.now, nullable=False)
 
     @declared_attr
     def creator_id(cls):
-        return db.Column(db.Integer, db.ForeignKey('entity.id'))
+        return db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
 
     @declared_attr
     def creator(cls):
