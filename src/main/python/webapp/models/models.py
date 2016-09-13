@@ -49,33 +49,35 @@ class TableTemplate():
         return db.relationship('Entity', backref=db.backref('entity', lazy='dynamic'))
 
 class Entity(TableTemplate, db.Model, CRUD):
-    id           = db.Column(db.Integer, primary_key=True)
-    username     = db.Column(db.String(20), unique=True, nullable=False)
-    password     = db.Column(db.String(20), nullable=False)
-    email        = db.Column(db.String(120), unique=True, nullable=False)
-    first_name   = db.Column(db.String(20), nullable=False)
-    last_name    = db.Column(db.String(20), nullable=False)
-    phone_number = db.Column(db.String(20))
-    is_active    = db.Column(db.Boolean, nullable=False, server_default='true')
-    
-    #Foreign Keys
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
-    role    = db.relationship('Role', backref=db.backref('entities', lazy='dynamic'))
-
+    id                       = db.Column(db.Integer, primary_key=True)
+    username                 = db.Column(db.String(20), unique=True, nullable=False)
+    password                 = db.Column(db.String(20), nullable=False)
+    email                    = db.Column(db.String(120), unique=True, nullable=False)
+    first_name               = db.Column(db.String(20), nullable=False)
+    last_name                = db.Column(db.String(20), nullable=False)
+    phone_number             = db.Column(db.String(20))
+    is_active                = db.Column(db.Boolean, nullable=False, server_default='true')
+    role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
-    local_adviosr_profile    = db.relationship('LocalAdvsiorProfile', backref=db.backref('entity', lazy='dynamic'))
+    admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
+    
+    #Relationships
+    role                  = db.relationship('Role', backref=db.backref('entities', lazy='dynamic'))
+    local_adviosr_profile = db.relationship('LocalAdvsiorProfile', backref=db.backref('entity', lazy='dynamic'))
+    admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
+    sent_messages         = db.relationship('Message', backref='sender')
 
-    admin_profile_id = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
-    admin_profile    = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
-
-    sent_messages = db.relationship('Message', backref='sender')
-
-    def __init__(self, username, password, email, first_name, last_name):
-        self.username   = username
-        self.password   = password
-        self.email      = email
-        self.first_name = first_name
-        self.last_name  = last_name
+    def __init__(self, username, password, email, first_name, last_name, phone_number=None, is_active=True, role_id=None, local_advisor_profile_id=None, admin_profile_id=None):
+        self.username                 = username
+        self.password                 = password
+        self.email                    = email
+        self.first_name               = first_name
+        self.last_name                = last_name
+        self.phone_number             = phone_number
+        self.is_active                = is_active
+        self.role_id                  = role_id
+        self.local_advisor_profile_id = local_advisor_profile_id
+        self.admin_id                 = admin_id
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -100,7 +102,9 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
     id          = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(1024))
     city_id     = db.Column(db.Integer, db.ForeignKey('city.id'), nullable=False)
-    city        = db.relationship('City', backref='local_advisor_profiles')
+
+    #Relationships
+    city            = db.relationship('City', backref='local_advisor_profiles')
     available_dates = db.relationship('Date', secondary=local_advisor_available_dates, backref=db.backref('local_advisor_profiles'), lazy='dynamic')
 
 class AdminProfile(TableTemplate, db.Model, CRUD):
@@ -112,23 +116,26 @@ class Message(db.Model, CRUD):
     sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     delivered_at = db.Column(db.DateTime)
     read_at      = db.Column(db.DateTime)
+    sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
     
-    #Foreign Keys
-    sender_id   = db.Column(db.Integer, db.ForeignKey('entity.id'))
-    receiver_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
-
+    #Relationships
     receiver = db.relationship('Entity', backref='received_messages')
 
 class City(db.Model, CRUD):
     id       = db.Column(db.Integer, primary_key=True)
     label    = db.Column(db.String(32), nullable=False)
     state_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+
+    #Relationships
     state    = db.relationship('State', backref='cities')
 
 class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
     county_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+
+    #Relationships
     country   = db.relationship('Country', backref='states')
 
 class Country(db.Model, CRUD):
@@ -139,22 +146,26 @@ class Date(db.Model, CRUD):
     id       = db.Column(db.Integer, primary_key=True)
     year     = db.Column(db.String(4), nullable=False)
     month_id = db.Column(db.Integer, db.ForeignKey('month.id'), nullable=False)
-    month    = db.relationship('Month', backref='dates')
     day      = db.Column(db.Integer, nullable=False)
+
+    #Relationships
+    month    = db.relationship('Month', backref='dates')
 
 class Month(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(32), nullable=False)
 
 class Review(TableTemplate, db.Model, CRUD):
-    id     = db.Column(db.Integer, primary_key=True)
-    rating = db.Column(db.Integer, nullable=False)
-    title  = db.Column(db.String(64), nullable=False)
-    posted = db.Column(db.DateTime, nullable=False)
-
+    id                       = db.Column(db.Integer, primary_key=True)
+    rating                   = db.Column(db.Integer, nullable=False)
+    title                    = db.Column(db.String(64), nullable=False)
+    posted                   = db.Column(db.DateTime, nullable=False)
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('entity.id'))
-    local_avsisor_profile    = db.relationship('LocalAdvisorProfile', backref='reviews')
 
+    #Relationships
+    local_avsisor_profile = db.relationship('LocalAdvisorProfile', backref='reviews')
+
+    #Constraints
     __table_args__ = (
         db.CheckConstraint('rating <= 5 and rating >= 0'),
         {})
