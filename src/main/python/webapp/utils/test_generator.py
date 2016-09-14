@@ -1,11 +1,18 @@
-from models import RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+if __name__ == '__main__' and __package__ is None:
+    from os import sys, path
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from models.models import RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 db.create_all()
 
 # TODO:
+# entity sent_messages
 # LocalAdvisorProfile available dates
 # Recommendation entity_recommendations
+# scripts
+# test: google map api, address
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None, message=None):
 
@@ -27,14 +34,8 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
                       phone_number=phone_number, is_active=is_active, role=role, 
                       local_advisor_profile=local_advisor_profile, admin_profile=admin_profile)
         if message is list:
+            print 'list of message'
             user.sent_messages = message
-        # else:
-        #     if message is not list:
-        #         message = [message]
-        #     user = Entity(username=username, password=password, email=email,
-        #               first_name=first_name, last_name=last_name, 
-        #               phone_number=phone_number, is_active=is_active, role=role, 
-        #               local_advisor_profile=local_advisor_profile, admin_profile=admin_profile, sent_messages=message)
         user.add(user)
         return user
     else:
@@ -49,6 +50,8 @@ def createMessage(body, receiver):
     print '----- message sent ------'
     return message
 message = createMessage('this is body', entity)
+message2 = createMessage('this is body2', entity)
+message = [message, message2]
 entity = createEntity('Visitor', 'Test2@gmail.com', 'Test2', 'hello_world', 'kyrsten', 'Greenfield', '123', message=message)
 
 

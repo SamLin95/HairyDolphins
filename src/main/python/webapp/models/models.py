@@ -43,8 +43,8 @@ class Entity(TableTemplate, db.Model, CRUD):
     phone_number             = db.Column(db.String(20))
     birthday_id              = db.Column(db.Integer, db.ForeignKey('date.id'))
     is_active                = db.Column(db.Boolean, nullable=False, server_default='true')
-    # role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
-    role_id                  = db.Column(db.String(20), db.ForeignKey('role.label'))
+    role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
+    # role_id                  = db.Column(db.String(20), db.ForeignKey('role.label'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
     admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     
@@ -137,7 +137,7 @@ class Review(TableTemplate, db.Model, CRUD):
     id                       = db.Column(db.Integer, primary_key=True)
     rating                   = db.Column(db.Integer, nullable=False)
     title                    = db.Column(db.String(64), nullable=False)
-    posted                   = db.Column(db.DateTime, nullable=False)
+    posted                   = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'))
     reviewer_id              = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
