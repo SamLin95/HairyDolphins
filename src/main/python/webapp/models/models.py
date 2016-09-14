@@ -162,12 +162,13 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     zip_code                   = db.Column(db.String(5), nullable=False)
     recommendation_category_id = db.Column(db.Integer, db.ForeignKey('recommendation_category.id'))
     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    # entity_recommendations_id  = db.Column(db.Integer, db.ForeignKey('entity_recommendations.id'))
 
     #Relationships
     city                    = db.relationship('City', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
     recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
     recommender             = db.relationship('Entity', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
-    entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
+    # entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
 
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                            = db.Column(db.Integer, primary_key=True)
@@ -178,6 +179,7 @@ class EntityRecommendation(TableTemplate, db.Model, CRUD):
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
     entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
+    recommendation = db.relationship('Recommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
 
 class EntityRecommendationType(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
