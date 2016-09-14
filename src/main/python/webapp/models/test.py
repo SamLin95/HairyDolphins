@@ -1,16 +1,17 @@
-from models import Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from models import RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 db.create_all()
 
 # TODO:
 # Entity sent_messages
-# LocalAdvisorProfile
-# AdminProfile
+# LocalAdvisorProfile available dates
 # Review
 # Recommendation entity_recommendations
-# EntityPhoto
 # RecommendationPhoto
+
+
+
 
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None, message=None):
@@ -27,10 +28,18 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
     if (Entity.query.filter_by(email=email).first() 
         or Entity.query.filter_by(username=username).first()) == None:
         print '----- new user, updating ------'
+        # if message == None:
         user = Entity(username=username, password=password, email=email,
                       first_name=first_name, last_name=last_name, 
                       phone_number=phone_number, is_active=is_active, role=role, 
                       local_advisor_profile=local_advisor_profile, admin_profile=admin_profile)
+        # else:
+        #     if message is not list:
+        #         message = [message]
+        #     user = Entity(username=username, password=password, email=email,
+        #               first_name=first_name, last_name=last_name, 
+        #               phone_number=phone_number, is_active=is_active, role=role, 
+        #               local_advisor_profile=local_advisor_profile, admin_profile=admin_profile, sent_messages=message)
         user.add(user)
         return user
     else:
@@ -74,7 +83,8 @@ def checkType(label):
 recommendation_type = checkType('attraction')
 
 def createEntityRecommendation(entity, entity_recommendation_type, recommendation):
-    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=entity_recommendation_type)
+    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=entity_recommendation_type, recommendation=recommend)
+    print '----- entity recommendation updated -----'
     return entity_recommendation
 
 def createRecommendation(title, description, address_line_one, zip_code, category, recommender, 
@@ -95,8 +105,6 @@ entity_recommendation = createEntityRecommendation(entity, recommendation_type, 
 
 
 
-
-
 def createFile(name, checksum, download_link, type_name):
     file_type = FileType.query.filter_by(label=type_name).first()
     if file_type == None:
@@ -110,9 +118,10 @@ def createFile(name, checksum, download_link, type_name):
     files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
     files.add(files)
 
-    print '------ fileFi added -----'
+    print '------ file added -----'
+    return files
 
-# createFile('firstFile', 123, 'www.test.com', 'Text')
+files = createFile('firstFile', 123, 'www.test.com', 'Text')
 
 
 def checkCity(city_name, state_name, country_name):
@@ -147,20 +156,48 @@ def checkCity(city_name, state_name, country_name):
     print '------ city checked -----'
     return city
 
-# city = checkCity('ATL', 'GA', 'America')
+city = checkCity('ATL', 'GA', 'America')
 
-# TODO: availabe_datesa
-def createAdvisorProfile(description, city=None, available_dates=None):
+# TODO: availabe_dates
+def createAdvisorProfile(description, city=None, dates=None):
     # date = datetime.datetime.now()
     advisor = LocalAdvisorProfile(description=description, city=city)
     advisor.add(advisor)
     print advisor
+    print '------ advisor checked -----'
+    return advisor
 
-# createAdvisorProfile('hello im advisor', city)
+advisor = createAdvisorProfile('hello im advisor', city)
 
+
+def createReview(rating, title, advisor, reviewer, posted=datetime.datetime.now):
+    review = Review(rating=rating, title=title, posted=posted, local_advisor_profile=advisor, reviewer=reviewer)
+
+    print review
+    print '----- review checked -----'
+    return review
+
+review = createReview(4, 'first review', advisor, entity)
+
+
+def createEntityPhoto(entity, files):
+    photo = EntityPhoto(entity=entity, file=files)
+    print photo
+    print '----- entity photo checked -----'
+    return photo
+
+entity_photo = createEntityPhoto(entity, files)
+
+def creatRecommendationPhoto(uploader, recommendation, files):
+    photo = RecommendationPhoto(uploader=uploader, recommendation=recommendation, file=files)
+    print photo
+    print '----- recommendation photo checked -----'
+    return photo
+
+recommend_photo = creatRecommendationPhoto(entity, recommend, files)
 
 # print '1 should succeed'
-# createEntity('Visitor', 'jing@gmail.com', 'Jing', 'hello_world', 'Jing', 'Hong', '123')
+# createEntity('Visitor', 'jing@gmail.com', 'Jing', 'hello_world', 'Jing', 'Hong', '123', local_advisor_profile=advisor, admin_profile=AdminProfile(), message=message)
 # print '2 shoud fail as duplicate email'
 # createEntity('Local Advisor', 'jing@gmail.com', 'Dun', 'hello_world', 'Jing', 'Hong', '123')
 # print '3 should fail as duplicate username'

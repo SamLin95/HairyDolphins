@@ -53,7 +53,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     role                  = db.relationship('Role', backref=db.backref('entities', lazy='joined'), lazy='joined')
     local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
     admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
-    # sent_messages         = db.relationship('Message', foreign_keys='[Message.sender_id]', backref=db.backref('sender', lazy='joined'), lazy='joined')
+    sent_messages         = db.relationship('Message', foreign_keys='[Message.sender_id]', backref=db.backref('sender', lazy='joined'), lazy='joined')
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -142,7 +142,7 @@ class Review(TableTemplate, db.Model, CRUD):
     reviewer_id              = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     #Relationships
-    local_avsisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('reviews', lazy='joined'), lazy='joined')
+    local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('reviews', lazy='joined'), lazy='joined')
     reviewer = db.relationship('Entity', backref=db.backref('post_reviews', lazy='joined'), lazy='joined')
 
     #Constraints
