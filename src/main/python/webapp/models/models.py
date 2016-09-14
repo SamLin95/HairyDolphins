@@ -87,18 +87,17 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
 
-# class Message(db.Model, CRUD):
-#     id           = db.Column(db.Integer, primary_key=True)
-#     message_body = db.Column(db.String(1024), nullable=False)
-#     sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
-#     delivered_at = db.Column(db.DateTime)
-#     read_at      = db.Column(db.DateTime)
-#     sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
-#     receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
-    
+class Message(db.Model, CRUD):
+    id           = db.Column(db.Integer, primary_key=True)
+    message_body = db.Column(db.String(1024), nullable=False)
+    sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    delivered_at = db.Column(db.DateTime)
+    read_at      = db.Column(db.DateTime)
+    sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     #Relationships
-    # receiver = db.relationship('Entity', foreign_keys=[receiver_id], backref=db.backref('received_messages', lazy='joined'), lazy='joined')
+    receiver = db.relationship('Entity', foreign_keys=[receiver_id], backref=db.backref('received_messages', lazy='joined'), lazy='joined')
 
 
 class City(db.Model, CRUD):
@@ -195,7 +194,7 @@ class EntityPhoto(db.Model, CRUD):
     file_id   = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
 
     #Relationships
-    # entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='joined'), lazy='joined')
+    entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='joined'), lazy='joined')
     file   = db.relationship('File')
 
 class RecommendationPhoto(db.Model, CRUD):

@@ -1,9 +1,19 @@
-from models import EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from models import Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 db.create_all()
 
-def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None):
+# TODO:
+# Entity sent_messages
+# LocalAdvisorProfile
+# AdminProfile
+# Review
+# Recommendation entity_recommendations
+# EntityPhoto
+# RecommendationPhoto
+
+
+def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None, message=None):
 
     role = Role.query.filter_by(label=label).first()
     if role == None:
@@ -27,6 +37,17 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
         print 'duplicate email or username'
     print '------ user added -----'
     return None
+
+entity = createEntity('Visitor', 'Test@gmail.com', 'Test1', 'hello_world', 'kyrsten', 'Greenfield', '123')
+
+def createMessage(body, receiver):
+    message = Message(message_body=body, receiver=receiver)
+    print '----- message sent ------'
+    return message
+message = createMessage('this is body', entity)
+entity = createEntity('Visitor', 'Test2@gmail.com', 'Test2', 'hello_world', 'kyrsten', 'Greenfield', '123', message=message)
+
+
 
 def checkCategory(label):
     recommendation_category = RecommendationCategory.query.filter_by(label='shopping').first()
@@ -55,8 +76,6 @@ recommendation_type = checkType('attraction')
 def createEntityRecommendation(entity, entity_recommendation_type, recommendation):
     entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=entity_recommendation_type)
     return entity_recommendation
-
-entity = createEntity('Visitor', 'Test@gmail.com', 'Test1', 'hello_world', 'kyrsten', 'Greenfield', '123')
 
 def createRecommendation(title, description, address_line_one, zip_code, category, recommender, 
                          recommender_idaddress_line_two=None, is_draft=False):
@@ -137,10 +156,7 @@ def createAdvisorProfile(description, city=None, available_dates=None):
     advisor.add(advisor)
     print advisor
 
-
-
 # createAdvisorProfile('hello im advisor', city)
-
 
 
 # print '1 should succeed'
