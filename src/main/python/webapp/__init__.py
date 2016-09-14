@@ -12,8 +12,8 @@ app.register_blueprint(search_module)
 from mod_auth.controllers import mod_auth as auth_module
 app.register_blueprint(auth_module)
 
-from mod_api.controllers import mod_auth as auth_module
-app.register_blueprint(auth_module)
+from mod_api.controllers import mod_api as api_module
+app.register_blueprint(api_module)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
