@@ -151,40 +151,41 @@ class Review(TableTemplate, db.Model, CRUD):
         db.CheckConstraint('rating <= 5 and rating >= 0'),
         {})
 
-# class Recommendation(TableTemplate, db.Model, CRUD):
-#     id                         = db.Column(db.Integer, primary_key=True)
-#     title                      = db.Column(db.String(128), nullable=False)
-#     description                = db.Column(db.String(2048), nullable=False)
-#     address_line_one           = db.Column(db.String(64), nullable=False)
-#     address_line_two           = db.Column(db.String(64))
-#     is_draft                   = db.Column(db.Boolean, nullable=False, server_default='true')
-#     city_id                    = db.Column(db.Integer, db.ForeignKey('city.id'))
-#     zip_code                   = db.Column(db.String(5), nullable=False)
-#     recommendation_category_id = db.Column(db.Integer, db.ForeignKey('recommendation_category.id'))
-#     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
+class Recommendation(TableTemplate, db.Model, CRUD):
+    id                         = db.Column(db.Integer, primary_key=True)
+    title                      = db.Column(db.String(128), nullable=False)
+    description                = db.Column(db.String(2048), nullable=False)
+    address_line_one           = db.Column(db.String(64), nullable=False)
+    address_line_two           = db.Column(db.String(64))
+    is_draft                   = db.Column(db.Boolean, nullable=False, server_default='true')
+    city_id                    = db.Column(db.Integer, db.ForeignKey('city.id'))
+    zip_code                   = db.Column(db.String(5), nullable=False)
+    recommendation_category_id = db.Column(db.Integer, db.ForeignKey('recommendation_category.id'))
+    recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
-#     #Relationships
-#     city                    = db.relationship('City', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
-#     recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
-#     recommender             = db.relationship('Entity', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
-#     entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
+    #Relationships
+    city                    = db.relationship('City', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
+    recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
+    recommender             = db.relationship('Entity', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
+    entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
 
-# class EntityRecommendation(TableTemplate, db.Model, CRUD):
-#     id                            = db.Column(db.Integer, primary_key=True)
-#     entity_id                     = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-#     recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
-#     entity_recommendation_type_id = db.Column(db.Integer, db.ForeignKey('entity_recommendation_type.id'),nullable=False)
+class EntityRecommendation(TableTemplate, db.Model, CRUD):
+    id                            = db.Column(db.Integer, primary_key=True)
+    entity_id                     = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
+    entity_recommendation_type_id = db.Column(db.Integer, db.ForeignKey('entity_recommendation_type.id'),nullable=False)
     
-#     #Relationships
-#     entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
-#     entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
-# class EntityRecommendationType(db.Model, CRUD):
-#     id = db.Column(db.Integer, primary_key=True)
-#     label= db.Column(db.String(32), nullable=False, unique=True)
+    #Relationships
+    entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
+    entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
 
-# class RecommendationCategory(db.Model, CRUD):
-#     id = db.Column(db.Integer, primary_key=True)
-#     label= db.Column(db.String(32), nullable=False, unique=True)
+class EntityRecommendationType(db.Model, CRUD):
+    id = db.Column(db.Integer, primary_key=True)
+    label= db.Column(db.String(32), nullable=False, unique=True)
+
+class RecommendationCategory(db.Model, CRUD):
+    id = db.Column(db.Integer, primary_key=True)
+    label= db.Column(db.String(32), nullable=False, unique=True)
 
 class EntityPhoto(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
@@ -192,7 +193,7 @@ class EntityPhoto(db.Model, CRUD):
     file_id   = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
 
     #Relationships
-    entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='joined'), lazy='joined')
+    # entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='joined'), lazy='joined')
     file   = db.relationship('File')
 
 class RecommendationPhoto(db.Model, CRUD):

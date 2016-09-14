@@ -1,9 +1,47 @@
-from models import File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from models import EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 db.create_all()
 
-def checkFile(name, checksum, download_link, type_name):
+def checkCategory(label):
+    recommendation_category = RecommendationCategory.query.filter_by(label='shopping').first()
+    if recommendation_category == None:
+        print '----- new category, updating ------'
+        recommendation_category = RecommendationCategory(label=label)
+        recommendation_category.add(recommendation_category)
+    else:
+        print recommendation_category
+    print '------ category checked -----'
+
+def checkType(label):
+    recommendation_type = EntityRecommendationType.query.filter_by(label='shopping').first()
+    if recommendation_type == None:
+        print '----- new recommendation type, updating ------'
+        recommendation_type = EntityRecommendationType(label=label)
+        recommendation_type.add(recommendation_type)
+    else:
+        print recommendation_type
+    print '------ recommendation type checked -----'
+
+
+checkCategory('shopping')
+
+checkType('attractions')
+
+def createRecommendation(title, description, address_line_one, zip_code, recommendation_category, 
+                         recommender_idaddress_line_two=None, is_draft=False):
+    
+    recommend = Recommendation(title=title, description=description, address_line_one=address_line_one, zip_code=zip_code, 
+                               recommendation_category=recommendation_category, recommender=recommender)
+
+
+# createRecommendation('recommend', 'description of place', 'university house', '30332', )
+
+
+
+
+
+def createFile(name, checksum, download_link, type_name):
     file_type = FileType.query.filter_by(label=type_name).first()
     if file_type == None:
         print '----- new type, updating ------'
@@ -16,10 +54,9 @@ def checkFile(name, checksum, download_link, type_name):
     files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
     files.add(files)
 
-    print '------ file added -----'
+    print '------ fileFi added -----'
 
-
-checkFile('firstFile', 123, 'www.test.com', 'Text')
+# createFile('firstFile', 123, 'www.test.com', 'Text')
 
 
 def checkCity(city_name, state_name, country_name):
