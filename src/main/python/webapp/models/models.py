@@ -5,7 +5,7 @@ import datetime
 
 app = Flask(__name__)
 #TODO Hard coded here for now, will be placed somewhere else in the future
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/dev'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/test'
 db = SQLAlchemy(app)
 
 #Class to add, update and delete data via SQLALchemy sessions
@@ -44,13 +44,14 @@ class Entity(TableTemplate, db.Model, CRUD):
     birthday_id              = db.Column(db.Integer, db.ForeignKey('date.id'))
     is_active                = db.Column(db.Boolean, nullable=False, server_default='true')
     role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
+    # role_id                  = db.Column(db.String(20), db.ForeignKey('role.label'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
     admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     
     #Relationships
     birthday              = db.relationship('Date')
     role                  = db.relationship('Role', backref=db.backref('entities', lazy='joined'), lazy='joined')
-    local_adviosr_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
+    local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
     admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
     sent_messages         = db.relationship('Message', foreign_keys='[Message.sender_id]', backref=db.backref('sender', lazy='joined'), lazy='joined')
 
@@ -61,8 +62,8 @@ class Role(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(20), unique=True, nullable=False)
 
-    def __init__(self, label):
-        self.label = label
+    # def __init__(self, label):
+    #     self.label = label
 
     def __repr__(self):
         return '<Role %r>' % self.label
@@ -94,9 +95,10 @@ class Message(db.Model, CRUD):
     read_at      = db.Column(db.DateTime)
     sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
     receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
-    
+
     #Relationships
     receiver = db.relationship('Entity', foreign_keys=[receiver_id], backref=db.backref('received_messages', lazy='joined'), lazy='joined')
+
 
 class City(db.Model, CRUD):
     id       = db.Column(db.Integer, primary_key=True)
@@ -115,7 +117,6 @@ class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'))
-
     #Relationships
     country   = db.relationship('Country', backref=db.backref('states', lazy='joined'), lazy='joined')
 
@@ -136,12 +137,12 @@ class Review(TableTemplate, db.Model, CRUD):
     id                       = db.Column(db.Integer, primary_key=True)
     rating                   = db.Column(db.Integer, nullable=False)
     title                    = db.Column(db.String(64), nullable=False)
-    posted                   = db.Column(db.DateTime, nullable=False)
+    posted                   = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'))
     reviewer_id              = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     #Relationships
-    local_avsisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('reviews', lazy='joined'), lazy='joined')
+    local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('reviews', lazy='joined'), lazy='joined')
     reviewer = db.relationship('Entity', backref=db.backref('post_reviews', lazy='joined'), lazy='joined')
 
     #Constraints
@@ -160,12 +161,13 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     zip_code                   = db.Column(db.String(5), nullable=False)
     recommendation_category_id = db.Column(db.Integer, db.ForeignKey('recommendation_category.id'))
     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    # entity_recommendations_id  = db.Column(db.Integer, db.ForeignKey('entity_recommendations.id'))
 
     #Relationships
     city                    = db.relationship('City', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
     recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
     recommender             = db.relationship('Entity', backref=db.backref('recommendations', lazy='joined'), lazy='joined')
-    entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
+    # entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
 
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                            = db.Column(db.Integer, primary_key=True)
@@ -176,6 +178,7 @@ class EntityRecommendation(TableTemplate, db.Model, CRUD):
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
     entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
+    recommendation = db.relationship('Recommendation', backref=db.backref('recommendation', lazy='joined'), lazy='joined')
 
 class EntityRecommendationType(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
@@ -212,6 +215,7 @@ class File(TableTemplate, db.Model, CRUD):
     checksum       = db.Column(db.Integer, nullable=False)
     download_link  = db.Column(db.String(1024), nullable=False)
 
+    #Relationships
     file_type = db.relationship('FileType')
 
 class FileType(db.Model, CRUD):
