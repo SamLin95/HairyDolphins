@@ -128,7 +128,6 @@ class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'))
-    # country   = db.Column(db.String(32), db.ForeignKey('country.label'))
 
     #Relationships
     country   = db.relationship('Country', backref=db.backref('states', lazy='dynamic'))
