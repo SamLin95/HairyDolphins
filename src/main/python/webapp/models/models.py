@@ -44,7 +44,6 @@ class Entity(TableTemplate, db.Model, CRUD):
     birthday_id              = db.Column(db.Integer, db.ForeignKey('date.id'))
     is_active                = db.Column(db.Boolean, nullable=False, server_default='true')
     role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
-    # role_id                  = db.Column(db.String(20), db.ForeignKey('role.label'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
     admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     
@@ -61,9 +60,6 @@ class Entity(TableTemplate, db.Model, CRUD):
 class Role(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(20), unique=True, nullable=False)
-
-    # def __init__(self, label):
-    #     self.label = label
 
     def __repr__(self):
         return '<Role %r>' % self.label
