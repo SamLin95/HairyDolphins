@@ -4,15 +4,8 @@ import datetime
 db.create_all()
 
 # TODO:
-# Entity sent_messages
 # LocalAdvisorProfile available dates
-# Review
 # Recommendation entity_recommendations
-# RecommendationPhoto
-
-
-
-
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None, message=None):
 
@@ -33,6 +26,8 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
                       first_name=first_name, last_name=last_name, 
                       phone_number=phone_number, is_active=is_active, role=role, 
                       local_advisor_profile=local_advisor_profile, admin_profile=admin_profile)
+        if message is list:
+            user.sent_messages = message
         # else:
         #     if message is not list:
         #         message = [message]
