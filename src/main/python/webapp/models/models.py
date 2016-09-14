@@ -195,16 +195,16 @@ class EntityPhoto(db.Model, CRUD):
     entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='joined'), lazy='joined')
     file   = db.relationship('File')
 
-# class RecommendationPhoto(db.Model, CRUD):
-#     id                = db.Column(db.Integer, primary_key=True)
-#     recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
-#     uploader_id       = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-#     file_id           = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
+class RecommendationPhoto(db.Model, CRUD):
+    id                = db.Column(db.Integer, primary_key=True)
+    recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
+    uploader_id       = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    file_id           = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
 
     #Relationships
-    # uploader       = db.relationship('Entity', backref=db.backref('uploaded_recommendation_photos', lazy='joined'), lazy='joined')
-    # recommendation = db.relationship('Recommendation', backref=db.backref('recommendation_photos', lazy='joined'), lazy='joined')
-    # file           = db.relationship('File')
+    uploader       = db.relationship('Entity', backref=db.backref('uploaded_recommendation_photos', lazy='joined'), lazy='joined')
+    recommendation = db.relationship('Recommendation', backref=db.backref('recommendation_photos', lazy='joined'), lazy='joined')
+    file           = db.relationship('File')
 
 class File(TableTemplate, db.Model, CRUD):
     id             = db.Column(db.Integer, primary_key=True)

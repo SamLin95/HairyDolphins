@@ -1,8 +1,25 @@
-from models import Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from models import File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 db.create_all()
 
+def checkFile(name, checksum, download_link, type_name):
+    file_type = FileType.query.filter_by(label=type_name).first()
+    if file_type == None:
+        print '----- new type, updating ------'
+        file_type = FileType(label=type_name)
+        file_type.add(file_type)
+    else:
+        print file_type
+    print '------ type checked -----'
+
+    files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
+    files.add(files)
+
+    print '------ file added -----'
+
+
+checkFile('firstFile', 123, 'www.test.com', 'Text')
 
 
 def checkCity(city_name, state_name, country_name):
@@ -37,7 +54,7 @@ def checkCity(city_name, state_name, country_name):
     print '------ city checked -----'
     return city
 
-city = checkCity('ATL', 'GA', 'America')
+# city = checkCity('ATL', 'GA', 'America')
 
 # TODO: availabe_datesa
 def createAdvisorProfile(description, city=None, available_dates=None):
@@ -48,7 +65,7 @@ def createAdvisorProfile(description, city=None, available_dates=None):
 
 
 
-createAdvisorProfile('hello im advisor', city)
+# createAdvisorProfile('hello im advisor', city)
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None):
 
@@ -73,26 +90,26 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
         return 'duplicate email or username'
     print '------ user added -----'
 
-print '1 should succeed'
-createEntity('Visitor', 'jing@gmail.com', 'Jing', 'hello_world', 'Jing', 'Hong', '123')
-print '2 shoud fail as duplicate email'
-createEntity('Local Advisor', 'jing@gmail.com', 'Dun', 'hello_world', 'Jing', 'Hong', '123')
-print '3 should fail as duplicate username'
-createEntity('Visitor', 'dun@gmail.com', 'Jing', 'hello_world', 'Jing', 'Hong', '123')
-print '4 should succeed'
-createEntity('Local Advisor', 'dun@gmail.com', 'Dun', 'hello_world', 'Dun', 'Huang', '123')
-print '5 should fail as duplicate email'
-createEntity('Visitor', 'dun@gmail.com', 'Sizhe', 'hello_world', 'Dun', 'Huang')
-print '6 should fail as duplicate username'
-createEntity('Local Advisor', 'sizhe@gmail.com', 'Dun', 'hello_world', 'Dun', 'Huang', '123')
-print '7 should succeed'
-createEntity('Visitor', 'sizhe@gmail.com', 'Sizhe', 'hello_world', 'Sizhe', 'Lin', '123')
-print '8 should fail as duplicate email'
-createEntity('Visitor', 'sizhe@gmail.com', 'Kelvin', 'hello_world', 'Sizhe', 'Lin')
-print '9 should fail as duplicate username'
-createEntity('Local Advisor', 'kelvin@gmail.com', 'Sizhe', 'hello_world', 'Sizhe', 'Lin', '123')
-print '10 should succeed'
-createEntity('Local Advisor', 'kelvin@gmail.com', 'Kelvin', 'hello_world', 'Kelvin', 'Vhora', '123')
-print '11 should succeed'
-createEntity('Visitor', 'kyrsten@gmail.com', 'Krysten', 'hello_world', 'Krysten', 'Greenfield', '123')
-print '---------- create entity test finished ----------'
+# print '1 should succeed'
+# createEntity('Visitor', 'jing@gmail.com', 'Jing', 'hello_world', 'Jing', 'Hong', '123')
+# print '2 shoud fail as duplicate email'
+# createEntity('Local Advisor', 'jing@gmail.com', 'Dun', 'hello_world', 'Jing', 'Hong', '123')
+# print '3 should fail as duplicate username'
+# createEntity('Visitor', 'dun@gmail.com', 'Jing', 'hello_world', 'Jing', 'Hong', '123')
+# print '4 should succeed'
+# createEntity('Local Advisor', 'dun@gmail.com', 'Dun', 'hello_world', 'Dun', 'Huang', '123')
+# print '5 should fail as duplicate email'
+# createEntity('Visitor', 'dun@gmail.com', 'Sizhe', 'hello_world', 'Dun', 'Huang')
+# print '6 should fail as duplicate username'
+# createEntity('Local Advisor', 'sizhe@gmail.com', 'Dun', 'hello_world', 'Dun', 'Huang', '123')
+# print '7 should succeed'
+# createEntity('Visitor', 'sizhe@gmail.com', 'Sizhe', 'hello_world', 'Sizhe', 'Lin', '123')
+# print '8 should fail as duplicate email'
+# createEntity('Visitor', 'sizhe@gmail.com', 'Kelvin', 'hello_world', 'Sizhe', 'Lin')
+# print '9 should fail as duplicate username'
+# createEntity('Local Advisor', 'kelvin@gmail.com', 'Sizhe', 'hello_world', 'Sizhe', 'Lin', '123')
+# print '10 should succeed'
+# createEntity('Local Advisor', 'kelvin@gmail.com', 'Kelvin', 'hello_world', 'Kelvin', 'Vhora', '123')
+# print '11 should succeed'
+# createEntity('Visitor', 'kyrsten@gmail.com', 'Krysten', 'hello_world', 'Krysten', 'Greenfield', '123')
+# print '---------- create entity test finished ----------'
