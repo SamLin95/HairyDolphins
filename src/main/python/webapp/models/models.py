@@ -127,7 +127,7 @@ class City(db.Model, CRUD):
 class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
-    country_id = db.Column(db.Integer, db.ForeignKey('country.id'))
+    country_id = db.Column(db.Integer, db.ForeignKey('country.id'))\
 
     #Relationships
     country   = db.relationship('Country', backref=db.backref('states', lazy='dynamic'))
@@ -225,6 +225,7 @@ class File(TableTemplate, db.Model, CRUD):
     checksum       = db.Column(db.Integer, nullable=False)
     download_link  = db.Column(db.String(1024), nullable=False)
 
+    #Relationships
     file_type = db.relationship('FileType')
 
 class FileType(db.Model, CRUD):

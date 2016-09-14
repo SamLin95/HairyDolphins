@@ -1,7 +1,8 @@
-from models import Role, Entity, db, City, State, Country
+from models import Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 db.create_all()
+
 
 
 def checkCity(city_name, state_name, country_name):
@@ -38,9 +39,15 @@ def checkCity(city_name, state_name, country_name):
 
 city = checkCity('ATL', 'GA', 'America')
 
+def createAdvisorProfile(description, city=None, available_dates=None):
+    # date = datetime.datetime.now()
+    advisor = LocalAdvisorProfile(description=description, city=city)
+    advisor.add(advisor)
+    print advisor
 
 
-# createAdvisorProfile('hello im advisor', city, )
+
+createAdvisorProfile('hello im advisor', city)
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None):
 
