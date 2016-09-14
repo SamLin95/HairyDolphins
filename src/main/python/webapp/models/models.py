@@ -5,7 +5,7 @@ import datetime
 
 app = Flask(__name__)
 #TODO Hard coded here for now, will be placed somewhere else in the future
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/dev'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/test'
 db = SQLAlchemy(app)
 
 #Class to add, update and delete data via SQLALchemy sessions
@@ -43,28 +43,29 @@ class Entity(TableTemplate, db.Model, CRUD):
     phone_number             = db.Column(db.String(20))
     birthday_id              = db.Column(db.Integer, db.ForeignKey('date.id'))
     is_active                = db.Column(db.Boolean, nullable=False, server_default='true')
-    role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
+    # role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role_id                  = db.Column(db.String(20), db.ForeignKey('role.label'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
     admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
     
     #Relationships
     birthday              = db.relationship('Date')
     role                  = db.relationship('Role', backref=db.backref('entities', lazy='dynamic'))
-    local_adviosr_profile = db.relationship('LocalAdvsiorProfile', backref=db.backref('entity', lazy='dynamic'))
+    local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('entity', lazy='dynamic'))
     admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='dynamic'))
-    sent_messages         = db.relationship('Message', backref=db.backref('sender', lazy='dynamic'))
+    # sent_messages         = db.relationship('Message', backref=db.backref('sender', lazy='dynamic'))
 
-    def __init__(self, username, password, email, first_name, last_name, phone_number=None, is_active=True, role_id=None, local_advisor_profile_id=None, admin_profile_id=None):
-        self.username                 = username
-        self.password                 = password
-        self.email                    = email
-        self.first_name               = first_name
-        self.last_name                = last_name
-        self.phone_number             = phone_number
-        self.is_active                = is_active
-        self.role_id                  = role_id
-        self.local_advisor_profile_id = local_advisor_profile_id
-        self.admin_id                 = admin_id
+    # def __init__(self, username, password, email, first_name, last_name, phone_number=None, is_active=True, role_id=None, local_advisor_profile_id=None, admin_id=None):
+    #     self.username                 = username
+    #     self.password                 = password
+    #     self.email                    = email
+    #     self.first_name               = first_name
+    #     self.last_name                = last_name
+    #     self.phone_number             = phone_number
+    #     self.is_active                = is_active
+    #     self.role_id                  = role_id
+    #     self.local_advisor_profile_id = local_advisor_profile_id
+    #     self.admin_id                 = admin_id
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -73,8 +74,8 @@ class Role(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(20), unique=True, nullable=False)
 
-    def __init__(self, label):
-        self.label = label
+    # def __init__(self, label):
+    #     self.label = label
 
     def __repr__(self):
         return '<Role %r>' % self.label
@@ -98,17 +99,17 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
 
-class Message(db.Model, CRUD):
-    id           = db.Column(db.Integer, primary_key=True)
-    message_body = db.Column(db.String(1024), nullable=False)
-    sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
-    delivered_at = db.Column(db.DateTime)
-    read_at      = db.Column(db.DateTime)
-    sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
-    receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
+# class Message(db.Model, CRUD):
+#     id           = db.Column(db.Integer, primary_key=True)
+#     message_body = db.Column(db.String(1024), nullable=False)
+#     sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+#     delivered_at = db.Column(db.DateTime)
+#     read_at      = db.Column(db.DateTime)
+#     sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
+#     receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
     
-    #Relationships
-    receiver = db.relationship('Entity', backref=db.backref('received_messages', lazy='dynamic'))
+#     #Relationships
+#     receiver = db.relationship('Entity', backref=db.backref('received_messages', lazy='dynamic'))
 
 class City(db.Model, CRUD):
     id       = db.Column(db.Integer, primary_key=True)
@@ -126,7 +127,8 @@ class City(db.Model, CRUD):
 class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
-    country_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+    country_id = db.Column(db.Integer, db.ForeignKey('country.id'))
+    # country   = db.Column(db.String(32), db.ForeignKey('country.label'))
 
     #Relationships
     country   = db.relationship('Country', backref=db.backref('states', lazy='dynamic'))
@@ -161,41 +163,41 @@ class Review(TableTemplate, db.Model, CRUD):
         db.CheckConstraint('rating <= 5 and rating >= 0'),
         {})
 
-class Recommendation(TableTemplate, db.Model, CRUD):
-    id                         = db.Column(db.Integer, primary_key=True)
-    title                      = db.Column(db.String(128), nullable=False)
-    description                = db.Column(db.String(2048), nullable=False)
-    address_line_one           = db.Column(db.String(64), nullable=False)
-    address_line_two           = db.Column(db.String(64))
-    is_draft                   = db.Column(db.Boolean, nullable=False, server_default='true')
-    city_id                    = db.Column(db.Integer, db.ForeignKey('city.id'))
-    zip_code                   = db.Column(db.String(5), nullable=False)
-    recommendation_category_id = db.Column(db.Integer, db.ForeignKey('city.id'))
-    recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
+# class Recommendation(TableTemplate, db.Model, CRUD):
+#     id                         = db.Column(db.Integer, primary_key=True)
+#     title                      = db.Column(db.String(128), nullable=False)
+#     description                = db.Column(db.String(2048), nullable=False)
+#     address_line_one           = db.Column(db.String(64), nullable=False)
+#     address_line_two           = db.Column(db.String(64))
+#     is_draft                   = db.Column(db.Boolean, nullable=False, server_default='true')
+#     city_id                    = db.Column(db.Integer, db.ForeignKey('city.id'))
+#     zip_code                   = db.Column(db.String(5), nullable=False)
+#     recommendation_category_id = db.Column(db.Integer, db.ForeignKey('city.id'))
+#     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
-    #Relationships
-    city                    = db.relationship('City', backref=db.backref('recommendations', lazy='dynamic'))
-    recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations', lazy='dynamic'))
-    recommender             = db.relationship('Entity', backref=db.backref('recommendations', lazy='dynamic'))
-    entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='dynamic'))
+#     #Relationships
+#     city                    = db.relationship('City', backref=db.backref('recommendations', lazy='dynamic'))
+#     recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations', lazy='dynamic'))
+#     recommender             = db.relationship('Entity', backref=db.backref('recommendations', lazy='dynamic'))
+#     entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation', lazy='dynamic'))
 
-class EntityRecommendation(TableTemplate, db.Model, CRUD):
-    id                         = db.Column(db.Integer, primary_key=True)
-    entity_id                  = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-    recommendation_id          = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
-    entity_recommendation_type = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
+# class EntityRecommendation(TableTemplate, db.Model, CRUD):
+#     id                         = db.Column(db.Integer, primary_key=True)
+#     entity_id                  = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+#     recommendation_id          = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
+#     entity_recommendation_type = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
     
-    #Relationships
-    entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='dynamic'))
-    entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='dynamic'))
+#     #Relationships
+#     entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='dynamic'))
+#     entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='dynamic'))
 
-class EntityRecommendationType(db.Model, CRUD):
-    id = db.Column(db.Integer, primary_key=True)
-    label= db.Column(db.String(32), nullable=False, unique=True)
+# class EntityRecommendationType(db.Model, CRUD):
+#     id = db.Column(db.Integer, primary_key=True)
+#     label= db.Column(db.String(32), nullable=False, unique=True)
 
-class RecommendationCategory(db.Model, CRUD):
-    id = db.Column(db.Integer, primary_key=True)
-    label= db.Column(db.String(32), nullable=False, unique=True)
+# class RecommendationCategory(db.Model, CRUD):
+#     id = db.Column(db.Integer, primary_key=True)
+#     label= db.Column(db.String(32), nullable=False, unique=True)
 
 class EntityPhoto(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
@@ -206,16 +208,16 @@ class EntityPhoto(db.Model, CRUD):
     entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='dynamic'))
     file   = db.relationship('File')
 
-class RecommendationPhoto(db.Model, CRUD):
-    id                = db.Column(db.Integer, primary_key=True)
-    recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
-    uploader_id       = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-    file_id           = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
+# class RecommendationPhoto(db.Model, CRUD):
+#     id                = db.Column(db.Integer, primary_key=True)
+#     recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
+#     uploader_id       = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+#     file_id           = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
 
-    #Relationships
-    uploader       = db.relationship('Entity', backref=db.backref('uploaded_recommendation_photos', lazy='dynamic'))
-    recommendation = db.relationship('Recommendation', backref=db.backref('recommendation_photos'), lazy='dynamic')
-    file           = db.relationship('File')
+#     #Relationships
+#     uploader       = db.relationship('Entity', backref=db.backref('uploaded_recommendation_photos', lazy='dynamic'))
+#     recommendation = db.relationship('Recommendation', backref=db.backref('recommendation_photos'))
+#     file           = db.relationship('File')
 
 class File(TableTemplate, db.Model, CRUD):
     id             = db.Column(db.Integer, primary_key=True)
