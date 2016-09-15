@@ -23,8 +23,8 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
         print role
     print '------ role checked -----'
 
-    if (Entity.query.filter_by(email=email).first() 
-        or Entity.query.filter_by(username=username).first()) == None:
+    user = Entity.query.filter_by(email=email).first() 
+    if (user or Entity.query.filter_by(username=username).first()) == None:
         print '----- new user, updating ------'
         user = Entity(username=username, password=password, email=email,
                       first_name=first_name, last_name=last_name, phone_number=phone_number, 
@@ -34,11 +34,10 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
             print 'list of message'
             user.sent_messages = message
         user.add(user)
-        return user
     else:
         print 'duplicate email or username'
     print '------ user added -----'
-    return None
+    return user
 
 
 
