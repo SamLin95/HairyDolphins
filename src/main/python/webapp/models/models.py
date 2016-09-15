@@ -183,13 +183,20 @@ class RecommendationCategory(db.Model, CRUD):
     label= db.Column(db.String(32), nullable=False, unique=True)
 
 class EntityPhoto(db.Model, CRUD):
-    id        = db.Column(db.Integer, primary_key=True)
-    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-    file_id   = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
+    id                 = db.Column(db.Integer, primary_key=True)
+    entity_id          = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    file_id            = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=False, unique=True)
+    is_profile_picture = db.Column(db.Boolean, nullable = False)
 
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_photos', lazy='joined'), lazy='joined')
     file   = db.relationship('File')
+
+    #Constraints
+    __table_args__ = (
+        db.UniqueConstraint('entity_id', 'file_id'),
+        db.Index('ix_unique_profile_pic', 'entity_id', unique=True, postgresql_where=(is_profile_picture)),
+        {})
 
 class RecommendationPhoto(db.Model, CRUD):
     id                = db.Column(db.Integer, primary_key=True)
@@ -202,10 +209,15 @@ class RecommendationPhoto(db.Model, CRUD):
     recommendation = db.relationship('Recommendation', backref=db.backref('recommendation_photos', lazy='joined'), lazy='joined')
     file           = db.relationship('File')
 
+    #Contraints
+    __table_args__ = (
+        db.UniqueConstraint('recommendation_id', 'file_id'),
+        {})
+
 class File(TableTemplate, db.Model, CRUD):
     id             = db.Column(db.Integer, primary_key=True)
     name           = db.Column(db.String(256))
-    file_type_id   = db.Column(db.Integer, db.ForeignKey('file_type.id'))
+    file_type_id   = db.Column(db.Integer, db.ForeignKey('file_type.id'), nullable=False)
     checksum       = db.Column(db.Integer, nullable=False)
     download_link  = db.Column(db.String(1024), nullable=False)
 

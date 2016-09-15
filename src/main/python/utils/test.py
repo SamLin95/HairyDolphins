@@ -155,7 +155,7 @@ def createReview(rating, title, advisor, reviewer):
 
 
 def createEntityPhoto(entity, files):
-    photo = EntityPhoto(entity=entity, file=files)
+    photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
     print photo
     print '----- entity photo checked -----'
     return photo
