@@ -75,19 +75,19 @@ def createTest():
 	visitor5.sent_messages.append(message5)
 	visitor5.add(visitor5)	
 
-	print 'more avaliable dates for advisor jing'
+	print '\nmore avaliable dates for advisor jing'
 	advisor_profile1.available_dates += dates2[5:7]
 	advisor1.local_advisor_profile = advisor_profile1
 	advisor1.add(advisor1)
 
-	print 'fewer avaliable date for advisor dun'
+	print '\nfewer avaliable date for advisor dun'
 	advisor_profile2.available_dates.remove(dates2[2])
 	advisor2.local_advisor_profile = advisor_profile2
 	advisor2.add(advisor2)
 
 	print '\nreview from visitor kyrsten for advisor sam'
 	review1 = test.createReview(5, 'this guide is so nice', advisor_profile3, visitor4)
-	print 'review from visitor jing for advisor kyrsten'
+	print '\nreview from visitor jing for advisor kyrsten'
 	review2 = test.createReview(4, 'this guide is so nice', advisor_profile4, visitor1)
 	print '\nreview from visitor kelvin for advisor dun'
 	review3 = test.createReview(3, 'this guide is so nice', advisor_profile2, visitor5)
@@ -95,5 +95,28 @@ def createTest():
 	review4 = test.createReview(2, 'this guide is so nice', advisor_profile1, visitor3)
 
 
+	print '\nvisitor dun recommends an attraction'
+	recommend1 = test.createRecommendation('ATL is a great place', 'I love atlanta', 'georgia tech', '30332',
+										   'attraction', visitor2)
+	print '\ncreating entity recommendation for dun'
+	entity_recommend1 = test.createEntityRecommendation(visitor2, 'dun_recommendation', recommend1)
+
+	print '\nvisitor sam recommends an attraction'
+	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332',
+										   'attraction', visitor3)
+	print '\ncreating entity recommendation for sam'
+	entity_recommend2 = test.createEntityRecommendation(visitor3, 'sam_recommendation', recommend2)
+
+	print '\nvisitor jing recommends a restaurant'
+	recommend3 = test.createRecommendation('Jia is a great place', 'I love jia', 'georgia tech', '30332',
+										   'restaurant', visitor1)
+	print '\ncreating entity recommendation for jing'
+	entity_recommend3 = test.createEntityRecommendation(visitor1, 'jing_recommendation', recommend3)
+	
+	print '\nvisitor kelvin recommends an attraction'
+	recommend4 = test.createRecommendation('ATL is a great place', 'I love atlanta', 'georgia tech', '30332',
+										   'attraction', visitor5)
+	print '\ncreating entity recommendation for kelvin'
+	entity_recommend4 = test.createEntityRecommendation(visitor5, 'dune_recommendation', recommend4)
 
 createTest()
