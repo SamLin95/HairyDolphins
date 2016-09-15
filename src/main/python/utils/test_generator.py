@@ -11,19 +11,29 @@ def createTest():
 	before	= [date(1995, 9, 16), date(1995, 9, 17), date(1995, 9, 18),
 			   date(1995, 10, 16), date(1995, 10, 17), date(1995, 10, 18),
 			   date(1995, 11, 16), date(1995, 11, 17), date(1995, 11, 18)]
-	before.append(date(1995, 11, 22))
-	if before is list:
-		print 'here'
+	dates1 = []
+	for dates in before:
+		dates1.append(test.Date(date=dates))
+
 	after	= [date(2016, 9, 16), date(2016, 9, 17), date(2016, 9, 18),
 			   date(2016, 10, 16), date(2016, 10, 17), date(2016, 10, 18),
 			   date(2016, 11, 16), date(2016, 11, 17), date(2016, 11, 18)]
+	dates2 = []
+	for dates in after:
+		dates2.append(test.Date(date=dates))
 
 	visitor1 = test.createEntity('Visitor', 'jing@gmail.com', 'jing', 'helloworld',
-							  'Jing', 'Hong', birthday=test.Date(date=before[0]))
-	dates1 = [test.Date(date=after[0]), test.Date(date=after[1]), test.Date(date=after[2])]
-	if dates1 is list:
-		print 'list dates'
-	advisor1 = test.createAdvisorProfile('im your advisor Jing', test.createCity('Atlanta', 'GA', 'USA'), dates=dates1)
+							     'Jing', 'Hong', birthday=dates1[0])
+	advisor_profile1 = test.createAdvisorProfile('im your advisor Jing', test.createCity('Atlanta', 'GA', 'USA'), dates=dates2[0:3])
+	advisor1 = test.createEntity('Local Advisor', 'jing_advisor@gmail', 'jing_advisor', 'pwd', 
+								  'Jing', 'Hong', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile1)
+	
+	# 
+	visitor2 = test.createEntity('Visitor', 'dun@gmail.com', 'Dun', 'helloworld',
+							     'Dun', 'Huang', birthday=dates1[1])
+	advisor_profile2 = test.createAdvisorProfile('im your advisor Dun', test.createCity('Atlanta', 'GA', 'USA'), dates=dates2[1:4])
+	advisor2 = test.createEntity('Local Advisor', 'dun_advisor@gmail', 'dun_advisor', 'pwd', 
+								  'Dun', 'Huang', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile2)
 	# user2 = test.createEntity('Local Advisor', 'jingh@gmail.com', 'jingh', 'helloworld',
 	# 						  'Jing', 'Hong', birthday=before[1], admin_profile=AdminProfile())
 

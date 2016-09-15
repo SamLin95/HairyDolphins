@@ -26,12 +26,11 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
     if (Entity.query.filter_by(email=email).first() 
         or Entity.query.filter_by(username=username).first()) == None:
         print '----- new user, updating ------'
-        # if message == None:
         user = Entity(username=username, password=password, email=email,
                       first_name=first_name, last_name=last_name, phone_number=phone_number, 
                       is_active=is_active, birthday=birthday, role=role, 
                       local_advisor_profile=local_advisor_profile, admin_profile=admin_profile)
-        if message is list:
+        if message != None:
             print 'list of message'
             user.sent_messages = message
         user.add(user)
@@ -136,12 +135,10 @@ def createCity(city_name, state_name, country_name):
     print '------ city checked -----'
     return city
 
-# TODO: available_dates
 def createAdvisorProfile(description, city=None, dates=None):
-    # date = datetime.datetime.now()
     advisor = LocalAdvisorProfile(description=description, city=city)
     if dates != None:
-        print '---- available dates set for advisor'
+        print '---- available dates set for advisor ----'
         advisor.available_dates = dates
     advisor.add(advisor)
     print advisor

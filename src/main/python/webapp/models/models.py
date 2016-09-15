@@ -64,10 +64,11 @@ class Role(db.Model, CRUD):
     def __repr__(self):
         return '<Role %r>' % self.label
 
+# revised: delete date_id unique=True
 #Join table of local advisor profile and date
 local_advisor_available_date = db.Table( 'local_advisor_available_date',
     db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
-    db.Column('date_id', db.Integer, db.ForeignKey('date.id'), unique=True),
+    db.Column('date_id', db.Integer, db.ForeignKey('date.id')),
     db.UniqueConstraint('local_advisor_profile_id', 'date_id')
 )
 
