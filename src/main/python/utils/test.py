@@ -2,7 +2,7 @@ if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from webapp.models.models import RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 # TODO:
@@ -12,7 +12,7 @@ import datetime
 # scripts
 # test: google map api, address
 
-def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None, message=None):
+def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
 
     role = Role.query.filter_by(label=label).first()
     if role == None:
@@ -28,8 +28,8 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
         print '----- new user, updating ------'
         # if message == None:
         user = Entity(username=username, password=password, email=email,
-                      first_name=first_name, last_name=last_name, 
-                      phone_number=phone_number, is_active=is_active, role=role, 
+                      first_name=first_name, last_name=last_name, phone_number=phone_number, 
+                      is_active=is_active, birthday=birthday, role=role, 
                       local_advisor_profile=local_advisor_profile, admin_profile=admin_profile)
         if message is list:
             print 'list of message'
@@ -104,7 +104,7 @@ def createFile(name, checksum, download_link, type_name):
     return files
 
 
-def checkCity(city_name, state_name, country_name):
+def createCity(city_name, state_name, country_name):
     # country_name = 'America'
     country = Country.query.filter_by(label=country_name).first()
     if country == None:
@@ -165,5 +165,3 @@ def creatRecommendationPhoto(uploader, recommendation, files):
     print photo
     print '----- recommendation photo checked -----'
     return photo
-
-
