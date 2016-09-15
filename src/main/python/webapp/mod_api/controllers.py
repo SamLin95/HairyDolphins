@@ -11,22 +11,28 @@ mod_api = Blueprint('api', __name__, url_prefix='/api')
 api = flask_restful.Api(mod_api)
 
 class GetUsers(flask_restful.Resource):
-
     def __init__(self):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id', type=int)
+        parser.add_argument('role_id', type=int)
 
         self.parser = parser
 
     def get(self):
         args = self.parser.parse_args()
+        entity_query = Entity.query
+
         if args['user_id']:
             user_id = args['user_id']
-            entity = Entity.query.filter_by(id=user_id).first()
+            entity = entity_query.filter_by(id=user_id).first()
             entity_schema = EntitySchema(exclude='password')
             entity_json = entity_schema.dump(entity).data
         else:
-            entities = Entity.query.all()
+            if(args['role_id']):
+                role_id = args['role_id']
+                entity_query = entity_query.filter_by(role_id=role_id)
+
+            entities = entity_query.all()
             entity_schema = EntitySchema(exclude='password')
             entity_json = entity_schema.dump(entities, many=True).data
         return entity_json
