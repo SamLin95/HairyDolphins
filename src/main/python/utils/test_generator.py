@@ -42,7 +42,7 @@ def createTest():
 
 	visitor4 = test.createEntity('Visitor', 'kyrsten@gmail.com', 'kyrsten', 'helloworld',
 							     'Kyrsten', 'Greenfield', birthday=dates1[3])
-	advisor_profile4 = test.createAdvisorProfile('im your advisor Sam', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[3:9])
+	advisor_profile4 = test.createAdvisorProfile('im your advisor Sam', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[3:8])
 	advisor4 = test.createEntity('Local Advisor', 'kyrsten_advisor@gmail', 'kyrsten_advisor', 'pwd', 
 								  'Kyrsten', 'Greenfield', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile4)
 	
@@ -54,7 +54,7 @@ def createTest():
 	advisor5 = test.createEntity('Local Advisor', 'sam_advisor@gmail', 'sam_advisor', 'pwd', 
 								  'Kelvin', 'Vohra', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile5)
 
-	print '\nsending\nmessage\n!!!!!\n'
+	print 'sending\nmessage\n!!!!!\n'
 	message1 = test.createMessage('this a message from jing, sent to dun', advisor2)
 	visitor1.sent_messages.append(message1)
 	visitor1.add(visitor1)
@@ -74,5 +74,26 @@ def createTest():
 	message5 = test.createMessage('this a message from kelvin, sent to sam', advisor3)
 	visitor5.sent_messages.append(message5)
 	visitor5.add(visitor5)	
-	
+
+	print 'more avaliable dates for advisor jing'
+	advisor_profile1.available_dates += dates2[5:7]
+	advisor1.local_advisor_profile = advisor_profile1
+	advisor1.add(advisor1)
+
+	print 'fewer avaliable date for advisor dun'
+	advisor_profile2.available_dates.remove(dates2[2])
+	advisor2.local_advisor_profile = advisor_profile2
+	advisor2.add(advisor2)
+
+	print '\nreview from visitor kyrsten for advisor sam'
+	review1 = test.createReview(5, 'this guide is so nice', advisor_profile3, visitor4)
+	print 'review from visitor jing for advisor kyrsten'
+	review2 = test.createReview(4, 'this guide is so nice', advisor_profile4, visitor1)
+	print '\nreview from visitor kelvin for advisor dun'
+	review3 = test.createReview(3, 'this guide is so nice', advisor_profile2, visitor5)
+	print '\nreview from visitor sam for advisor jing'
+	review4 = test.createReview(2, 'this guide is so nice', advisor_profile1, visitor3)
+
+
+
 createTest()
