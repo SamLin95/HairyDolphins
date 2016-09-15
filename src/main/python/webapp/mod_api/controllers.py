@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, Flask,
 import flask_restful
 
 from ..models.models import *
+from ..models.schemas import *
 
 API_VERSION = 1
 
@@ -10,9 +11,9 @@ api = flask_restful.Api(mod_api)
 
 class HelloWorld(flask_restful.Resource):
     def get(self):
-        r = Role.query.filter_by(id=1).first()
-        return {
-            "data" : r.label
-        }
+        entity = Entity.query.all()
+        entity_schema = EntitySchema()
+        entity_json = entity_schema.dump(entity, many=True).data
+        return entity_json
 
-api.add_resource(HelloWorld, '/helloworld')
+api.add_resource(HelloWorld, '/users')
