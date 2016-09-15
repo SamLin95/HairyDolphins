@@ -9,11 +9,20 @@ API_VERSION = 1
 mod_api = Blueprint('api', __name__, url_prefix='/api')
 api = flask_restful.Api(mod_api)
 
-class HelloWorld(flask_restful.Resource):
+class GetUsers(flask_restful.Resource):
     def get(self):
-        entity = Entity.query.all()
-        entity_schema = EntitySchema()
-        entity_json = entity_schema.dump(entity, many=True).data
+        entities = Entity.query.all()
+        entity_schema = EntitySchema(exclude='password')
+        entity_json = entity_schema.dump(entities, many=True).data
         return entity_json
 
-api.add_resource(HelloWorld, '/users')
+api.add_resource(GetUsers, '/users')
+
+class GetRoles(flask_restful.Resource):
+    def get(self):
+        roles = Role.query.all()
+        role_schema = RoleSchema()
+        role_json = role_schema.dump(roles, many=True).data
+        return role_json
+
+api.add_resource(GetRoles, '/roles')
