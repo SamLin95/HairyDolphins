@@ -11,14 +11,19 @@ def createTest():
 	before	= [date(1995, 9, 16), date(1995, 9, 17), date(1995, 9, 18),
 			   date(1995, 10, 16), date(1995, 10, 17), date(1995, 10, 18),
 			   date(1995, 11, 16), date(1995, 11, 17), date(1995, 11, 18)]
-
+	before.append(date(1995, 11, 22))
+	if before is list:
+		print 'here'
 	after	= [date(2016, 9, 16), date(2016, 9, 17), date(2016, 9, 18),
 			   date(2016, 10, 16), date(2016, 10, 17), date(2016, 10, 18),
 			   date(2016, 11, 16), date(2016, 11, 17), date(2016, 11, 18)]
 
 	visitor1 = test.createEntity('Visitor', 'jing@gmail.com', 'jing', 'helloworld',
 							  'Jing', 'Hong', birthday=test.Date(date=before[0]))
-	advisor1 = test.createAdvisorProfile('im your advisor Jing', test.createCity('Atlanta', 'GA', 'USA'))
+	dates1 = [test.Date(date=after[0]), test.Date(date=after[1]), test.Date(date=after[2])]
+	if dates1 is list:
+		print 'list dates'
+	advisor1 = test.createAdvisorProfile('im your advisor Jing', test.createCity('Atlanta', 'GA', 'USA'), dates=dates1)
 	# user2 = test.createEntity('Local Advisor', 'jingh@gmail.com', 'jingh', 'helloworld',
 	# 						  'Jing', 'Hong', birthday=before[1], admin_profile=AdminProfile())
 

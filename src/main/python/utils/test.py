@@ -136,10 +136,13 @@ def createCity(city_name, state_name, country_name):
     print '------ city checked -----'
     return city
 
-# TODO: availabe_dates
+# TODO: available_dates
 def createAdvisorProfile(description, city=None, dates=None):
     # date = datetime.datetime.now()
     advisor = LocalAdvisorProfile(description=description, city=city)
+    if dates != None:
+        print '---- available dates set for advisor'
+        advisor.available_dates = dates
     advisor.add(advisor)
     print advisor
     print '------ advisor checked -----'
