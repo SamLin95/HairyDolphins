@@ -58,7 +58,7 @@ class Users(flask_restful.Resource):
         parameters=[
             {
               "name": "user_id",
-              "description": "Primary key of the expected user",
+              "description": "Primary key of the expected user. Cannot put retriction on any other fields of a user if this parameter is being used",
               "required": False,
               "allowMultiple": False,
               "dataType": "integer",
