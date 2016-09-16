@@ -114,7 +114,10 @@ class Users(flask_restful.Resource):
             if(not entities):
                 return {"message" :"User not found"}, HTTP_NOT_FOUND
 
-            entity_json = entity_schema.dump(entities, many=True).data
+            try:
+                entity_json = entity_schema.dump(entities, many=True).data
+            except AttributeError as err:
+                return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
 
         return entity_json
 
