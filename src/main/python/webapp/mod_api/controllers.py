@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, Flask, jsonify
 import flask_restful
 from flask_restful import reqparse
+from flask_restful_swagger import swagger
 
 from ..models.models import *
 from ..models.schemas import *
@@ -37,9 +38,11 @@ HTTP_HTTP_VERSION_NOT_SUPPORTED      = 505
 HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511
 
 mod_api = Blueprint('api', __name__, url_prefix='/api')
-api = flask_restful.Api(mod_api)
+api = swagger.docs(flask_restful.Api(mod_api), apiVersion=API_VERSION, api_spec_url='/spec')
 
-class GetUsers(flask_restful.Resource):
+class Users(flask_restful.Resource):
+    "Users Information"
+
     def __init__(self):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id', type=int)
@@ -49,6 +52,36 @@ class GetUsers(flask_restful.Resource):
 
         self.parser = parser
 
+    @swagger.operation(
+        summary = "Search for users given criteria",
+        nickname = "User Search",
+        parameters=[
+            {
+              "name": "user_id",
+              "description": "Primary key of a user",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "role_id",
+              "description": "The primary key of the role of the result user list",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "request_fields",
+              "description": "Names of the fields of a user that are required to be returned",
+              "required": False,
+              "allowMultiple": True,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+       ]
+    )
     def get(self):
         args = self.parser.parse_args()
         entity_query = Entity.query
@@ -85,13 +118,13 @@ class GetUsers(flask_restful.Resource):
 
         return entity_json
 
-api.add_resource(GetUsers, '/users')
+api.add_resource(Users, '/users')
 
-class GetRoles(flask_restful.Resource):
+class Roles(flask_restful.Resource):
     def get(self):
         roles = Role.query.all()
         role_schema = RoleSchema()
         role_json = role_schema.dump(roles, many=True).data
         return role_json
 
-api.add_resource(GetRoles, '/roles')
+api.add_resource(Roles, '/roles')
