@@ -2,7 +2,7 @@ if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from webapp.models.models import RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
 # TODO:
@@ -12,7 +12,7 @@ import datetime
 # scripts
 # test: google map api, address
 
-def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, local_advisor_profile=None, admin_profile=None, message=None):
+def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
 
     role = Role.query.filter_by(label=label).first()
     if role == None:
@@ -23,23 +23,21 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
         print role
     print '------ role checked -----'
 
-    if (Entity.query.filter_by(email=email).first() 
-        or Entity.query.filter_by(username=username).first()) == None:
+    user = Entity.query.filter_by(email=email).first() 
+    if (user or Entity.query.filter_by(username=username).first()) == None:
         print '----- new user, updating ------'
-        # if message == None:
         user = Entity(username=username, password=password, email=email,
-                      first_name=first_name, last_name=last_name, 
-                      phone_number=phone_number, is_active=is_active, role=role, 
+                      first_name=first_name, last_name=last_name, phone_number=phone_number, 
+                      is_active=is_active, birthday=birthday, role=role, 
                       local_advisor_profile=local_advisor_profile, admin_profile=admin_profile)
-        if message is list:
+        if message != None:
             print 'list of message'
             user.sent_messages = message
-        user.add(user)
-        return user
+            user.add(user)
     else:
         print 'duplicate email or username'
     print '------ user added -----'
-    return None
+    return user
 
 
 
@@ -50,7 +48,7 @@ def createMessage(body, receiver):
 
 
 def checkCategory(label):
-    recommendation_category = RecommendationCategory.query.filter_by(label='shopping').first()
+    recommendation_category = RecommendationCategory.query.filter_by(label=label).first()
     if recommendation_category == None:
         print '----- new category, updating ------'
         recommendation_category = RecommendationCategory(label=label)
@@ -73,11 +71,11 @@ def checkType(label):
 
 
 def createEntityRecommendation(entity, entity_recommendation_type, recommend):
-    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=entity_recommendation_type, recommendation=recommend)
+    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=EntityRecommendationType(label=entity_recommendation_type), recommendation=recommend)
     print '----- entity recommendation updated -----'
     return entity_recommendation
 
-def createRecommendation(title, description, address_line_one, zip_code, category, recommender, 
+def createRecommendation(title, description, address_line_one, zip_code, category, recommender,
                          recommender_idaddress_line_two=None, is_draft=False):  
     recommendation_category = checkCategory(category)
     recommend = Recommendation(title=title, description=description, address_line_one=address_line_one, zip_code=zip_code, 
@@ -98,13 +96,12 @@ def createFile(name, checksum, download_link, type_name):
     print '------ type checked -----'
 
     files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
-    files.add(files)
 
     print '------ file added -----'
     return files
 
 
-def checkCity(city_name, state_name, country_name):
+def createCity(city_name, state_name, country_name):
     # country_name = 'America'
     country = Country.query.filter_by(label=country_name).first()
     if country == None:
@@ -136,19 +133,19 @@ def checkCity(city_name, state_name, country_name):
     print '------ city checked -----'
     return city
 
-# TODO: availabe_dates
 def createAdvisorProfile(description, city=None, dates=None):
-    # date = datetime.datetime.now()
     advisor = LocalAdvisorProfile(description=description, city=city)
-    advisor.add(advisor)
+    if dates != None:
+        print '---- available dates set for advisor ----'
+        advisor.available_dates = dates
+        advisor.add(advisor)
     print advisor
     print '------ advisor checked -----'
     return advisor
 
-def createReview(rating, title, advisor, reviewer):
+def createReview(rating, title, advisor_profile, reviewer, posted=None):
 
-    review = Review(rating=rating, title=title, local_advisor_profile=advisor, reviewer=reviewer)
-
+    review = Review(rating=rating, title=title, local_advisor_profile=advisor_profile, reviewer=reviewer)
     print review
     print '----- review checked -----'
     return review
@@ -165,5 +162,3 @@ def creatRecommendationPhoto(uploader, recommendation, files):
     print photo
     print '----- recommendation photo checked -----'
     return photo
-
-
