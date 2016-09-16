@@ -107,7 +107,7 @@ class Users(flask_restful.Resource):
         self.parser = parser
 
     @swagger.operation(
-        summary = "Returns the information of a list of users satisfying given criteria",
+        summary = "Returns the information of a list of users which meet all given criteria",
         nickname = "Search Users",
         parameters=[
             {
@@ -170,7 +170,7 @@ class Users(flask_restful.Resource):
             entities = entity_query.all()
 
             if(not entities):
-                return {"message" :"User not found"}, HTTP_NOT_FOUND
+                return {"message" :"No expected user found"}, HTTP_NOT_FOUND
 
             try:
                 entity_json = entity_schema.dump(entities, many=True).data
