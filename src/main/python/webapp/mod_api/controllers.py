@@ -58,7 +58,7 @@ class Users(flask_restful.Resource):
         parameters=[
             {
               "name": "user_id",
-              "description": "Primary key of a user",
+              "description": "Primary key of the expected user",
               "required": False,
               "allowMultiple": False,
               "dataType": "integer",
@@ -66,7 +66,7 @@ class Users(flask_restful.Resource):
             },
             {
               "name": "role_id",
-              "description": "The primary key of the role of the result user list",
+              "description": "The primary key of the role of users in the expected user list",
               "required": False,
               "allowMultiple": False,
               "dataType": "integer",
@@ -74,7 +74,7 @@ class Users(flask_restful.Resource):
             },
             {
               "name": "request_fields",
-              "description": "Names of the fields of a user that are required to be returned",
+              "description": "Names of the fields of each user that are required to be returned",
               "required": False,
               "allowMultiple": True,
               "dataType": "integer",
