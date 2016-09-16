@@ -97,7 +97,7 @@ class Users(flask_restful.Resource):
             entity = entity_query.get(user_id)
 
             if(not entity):
-                return {"error_message" :"User not found"}, HTTP_NOT_FOUND
+                return {"message" :"User not found"}, HTTP_NOT_FOUND
 
             entity_json = entity_schema.dump(entity).data
         else:
@@ -112,7 +112,7 @@ class Users(flask_restful.Resource):
             entities = entity_query.all()
 
             if(not entities):
-                return {"error_message" :"User not found"}, HTTP_NOT_FOUND
+                return {"message" :"User not found"}, HTTP_NOT_FOUND
 
             entity_json = entity_schema.dump(entities, many=True).data
 
