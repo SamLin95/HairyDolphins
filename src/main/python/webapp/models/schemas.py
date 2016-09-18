@@ -3,7 +3,6 @@ from marshmallow_sqlalchemy import ModelSchema
 from models import *
 
 class RoleSchema(ModelSchema):
-    entities = fields.Nested('EntitySchema', many=True, exclude=('role',))
     class Meta:
         model = Role
 
@@ -20,7 +19,6 @@ class EntitySchema(ModelSchema):
         exclude = ('search_vector',)
 
 class LocalAdvisorProfileSchema(ModelSchema):
-    entity = fields.Nested(EntitySchema, exclude=('local_advisor_profile',))
     reviews = fields.Nested('ReviewSchema', many=True, exclude=('local_advisor_profile',))
     city = fields.Nested('CitySchema')
     available_dates = fields.Nested('DateSchema', many=True)
@@ -29,9 +27,7 @@ class LocalAdvisorProfileSchema(ModelSchema):
         exclude = ('search_vector',)
 
 class ReviewSchema(ModelSchema):
-    reviewer = fields.Nested(EntitySchema, exclude=('post_reviews',))
-    local_advisor_profile = fields.Nested(LocalAdvisorProfileSchema, exclude=('reviews',))
-    recommendation = fields.Nested('RecommendationSchema', exclude=('reviews',))
+    reviewer = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
     class Meta:
         model = Review
 
@@ -42,7 +38,6 @@ class CitySchema(ModelSchema):
         exclude = ('search_vector',)
 
 class EntityPhotoSchema(ModelSchema):
-    entity = fields.Nested(EntitySchema, exclude=('entity_photos',))
     file = fields.Nested('FileSchema', exclude=('file',))
     class Meta:
         model = EntityPhoto
@@ -72,7 +67,7 @@ class DateSchema(ModelSchema):
         model = Date
 
 class RecommendationSchema(ModelSchema):
-    recommender = fields.Nested(EntitySchema, exlcude=('recommender',))
+    recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
     reviews = fields.Nested(ReviewSchema, exclude=('recommendation',))
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
     recommendation_photos = fields.Nested('RecommendationSchema', many=True, exclude=('recommendation',))
@@ -82,13 +77,12 @@ class RecommendationSchema(ModelSchema):
         model = Recommendation
 
 class RecommendationCategorySchema(ModelSchema):
-    recommendations = fields.Nested('RecommendationSchema', exclude=('recommendation_category',))
     class Meta:
         model = RecommendationCategory
 
 class EntityRecommendationSchema(ModelSchema):
-    entity = fields.Nested(EntitySchema, exclude=('entity_recommendations', 'recommendations', 'post_reviews'))
-    recommendation = fields.Nested(EntitySchema, exclude=('entity_recommendations', 'recommender', 'reviews'))
+    entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    recommendation = fields.Nested(RecommendationSchema, only=('id', 'title', 'description', 'address_line_one', 'address_line_two', 'city', 'zip_code', 'is_draft'))
     entity_recommendation_type = fields.Nested('EntityRecommendationTypeSchema', exclude=('entity_recommendations'))
     class Meta:
         model = EntityRecommendation
@@ -98,8 +92,8 @@ class EntityRecommendationTypeSchema(ModelSchema):
         model = EntityRecommendationType
 
 class RecommendationPhotoSchema(ModelSchema):
-    uploader = fields.Nested(EntitySchema, exclude=('uploaded_recommendation_photos',))
-    recommendation = fields.Nested(RecommendationSchema, exclude=('recommendation_photos',))
+    entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    recommendation = fields.Nested(RecommendationSchema, only=('id', 'title', 'description', 'address_line_one', 'address_line_two', 'city', 'zip_code', 'is_draft'))
     file = fields.Nested(FileSchema, exclude=('file',))
     class Meta:
         model = RecommendationPhoto

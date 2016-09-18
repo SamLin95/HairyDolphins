@@ -199,7 +199,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                            = db.Column(db.Integer, primary_key=True)
     entity_id                     = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-    recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
+    recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
     entity_recommendation_type_id = db.Column(db.Integer, db.ForeignKey('entity_recommendation_type.id'),nullable=False)
 
     #Relationships
