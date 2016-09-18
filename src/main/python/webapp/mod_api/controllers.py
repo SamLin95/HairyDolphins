@@ -2,6 +2,8 @@ from flask import Blueprint, request, render_template, redirect, url_for, Flask,
 import flask_restful
 from flask_restful import reqparse
 from flask_restful_swagger import swagger
+from datetime import datetime
+from sqlalchemy_searchable import search, parse_search_query
 
 from ..models.models import *
 from ..models.schemas import *
@@ -101,6 +103,8 @@ class Users(flask_restful.Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id', type=int)
         parser.add_argument('role_id', type=int)
+        parser.add_argument('available_date', type=str)
+        parser.add_argument('keyword', type=str)
         parser.add_argument('limit', type=int)
         parser.add_argument('request_fields', type=str, action='append')
 
@@ -124,6 +128,22 @@ class Users(flask_restful.Resource):
               "required": False,
               "allowMultiple": False,
               "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "available_date",
+              "description": "The expected avaialble date of local advisors that are required to be returned",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "keyword",
+              "description": "Keyword related to the users (can be user's username, first_name, last_name, description as a local advisor, city, state, or the country the user belongs to or any combination of them) that are required to be returned",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "string",
               "paramType": "query"
             },
             {
@@ -157,11 +177,28 @@ class Users(flask_restful.Resource):
                 entity_json = entity_schema.dump(entity).data
                 return entity_json
             except AttributeError as err:
-                return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
+                return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
         else:
             if(args['role_id']):
                 role_id = args['role_id']
                 entity_query = entity_query.filter_by(role_id=role_id)
+
+            if(args['available_date']):
+                try:
+                    available_date = datetime.datetime.strptime(args['available_date'], "%Y-%m-%d")
+                    entity_query = entity_query.join(LocalAdvisorProfile, aliased=True).join(LocalAdvisorProfile.available_dates, aliased=True).filter_by(date=available_date)
+
+                except ValueError as err:
+                    return {"message" : {"available_date": format(err)}}, HTTP_BAD_REQUEST
+
+            if(args['keyword']):
+                keyword = args['keyword']
+
+                combined_search_vector = ( Entity.search_vector | LocalAdvisorProfile.search_vector | City.search_vector | State.search_vector | Country.search_vector )
+
+                entity_query = entity_query.join((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).join(City).join(State).join(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
+
+                print str(entity_query)
 
             if(args['limit']):
                 limit = args['limit']
@@ -176,7 +213,7 @@ class Users(flask_restful.Resource):
                 entity_json = entity_schema.dump(entities, many=True).data
                 return entity_json
             except AttributeError as err:
-                return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
+                return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
 
 api.add_resource(Users, '/users')
 

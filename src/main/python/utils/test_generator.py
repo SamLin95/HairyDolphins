@@ -30,7 +30,7 @@ def createTest():
 	# 
 	visitor2 = test.createEntity('Visitor', 'dun@gmail.com', 'Dun', 'helloworld',
 							     'Dun', 'Huang', birthday=dates1[1])
-	advisor_profile2 = test.createAdvisorProfile('im your advisor Dun', test.createCity('Atlanta', 'GA', 'USA'), dates=dates2[1:4])
+	advisor_profile2 = test.createAdvisorProfile('im your advisor Dun and I really like roadtrips', test.createCity('Atlanta', 'GA', 'USA'), dates=dates2[1:4])
 	advisor2 = test.createEntity('Local Advisor', 'dun_advisor@gmail', 'dun_advisor', 'pwd', 
 								  'Dun', 'Huang', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile2)
 

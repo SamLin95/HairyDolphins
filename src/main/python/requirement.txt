@@ -4,5 +4,6 @@ Flask-Login==0.3.2
 Flask-RESTful==0.3.3
 Flask-SQLAlchemy==2.1
 flask-restful-swagger=0.19
+SQLAlchemy-Searchable=0.10.2
 marshmallow==2.10.0
 marshmallow-sqlalchemy==0.10.0

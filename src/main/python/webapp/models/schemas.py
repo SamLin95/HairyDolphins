@@ -1,6 +1,6 @@
 from marshmallow import fields
 from marshmallow_sqlalchemy import ModelSchema
-from models import * 
+from models import *
 
 class RoleSchema(ModelSchema):
     entities = fields.Nested('EntitySchema', many=True, exclude=('role',))
@@ -14,13 +14,16 @@ class EntitySchema(ModelSchema):
     entity_photos = fields.Nested('EntityPhotoSchema', many=True, exclude=('entity',))
     class Meta:
         model = Entity
+        exclude = ('search_vector',)
 
 class LocalAdvisorProfileSchema(ModelSchema):
     entity = fields.Nested(EntitySchema, exclude=('local_advisor_profile',))
     reviews = fields.Nested('ReviewSchema', many=True, exclude=('local_advisor_profile',))
-    city = fields.Nested('CitySchema', exclude=('local_advisor_profile',))
+    city = fields.Nested('CitySchema')
+    available_dates = fields.Nested('DateSchema', many=True)
     class Meta:
         model = LocalAdvisorProfile
+        exclude = ('search_vector',)
 
 class ReviewSchema(ModelSchema):
     reviewer = fields.Nested(EntitySchema, exclude=('post_reviews',))
@@ -30,9 +33,9 @@ class ReviewSchema(ModelSchema):
 
 class CitySchema(ModelSchema):
     state = fields.Nested('StateSchema', exclude=('cities',))
-    local_advisor_profiles = fields.Nested(LocalAdvisorProfileSchema, many=True, exclude=('city',))
     class Meta:
         model = City
+        exclude = ('search_vector',)
 
 class EntityPhotoSchema(ModelSchema):
     entity = fields.Nested(EntitySchema, exclude=('entity_photos',))
@@ -53,7 +56,13 @@ class StateSchema(ModelSchema):
     country = fields.Nested('CountrySchema', exclude=('states',))
     class Meta:
         model = State
+        exclude = ('search_vector',)
 
 class CountrySchema(ModelSchema):
     class Meta:
         model = Country
+        exclude = ('search_vector',)
+
+class DateSchema(ModelSchema):
+    class Meta:
+        model = Date
