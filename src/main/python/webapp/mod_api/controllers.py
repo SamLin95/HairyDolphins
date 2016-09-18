@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, Flask, jsonify
 import flask_restful
+from sqlalchemy import or_, exc
 from flask_restful import reqparse
 from flask_restful_swagger import swagger
 from datetime import datetime
@@ -99,17 +100,6 @@ api.add_resource(User, '/users/<int:user_id>')
 class Users(flask_restful.Resource):
     "A list of users"
 
-    def __init__(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('user_id', type=int)
-        parser.add_argument('role_id', type=int)
-        parser.add_argument('available_date', type=str)
-        parser.add_argument('keyword', type=str)
-        parser.add_argument('limit', type=int)
-        parser.add_argument('request_fields', type=str, action='append')
-
-        self.parser = parser
-
     @swagger.operation(
         summary = "Returns the information of a list of users which meet all given criteria",
         nickname = "Search Users",
@@ -157,7 +147,14 @@ class Users(flask_restful.Resource):
        ]
     )
     def get(self):
-        args = self.parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument('user_id', type=int)
+        parser.add_argument('role_id', type=int)
+        parser.add_argument('available_date', type=str)
+        parser.add_argument('keyword', type=str)
+        parser.add_argument('limit', type=int)
+        parser.add_argument('request_fields', type=str, action='append')
+        args = parser.parse_args()
         entity_query = Entity.query
 
         if(args['request_fields']):
@@ -214,6 +211,87 @@ class Users(flask_restful.Resource):
                 return entity_json
             except AttributeError as err:
                 return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
+
+    @swagger.operation(
+        summary = "Create a new User",
+        nickname = "Create User",
+        parameters=[
+            {
+              "name": "username",
+              "description": "The username of the user to be created",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "password",
+              "description": "The password of the user to be created",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "email",
+              "description": "The email of the user to be created",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "first_name",
+              "description" : "The first name of the user to be created",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "first_name",
+              "description" : "The last name of the user to be created",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+       ]
+    )
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', type=str, required=True)
+        parser.add_argument('password', type=str, required=True)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('first_name', type=str, required=True)
+        parser.add_argument('last_name', type=str, required=True)
+        args = parser.parse_args()
+
+        username = args['username']
+        password = args['password']
+        email = args['email']
+        first_name = args['first_name']
+        last_name = args['last_name']
+
+        existing_entity = Entity.query.filter(or_(Entity.email==email, Entity.username==username)).first()
+        if(existing_entity):
+            return {"message" :"Username or email already used"}, HTTP_BAD_REQUEST
+
+        visitor_role = Role.query.filter_by(label='Visitor').first()
+
+        if(not visitor_role):
+            return {"message" : "Visitor role not found"}, HTTP_INTERNAL_SERVER_ERROR
+
+        try:
+            new_entity = Entity(username=username, password=password, email=email, first_name=first_name, last_name=last_name, role=visitor_role)
+
+            new_entity.add(new_entity)
+            entity_schema = EntitySchema(exclude=('password',))
+            entity_json = entity_schema.dump(new_entity).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add use during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return entity_json
 
 api.add_resource(Users, '/users')
 
