@@ -164,15 +164,18 @@ class Review(TableTemplate, db.Model, CRUD):
     title                    = db.Column(db.String(64), nullable=False)
     posted                   = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'))
+    recommendation_id        = db.Column(db.Integer, db.ForeignKey('recommendation.id'))
     reviewer_id              = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     #Relationships
     local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('reviews', lazy='joined'), lazy='joined')
+    recommendation = db.relationship('Recommendation', backref=db.backref('reviews', lazy='joined'), lazy='joined')
     reviewer = db.relationship('Entity', backref=db.backref('post_reviews', lazy='joined'), lazy='joined')
 
     #Constraints
     __table_args__ = (
         db.CheckConstraint('rating <= 5 and rating >= 0'),
+        db.CheckConstraint('(local_advisor_profile_id is null) <> (recommendation_id is null)'),
         {})
 
 class Recommendation(TableTemplate, db.Model, CRUD):
