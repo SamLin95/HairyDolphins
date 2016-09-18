@@ -162,9 +162,9 @@ class Users(flask_restful.Resource):
 
         if(args['request_fields']):
             request_fields = tuple(args['request_fields'])
-            entity_schema = EntitySchema(exclude='password', only=request_fields)
+            entity_schema = EntitySchema(exclude=('password',), only=request_fields)
         else:
-            entity_schema = EntitySchema(exclude='password')
+            entity_schema = EntitySchema(exclude=('password',))
 
         if args['user_id']:
             user_id = args['user_id']
