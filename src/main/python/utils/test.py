@@ -5,12 +5,6 @@ if __name__ == '__main__' and __package__ is None:
 from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
-# TODO:
-# entity sent_messages
-# LocalAdvisorProfile available dates
-# Recommendation entity_recommendations
-# scripts
-# test: google map api, address
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
 

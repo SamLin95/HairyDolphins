@@ -42,7 +42,7 @@ def createTest():
 
 	visitor4 = test.createEntity('Visitor', 'kyrsten@gmail.com', 'kyrsten', 'helloworld',
 							     'Kyrsten', 'Greenfield', birthday=dates1[3])
-	advisor_profile4 = test.createAdvisorProfile('im your advisor Sam', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[3:8])
+	advisor_profile4 = test.createAdvisorProfile('im your advisor Kyrsten', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[3:8])
 	advisor4 = test.createEntity('Local Advisor', 'kyrsten_advisor@gmail', 'kyrsten_advisor', 'pwd', 
 								  'Kyrsten', 'Greenfield', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile4)
 	
@@ -50,8 +50,8 @@ def createTest():
 
 	visitor5 = test.createEntity('Visitor', 'kelvin@gmail.com', 'kelvin', 'helloworld',
 							     'Kelvin', 'Vohra', birthday=dates1[4])
-	advisor_profile5 = test.createAdvisorProfile('im your advisor Sam', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[2:7])
-	advisor5 = test.createEntity('Local Advisor', 'sam_advisor@gmail', 'sam_advisor', 'pwd', 
+	advisor_profile5 = test.createAdvisorProfile('im your advisor Kelvin', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[2:7])
+	advisor5 = test.createEntity('Local Advisor', 'kelvin_advisor@gmail', 'kelvin_advisor', 'pwd', 
 								  'Kelvin', 'Vohra', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile5)
 
 	print 'sending\nmessage\n!!!!!\n'
