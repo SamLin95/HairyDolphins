@@ -7,3 +7,4 @@ flask-restful-swagger==0.19
 SQLAlchemy-Searchable==0.10.2
 marshmallow==2.10.0
 marshmallow-sqlalchemy==0.10.0
+Flask-Triangle==0.5.4
