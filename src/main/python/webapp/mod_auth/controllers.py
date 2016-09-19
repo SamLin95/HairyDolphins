@@ -16,15 +16,21 @@ def signin_page():
         #return render_template("login.html")
         return "loginPage"
 
-    username = str(request.form["username"])
-    password = str(request.form["password"])
+    username = str(request.args["username"])
+    password = str(request.args["password"])
     next_page = request.values.get("next", "/")
-    match = True
-    """TODO: add authentication logic here"""
+
+    user = Entity.query.filter_by(username=username).first()
+
+    if not user:
+        #return render_template("login.html", errMes = "Login Failed, Please try again")
+        return "user not found"
+
+    match = user.password == password
     if match:
         login_user(Entity.query.filter_by(username=username).first())
         #return redirect(next_page)
-        return "logged in"
+        return "logged in: " + str(current_user.id)
     else:
         #return render_template("login.html", errMes = "Login Failed, Please try again")
         return "login fail"
