@@ -186,7 +186,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     address_line_two           = db.Column(db.String(64))
     is_draft                   = db.Column(db.Boolean, nullable=False, server_default='true')
     city_id                    = db.Column(db.Integer, db.ForeignKey('city.id'))
-    zip_code                   = db.Column(db.String(5), nullable=False)
+    zip_code                   = db.Column(db.String(6), nullable=False)
     recommendation_category_id = db.Column(db.Integer, db.ForeignKey('recommendation_category.id'))
     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
