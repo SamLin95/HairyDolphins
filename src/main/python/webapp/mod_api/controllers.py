@@ -41,10 +41,13 @@ HTTP_HTTP_VERSION_NOT_SUPPORTED      = 505
 HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511
 
 mod_api = Blueprint('api', __name__, url_prefix='/api')
-api = swagger.docs(flask_restful.Api(mod_api), apiVersion=API_VERSION, api_spec_url='/spec')
+api = flask_restful.Api()
+"""Calling init_app can defer for Blueprint object"""
+api.init_app(mod_api)
+api = swagger.docs(api, apiVersion=API_VERSION, api_spec_url='/spec')
 
 class User(flask_restful.Resource):
-    "An User"
+    """An User"""
 
     def __init__(self):
         parser = reqparse.RequestParser()
