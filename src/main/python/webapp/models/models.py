@@ -1,6 +1,10 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy_searchable import make_searchable
+from sqlalchemy_searchable import SearchQueryMixin
+from sqlalchemy_utils.types import TSVectorType
+
 import datetime
 from .. import app
 
@@ -8,16 +12,22 @@ from .. import app
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/test'
 db = SQLAlchemy(app)
 
+make_searchable(options={'regconfig': 'pg_catalog.simple'})
+
+#Query classes for full text searching
+class EntityQuery(BaseQuery, SearchQueryMixin):
+    pass
+
 #Class to add, update and delete data via SQLALchemy sessions
-class CRUD():   
- 
+class CRUD():
+
     def add(self, resource):
         db.session.add(resource)
-        return db.session.commit()   
- 
+        return db.session.commit()
+
     def update(self):
         return db.session.commit()
- 
+
     def delete(self, resource):
         db.session.delete(resource)
         return db.session.commit()
@@ -34,6 +44,8 @@ class TableTemplate():
         return db.Column(db.DateTime, onupdate=datetime.datetime.now)
 
 class Entity(TableTemplate, db.Model, CRUD):
+    query_class = EntityQuery
+
     id                       = db.Column(db.Integer, primary_key=True)
     username                 = db.Column(db.String(20), unique=True, nullable=False)
     password                 = db.Column(db.String(20), nullable=False)
@@ -46,13 +58,16 @@ class Entity(TableTemplate, db.Model, CRUD):
     role_id                  = db.Column(db.Integer, db.ForeignKey('role.id'))
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'), unique=True)
     admin_profile_id         = db.Column(db.Integer, db.ForeignKey('admin_profile.id'), unique=True)
-    
+
     #Relationships
     birthday              = db.relationship('Date')
     role                  = db.relationship('Role', backref=db.backref('entities', lazy='joined'), lazy='joined')
     local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
     admin_profile         = db.relationship('AdminProfile', backref=db.backref('entity', lazy='joined'), lazy='joined')
     sent_messages         = db.relationship('Message', foreign_keys='[Message.sender_id]', backref=db.backref('sender', lazy='joined'), lazy='joined')
+
+    #Seach Vector
+    search_vector = db.Column(TSVectorType('username', 'first_name', 'last_name'))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -64,10 +79,11 @@ class Role(db.Model, CRUD):
     def __repr__(self):
         return '<Role %r>' % self.label
 
+# revised: delete date_id unique=True
 #Join table of local advisor profile and date
 local_advisor_available_date = db.Table( 'local_advisor_available_date',
     db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
-    db.Column('date_id', db.Integer, db.ForeignKey('date.id'), unique=True),
+    db.Column('date_id', db.Integer, db.ForeignKey('date.id')),
     db.UniqueConstraint('local_advisor_profile_id', 'date_id')
 )
 
@@ -77,8 +93,11 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
     city_id     = db.Column(db.Integer, db.ForeignKey('city.id'), nullable=False)
 
     #Relationships
-    city            = db.relationship('City', backref=db.backref('local_advisor_profiles', lazy='joined'), lazy='joined')
-    available_dates = db.relationship('Date', secondary=local_advisor_available_date, backref=db.backref('local_advisor_profiles', lazy='joined'), lazy='joined')
+    city            = db.relationship('City', lazy='joined')
+    available_dates = db.relationship('Date', secondary=local_advisor_available_date, lazy='joined')
+
+    #Seach Vector
+    search_vector = db.Column(TSVectorType('description'))
 
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
@@ -104,6 +123,9 @@ class City(db.Model, CRUD):
     #Relationships
     state    = db.relationship('State', backref=db.backref('cities', lazy='joined'), lazy='joined')
 
+    #Seach Vector
+    search_vector = db.Column(TSVectorType('label'))
+
     #Constraints
     __table_args__ = (
         db.UniqueConstraint('label', 'state_id'),
@@ -113,8 +135,12 @@ class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'))
+
     #Relationships
     country   = db.relationship('Country', backref=db.backref('states', lazy='joined'), lazy='joined')
+
+    #Seach Vector
+    search_vector = db.Column(TSVectorType('label'))
 
     #Constraints
     __table_args__ = (
@@ -124,6 +150,9 @@ class State(db.Model, CRUD):
 class Country(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(32), nullable=False, unique=True)
+
+    #Seach Vector
+    search_vector = db.Column(TSVectorType('label'))
 
 class Date(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
@@ -135,15 +164,18 @@ class Review(TableTemplate, db.Model, CRUD):
     title                    = db.Column(db.String(64), nullable=False)
     posted                   = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'))
+    recommendation_id        = db.Column(db.Integer, db.ForeignKey('recommendation.id'))
     reviewer_id              = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     #Relationships
     local_advisor_profile = db.relationship('LocalAdvisorProfile', backref=db.backref('reviews', lazy='joined'), lazy='joined')
+    recommendation = db.relationship('Recommendation', backref=db.backref('reviews', lazy='joined'), lazy='joined')
     reviewer = db.relationship('Entity', backref=db.backref('post_reviews', lazy='joined'), lazy='joined')
 
     #Constraints
     __table_args__ = (
         db.CheckConstraint('rating <= 5 and rating >= 0'),
+        db.CheckConstraint('(local_advisor_profile_id is null) <> (recommendation_id is null)'),
         {})
 
 class Recommendation(TableTemplate, db.Model, CRUD):
@@ -167,9 +199,9 @@ class Recommendation(TableTemplate, db.Model, CRUD):
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                            = db.Column(db.Integer, primary_key=True)
     entity_id                     = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-    recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'),nullable=False)
+    recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
     entity_recommendation_type_id = db.Column(db.Integer, db.ForeignKey('entity_recommendation_type.id'),nullable=False)
-    
+
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
     entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations', lazy='joined'), lazy='joined')
