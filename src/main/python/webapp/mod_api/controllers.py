@@ -249,7 +249,7 @@ class Users(flask_restful.Resource):
               "paramType": "query"
             },
             {
-              "name": "first_name",
+              "name": "last_name",
               "description" : "The last name of the user to be created",
               "required": True,
               "allowMultiple": False,
