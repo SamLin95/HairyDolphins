@@ -7,7 +7,6 @@ import datetime
 
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
-
     role = Role.query.filter_by(label=label).first()
     if role == None:
         print '----- new role, updating ------'
@@ -33,13 +32,10 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
     print '------ user added -----'
     return user
 
-
-
 def createMessage(body, receiver):
     message = Message(message_body=body, receiver=receiver)
     print '----- message sent ------'
     return message
-
 
 def checkCategory(label):
     recommendation_category = RecommendationCategory.query.filter_by(label=label).first()
@@ -63,7 +59,6 @@ def checkType(label):
     print '------ recommendation type checked -----'
     return recommendation_type
 
-
 def createEntityRecommendation(entity, entity_recommendation_type, recommend):
     entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=EntityRecommendationType(label=entity_recommendation_type), recommendation=recommend)
     print '----- entity recommendation updated -----'
@@ -79,7 +74,6 @@ def createRecommendation(title, description, address_line_one, zip_code, city, c
     print '----- recommendation updated -----'
     return recommend
 
-
 def createFile(name, checksum, download_link, type_name):
     file_type = FileType.query.filter_by(label=type_name).first()
     if file_type == None:
@@ -91,13 +85,12 @@ def createFile(name, checksum, download_link, type_name):
     print '------ type checked -----'
 
     files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
-
+    print files
     print '------ file added -----'
     return files
 
 
 def createCity(city_name, state_name, country_name):
-    # country_name = 'America'
     country = Country.query.filter_by(label=country_name).first()
     if country == None:
         print '----- new country, updating ------'
@@ -107,7 +100,6 @@ def createCity(city_name, state_name, country_name):
         print country
     print '------ country checked -----'
 
-    # state_name = 'GA'
     state = State.query.filter_by(label=state_name, country=country).first()
     if state == None:
         print '----- new state, updating ------'
@@ -139,7 +131,6 @@ def createAdvisorProfile(description, city=None, dates=None):
     return advisor
 
 def createReview(rating, title, reviewer, advisor_profile=None, posted=None, recommend=None):
-
     review = Review(rating=rating, title=title, reviewer=reviewer)
     if posted != None:
         review.posted=posted
@@ -161,7 +152,7 @@ def createEntityPhoto(entity, files):
     print '----- entity photo checked -----'
     return photo
 
-def creatRecommendationPhoto(uploader, recommendation, files):
+def createRecommendationPhoto(uploader, recommendation, files):
     photo = RecommendationPhoto(uploader=uploader, recommendation=recommendation, file=files)
     print photo
     print '----- recommendation photo checked -----'
