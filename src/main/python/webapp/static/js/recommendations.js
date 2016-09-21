@@ -5,7 +5,7 @@ angular.module('HairyDolphinsApp.reccomendations', ['ngRoute'])
 // Declared route
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/recommendations', {
-        templateUrl: 'reccomendations/reccomendations.html',
+        templateUrl: 'templates/reccomendations.html',
         controller: 'reccomendationsCtrl'
     });
 }])

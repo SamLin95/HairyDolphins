@@ -5,7 +5,7 @@ angular.module('HairyDolphinsApp.laSearch', ['ngRoute'])
 // Declared route
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/laSearch', {
-        templateUrl: 'laSearch/laSearch.html',
+        templateUrl: 'templates/laSearch.html',
         controller: 'laSearchCtrl'
     });
 }])

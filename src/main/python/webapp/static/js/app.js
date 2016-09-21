@@ -2,24 +2,25 @@
 
 angular.module('HairyDolphinsApp', [])
 
-.controller('mainController', function() {
-  var vm = this;
-  vm.message = "hey"
-  vm.computers = [
+.controller('mainController', function($scope) {
+
+  $scope.message = "test";
+  $scope.advisors = [
     {
-      name: 'Mac',
-      color: 'Silver',
-      nerd: 7
+      "name" = "Dun",
+      "startDate" = "09/09/2016",
+      "location" = "Italy"
     },
     {
-      name: 'Dell',
-      color: 'Black',
-      nerd: 6
+      "name" = "Kevin",
+      "startDate" = "05/04/2016",
+      "location" = "Spain"
+
     },
     {
-      name: 'Yoga',
-      color: 'Pink',
-      nerd: 1
+      "name" = "Sam",
+      "startDate" = "02/06/2016",
+      "location" = "Germany"
     }
   ];
-})
+});
