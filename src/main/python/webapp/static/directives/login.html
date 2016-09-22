@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">User Login</h3>
+</div>
+<div class="modal-body" id="modal-body">
+  <form accept-charset="UTF-8" role="form" name="loginForm" novalidate>
+    <fieldset>
+      <div class="form-group" show-errors>
+        <label class="control-label">Username</label>
+        <input class="form-control" placeholder="Username" ng-model="$loginCtrl.username" name="username" type="text" required>
+      </div>
+      <div class="form-group" show-errors>
+        <label class="control-label">Password</label>
+        <input class="form-control" placeholder="Password" ng-model="$loginCtrl.password" name="password" type="password" value="" required>
+      </div>
+    </fieldset>
+    <input class="btn btn-lg btn-success btn-block" type="submit" ng-click="$loginCtrl.submitLoginRequest()" value="Login">
+  </form>
+</div>
+<div class="modal-footer">
+    <div class="bottom text-center">
+        New here ? <a href="#" ng-click="$loginCtrl.openSignupModal()"><b>Sign Up</b></a>
+    </div>
+</div>
+
+
