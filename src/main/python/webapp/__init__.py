@@ -1,5 +1,5 @@
 from flask import Flask, request, url_for, render_template
-from flask.ext.triangle import Triangle
+from flask_triangle import Triangle
 
 app = Flask(__name__, static_path='/static')
 app.config.from_object('config')
