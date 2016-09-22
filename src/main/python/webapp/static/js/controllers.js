@@ -47,24 +47,33 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
         $ctrl.alerts = [];
         $ctrl.openSignupModal = openSignupModal;
         $ctrl.submitLoginRequest = submitLoginRequest;
-        console.log($scope);
+        $ctrl.addAlert = addAlert;
+        $ctrl.closeAlert = closeAlert;
 
         function openSignupModal() {
             $uibModalInstance.close('signup');
         }
 
         function submitLoginRequest() {
-            if($scope.loginForm.valid)
+            if($scope.loginForm.$valid)
             {
                 $state.go('auth.home');
 
                 $uibModalInstance.close('success');
             }
         }
+
+        function addAlert(type, message) {
+            alertFactory.addAlert($ctrl, type, message);
+        }
+
+        function closeAlert(index) {
+            alertFactory.closeAlert($ctrl, index);
+        }
     }
 );
 
-app.controller('signupController', function($scope, $uibModalInstance, $http, $state) {
+app.controller('signupController', function($scope, $uibModalInstance, $http, $state, alertFactory) {
         var $ctrl = this;
         $ctrl.alerts = [];
         $ctrl.openLoginModal = openLoginModal;
@@ -77,7 +86,7 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
         }
 
         function submitSignupRequest() {
-            if($scope.signupForm.valid)
+            if($scope.signupForm.$valid)
             {
                 $http({
                     method: 'POST',
@@ -99,18 +108,11 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
         }
 
         function addAlert(type, message) {
-            if(typeof message === 'string'){
-                $ctrl.alerts.push({ type: type, msg: message });
-            }
-            else{
-                Object.keys(message).forEach(function (key) {
-                    $ctrl.alerts.push({ type: type, msg: key + " : " + message[key]});
-                });
-            }
+            alertFactory.addAlert($ctrl, type, message);
         }
 
         function closeAlert(index) {
-            $ctrl.alerts.splice(index, 1);
+            alertFactory.closeAlert($ctrl, index);
         }
     }
 );
