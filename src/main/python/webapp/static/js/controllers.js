@@ -59,13 +59,13 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
     }
 );
 
-app.controller('signupController', function($scope, $uibModalInstance, $http) {
+app.controller('signupController', function($scope, $uibModalInstance, $http, $state) {
         var $ctrl = this;
         $ctrl.alerts = [];
         $ctrl.openLoginModal = openLoginModal;
         $ctrl.submitSignupRequest = submitSignupRequest;
         $ctrl.addAlert = addAlert;
-        $ctrl.close = closeAlert;
+        $ctrl.closeAlert = closeAlert;
 
         function openLoginModal() {
             $uibModalInstance.close('login');
@@ -88,6 +88,7 @@ app.controller('signupController', function($scope, $uibModalInstance, $http) {
                     email: $ctrl.email
                 }
             }).then(function successCallback(response) {
+                $state.go('auth.home');
                 $uibModalInstance.close('success');
             }, function errorCallback(response) { 
                 $ctrl.addAlert('danger', response.data.message)
