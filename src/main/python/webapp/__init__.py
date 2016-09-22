@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, render_template
+from flask import Flask, request, url_for, send_file
 from flask_triangle import Triangle
 
 app = Flask(__name__, static_path='/static')
@@ -20,4 +20,4 @@ Triangle(app)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-	return render_template('index.html')
+    return send_file('templates/index.html')

@@ -1,0 +1,36 @@
+{
+  "name": "bootstrap-angular-validation",
+  "description": "Bootstrap form validation in Angular like jQuery but w/o jQuery.",
+  "main": "dist/bootstrap-angular-validation.min.js",
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "^1.5.5"
+  },
+  "authors": [
+    "Shashank Agrawal <shagrawal99@gmail.com>",
+    "Julian Amelung <j.beisenkoetter@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sagrawal14/bootstrap-angular-validation.git"
+  },
+  "homepage": "https://github.com/sagrawal14/bootstrap-angular-validation",
+  "version": "1.0.2",
+  "_release": "1.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.2",
+    "commit": "9ffbc3ba62bb2a989ae24176fa69196afde96e8f"
+  },
+  "_source": "https://github.com/sagrawal14/bootstrap-angular-validation.git",
+  "_target": "^1.0.2",
+  "_originalSource": "bootstrap-angular-validation",
+  "_direct": true
+}
