@@ -69,6 +69,18 @@ class Entity(TableTemplate, db.Model, CRUD):
     #Seach Vector
     search_vector = db.Column(TSVectorType('username', 'first_name', 'last_name'))
 
+    def is_active(self):
+        return True
+
+    def is_authenticated(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -186,7 +198,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     address_line_two           = db.Column(db.String(64))
     is_draft                   = db.Column(db.Boolean, nullable=False, server_default='true')
     city_id                    = db.Column(db.Integer, db.ForeignKey('city.id'))
-    zip_code                   = db.Column(db.String(5), nullable=False)
+    zip_code                   = db.Column(db.String(6), nullable=False)
     recommendation_category_id = db.Column(db.Integer, db.ForeignKey('recommendation_category.id'))
     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
 

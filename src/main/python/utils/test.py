@@ -5,12 +5,6 @@ if __name__ == '__main__' and __package__ is None:
 from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 
-# TODO:
-# entity sent_messages
-# LocalAdvisorProfile available dates
-# Recommendation entity_recommendations
-# scripts
-# test: google map api, address
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
 
@@ -75,11 +69,12 @@ def createEntityRecommendation(entity, entity_recommendation_type, recommend):
     print '----- entity recommendation updated -----'
     return entity_recommendation
 
-def createRecommendation(title, description, address_line_one, zip_code, category, recommender,
+def createRecommendation(title, description, address_line_one, zip_code, city, category, recommender, 
                          recommender_idaddress_line_two=None, is_draft=False):  
     recommendation_category = checkCategory(category)
-    recommend = Recommendation(title=title, description=description, address_line_one=address_line_one, zip_code=zip_code, 
+    recommend = Recommendation(title=title, description=description, address_line_one=address_line_one, zip_code=zip_code, city=city, 
                                recommendation_category=recommendation_category, recommender=recommender)
+
     print recommend
     print '----- recommendation updated -----'
     return recommend
@@ -143,9 +138,18 @@ def createAdvisorProfile(description, city=None, dates=None):
     print '------ advisor checked -----'
     return advisor
 
-def createReview(rating, title, advisor_profile, reviewer, posted=None):
+def createReview(rating, title, reviewer, advisor_profile=None, posted=None, recommend=None):
 
-    review = Review(rating=rating, title=title, local_advisor_profile=advisor_profile, reviewer=reviewer)
+    review = Review(rating=rating, title=title, reviewer=reviewer)
+    if posted != None:
+        review.posted=posted
+        review.add(review)
+    if advisor_profile != None:
+        review.local_advisor_profile = advisor_profile
+        review.add(review) 
+    elif recommend != None:
+        review.recommendation = recommend
+        review.add(review)
     print review
     print '----- review checked -----'
     return review
