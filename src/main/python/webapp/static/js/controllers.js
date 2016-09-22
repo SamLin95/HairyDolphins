@@ -47,14 +47,19 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
         $ctrl.alerts = [];
         $ctrl.openSignupModal = openSignupModal;
         $ctrl.submitLoginRequest = submitLoginRequest;
+        console.log($scope);
 
         function openSignupModal() {
             $uibModalInstance.close('signup');
         }
 
         function submitLoginRequest() {
-            $state.go('auth.home');
-            $uibModalInstance.close('success');
+            if($scope.loginForm.valid)
+            {
+                $state.go('auth.home');
+
+                $uibModalInstance.close('success');
+            }
         }
     }
 );
@@ -72,27 +77,25 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
         }
 
         function submitSignupRequest() {
-            if(!($ctrl.password === $ctrl.confirmPassword))
+            if($scope.signupForm.valid)
             {
-                $ctrl.addAlert('danger', "password and confirm password should be the same");
+                $http({
+                    method: 'POST',
+                    url: 'api/users',
+                    params: {
+                        username: $ctrl.username,
+                        password: $ctrl.password,
+                        first_name: $ctrl.firstName,
+                        last_name: $ctrl.lastName,
+                        email: $ctrl.email
+                    }
+                }).then(function successCallback(response) {
+                    $state.go('auth.home');
+                    $uibModalInstance.close('success');
+                }, function errorCallback(response) { 
+                    $ctrl.addAlert('danger', response.data.message)
+                });
             }
-
-            $http({
-                method: 'POST',
-                url: 'api/users',
-                params: {
-                    username: $ctrl.username,
-                    password: $ctrl.password,
-                    first_name: $ctrl.firstName,
-                    last_name: $ctrl.lastName,
-                    email: $ctrl.email
-                }
-            }).then(function successCallback(response) {
-                $state.go('auth.home');
-                $uibModalInstance.close('success');
-            }, function errorCallback(response) { 
-                $ctrl.addAlert('danger', response.data.message)
-            });
         }
 
         function addAlert(type, message) {
