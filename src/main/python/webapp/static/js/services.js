@@ -13,6 +13,7 @@ app.factory('AuthService',
       login: login,
       logout: logout,
       loadCurrentUser: loadCurrentUser,
+      getUser: getUser,
     });
 
     function getUser() {

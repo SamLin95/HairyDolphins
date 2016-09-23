@@ -45,6 +45,7 @@ app.controller('unauthNavController', ['$scope', '$uibModal', function ($scope, 
 app.controller('authNavController', function ($scope, $state, AuthService) {
     var $ctrl = this;
     $ctrl.logout = logout;
+    $scope.user = AuthService.getUser();
   
     function logout(){
         AuthService.logout()

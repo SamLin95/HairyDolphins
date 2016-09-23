@@ -29,7 +29,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li uib-dropdown>
-          <a uib-dropdown-toggle>LastName FirstName<span class="caret"></span></a>
+          <a uib-dropdown-toggle>{{user.first_name}} {{user.last_name}}<span class="caret"></span></a>
           <ul uib-dropdown-menu>
             <li><a href="#">Edit Profils</a></li>
             <li><a ng-click="nav.logout()">Logout</a></li>
