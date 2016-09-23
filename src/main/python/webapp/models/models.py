@@ -70,7 +70,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     search_vector = db.Column(TSVectorType('username', 'first_name', 'last_name'))
 
     def is_active(self):
-        return True
+        return self.is_active;
 
     def is_authenticated(self):
         return True

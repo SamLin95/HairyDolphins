@@ -3,6 +3,7 @@
 </div>
 <div class="modal-body" id="modal-body">
   <form accept-charset="UTF-8" role="form" name="loginForm">
+    <div uib-alert ng-repeat="alert in $ctrl.alerts" ng-class="'alert-' + (alert.type || 'warning')" close="$ctrl.closeAlert($index)">{{alert.msg}}</div>
     <fieldset>
       <div class="form-group">
         <label class="control-label">Username</label>

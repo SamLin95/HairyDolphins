@@ -42,13 +42,29 @@ app.controller('unauthNavController', ['$scope', '$uibModal', function ($scope, 
     }
 }]);
 
-app.controller('loginController', function($scope, $uibModalInstance, $http, $state) {
+app.controller('authNavController', function ($scope, $state, AuthService) {
+    var $ctrl = this;
+    $ctrl.logout = logout;
+  
+    function logout(){
+        AuthService.logout()
+            .then(function() {
+                    alert("You have been logged out")
+                    $state.go('unauth.home');
+                }
+            )
+    }
+});
+
+
+app.controller('loginController', function($scope, $uibModalInstance, $http, $state, alertFactory, AuthService) {
         var $ctrl = this;
         $ctrl.alerts = [];
         $ctrl.openSignupModal = openSignupModal;
         $ctrl.submitLoginRequest = submitLoginRequest;
         $ctrl.addAlert = addAlert;
         $ctrl.closeAlert = closeAlert;
+        $ctrl.clearData = clearData;
 
         function openSignupModal() {
             $uibModalInstance.close('signup');
@@ -57,9 +73,15 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
         function submitLoginRequest() {
             if($scope.loginForm.$valid)
             {
-                $state.go('auth.home');
-
-                $uibModalInstance.close('success');
+                AuthService.login($ctrl.username, $ctrl.password)
+                    .then(function () {
+                        $ctrl.clearData();
+                        $state.go('auth.home');
+                        $uibModalInstance.close('success');
+                    }).catch(function () {
+                        $ctrl.clearData();
+                        $ctrl.addAlert('danger', "Invalid username and/or password")
+                    })
             }
         }
 
@@ -69,6 +91,11 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
 
         function closeAlert(index) {
             alertFactory.closeAlert($ctrl, index);
+        }
+
+        function clearData() {
+            $ctrl.username = undefined;
+            $ctrl.password = undefined;
         }
     }
 );
@@ -99,8 +126,9 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
                         email: $ctrl.email
                     }
                 }).then(function successCallback(response) {
-                    $state.go('auth.home');
-                    $uibModalInstance.close('success');
+                    $ctrl.alerts = []
+                    alert("Your account has been successfully created!")
+                    $uibModalInstance.close('login');
                 }, function errorCallback(response) { 
                     $ctrl.addAlert('danger', response.data.message)
                 });

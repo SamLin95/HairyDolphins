@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ui.router', 'bootstrap.angular.validation']);
+var app = angular.module('HairyDolphinsApp', ['ui.bootstrap','ui.router', 'bootstrap.angular.validation']);
 
 app.config(['bsValidationConfigProvider', function(bsValidationConfigProvider) {
   bsValidationConfigProvider.global.setValidateFieldsOn('submit');
@@ -22,7 +22,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controller: 'unauthNavController',
           controllerAs: 'nav'
         }
-      }
+      },
+      auth_redirect: "auth"
     })
     .state('unauth.home', { 
       url: '/home', 
@@ -30,7 +31,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/common/home.html'
         }
-      }    
+      },
+      auth_redirect: "auth.home"
     })
     .state('auth', {
       abstract: true,
@@ -38,20 +40,43 @@ app.config(function($stateProvider, $urlRouterProvider) {
       views: { 
         'header' : { 
           templateUrl: '/static/partials/auth/auth_nav.html',
-          controller: 'unauthNavController',
+          controller: 'authNavController',
           controllerAs: 'nav'
         }
-      }
+      },
+      unauth_redirect: "unauth"
     })
-    .state('auth.home', { 
+    .state('auth.home', {
       url: '/home', 
       views: { 
         'content@' : {
           templateUrl: '/static/partials/common/home.html'
         }
-      }    
+      },
+      unauth_redirect: "unauth.home"
     })
 
     $urlRouterProvider.otherwise('/unauth/home');
   
 });
+
+app.run(function ($rootScope, $state, AuthService) {
+  $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
+    toState.name
+    AuthService.loadCurrentUser()
+      .then(function(){
+        if(toState.auth_redirect){
+          $state.transitionTo(toState.auth_redirect);
+          event.preventDefault();
+        }
+      })
+      .catch(function(){
+        if(toState.unauth_redirect){
+          $state.transitionTo(toState.unauth_redirect);
+          event.preventDefault(); 
+        }
+      })
+  });
+});
+
+
