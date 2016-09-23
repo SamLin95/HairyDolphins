@@ -1,1 +1,101 @@
 /* HOME PAGE */
+.jumbotron { 
+    background-color: #40E0D0;
+    color: #ffffff;
+}
+
+/**************************
+Navigation Bar& Dropdown
+***************************/
+/* Add a dark background color with a little bit see-through */ 
+.navbar {
+    margin-bottom: 0;
+    background-color: #40E0D0;
+    border: 0;
+    font-size: 13px !important;
+    letter-spacing: 4px;
+    opacity:0.9;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Add a gray color to all navbar links */
+.navbar li a, .navbar .navbar-brand { 
+    color: #2d2d30 !important;
+}
+
+/* On hover, the links will turn white */
+.navbar-nav li a:hover {
+    color: #fff !important;
+}
+
+/* The active link */
+.navbar-nav li.active a {
+    color: #fff !important;
+    background-color:#29292c !important;
+}
+
+/* Remove border color from the collapsible button */
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+
+/* Dropdown */
+.open .dropdown-toggle {
+    color: #fff ;
+    background-color: #555 !important;
+}
+
+/* Dropdown links */
+.dropdown-menu li a {
+    color: #000 !important;
+}
+
+/* On hover, the dropdown links will turn red */
+.dropdown-menu li a:hover {
+    background-color: lightblue !important;
+}
+
+/*************
+Button-Success
+**************/
+.btn-success{
+    -webkit-transition-duration: 0.4s;
+    background-color: #40E0D0;
+    border-color: #40E0D0;
+}
+
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open > .dropdown-toggle.btn-success :hover
+{
+   background-color: #fff;
+   border-color: #40E0D0;
+   color: #40E0D0;
+}
+
+.btn-success:active, .btn-success.active {
+    background: #007299;
+    box-shadow: none;
+}
+
+/*************
+Button-Primary
+**************/
+.btn-primary{
+    -webkit-transition-duration: 0.4s;
+    background-color: #3CB371;
+    border-color: #3CB371;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary :hover
+{
+   background-color: #fff;
+   border-color: #3CB371;
+   color: #3CB371;
+}
+
+.btn-primary:active, .btn-primary.active {
+    background: #007299;
+    box-shadow: none;
+}
