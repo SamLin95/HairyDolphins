@@ -183,33 +183,40 @@ def createTest():
 										   'attraction', visitor2)
 	print '\ncreating entity recommendation for dun'
 	entity_recommend1 = test.createEntityRecommendation(visitor2, 'dun_recommendation', recommend1)
+	print '\nvisitor dun write a review for a place'
+	test.createReview(5, 'I love the atlanta', visitor2, recommend=recommend1)
 
 	print '\nvisitor sam recommends an attraction'
 	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
 	print '\ncreating entity recommendation for sam'
 	entity_recommend2 = test.createEntityRecommendation(visitor3, 'sam_recommendation', recommend2)
+		print '\nvisitor sam write a review for a place'
+	test.createReview(5, 'I love gt', visitor3, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
-	recommend3 = test.createRecommendation('Jia is a great place', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend3 = test.createRecommendation('Jia is a great restaurant', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'restaurant', visitor1)
 	print '\ncreating entity recommendation for jing'
 	entity_recommend3 = test.createEntityRecommendation(visitor1, 'jing_recommendation', recommend3)
+	print '\nvisitor jing write a review for a restaurant'
+	test.createReview(5, 'I love the shan city chicken', visitor1, recommend=recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
 	recommend4 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor5)
 	print '\ncreating entity recommendation for kelvin'
 	entity_recommend4 = test.createEntityRecommendation(visitor5, 'kelvin_recommendation', recommend4)
+	print '\nvisitor kelvin write a review for an attraction'
+	test.createReview(5, 'Atlanta is so great and i love it', visitor5, recommend=recommend4)
 
 	print '\nvisitor jing recommends an attraction'
 	recommend5 = test.createRecommendation('Suzhou is a great place', 'Suzhou is so beautiful', 'Suzhou', '215400', test.createCity('Suzhou', 'Jiangsu', 'China'),
 										   'attraction', visitor1)
 	print '\ncreating entity recommendation for jing'
 	entity_recommend5 = test.createEntityRecommendation(visitor1, 'jing_recommendation2', recommend5)
-
 	print '\nvisitor jing write a review for an attraction'
-	test.createReview(5, 'this place is so great', visitor1, recommend=recommend5)
+	test.createReview(5, 'suzhou is so beautiful', visitor1, recommend=recommend5)
 
 	# generating photoes
 	print '\ncreating photoes for advisors and recommendations!!!'
