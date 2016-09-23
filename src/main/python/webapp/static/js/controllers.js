@@ -4,6 +4,7 @@ app.controller('unauthNavController', ['$scope', '$uibModal', function ($scope, 
     var $ctrl = this;
     $ctrl.openSignupModal = openSignupModal;
     $ctrl.openLoginModal = openLoginModal;
+    $scope.isCollapsed = true;
 
     function openLoginModal() {
         var modalInstance = $uibModal.open({
@@ -46,6 +47,7 @@ app.controller('authNavController', function ($scope, $state, AuthService) {
     var $ctrl = this;
     $ctrl.logout = logout;
     $scope.user = AuthService.getUser();
+    $scope.isCollapsed = true;
   
     function logout(){
         AuthService.logout()

@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('HairyDolphinsApp', ['ui.bootstrap','ui.router', 'bootstrap.angular.validation']);
+var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router', 'bootstrap.angular.validation']);
 
 app.config(['bsValidationConfigProvider', function(bsValidationConfigProvider) {
   bsValidationConfigProvider.global.setValidateFieldsOn('submit');
