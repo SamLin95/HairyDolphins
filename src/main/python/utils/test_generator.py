@@ -212,9 +212,10 @@ def createTest():
 	test.createReview(5, 'this place is so great', visitor1, recommend=recommend5)
 
 	print '\ncreating photoes!!!'
-	file1 = test.createFile('file1.jpg', 32, 'url://1', 'entity_photo')
-	file2 = test.createFile('file2.jpg', 32, 'url://2', 'entity_photo')	
-	file3 = test.createFile('file3.jpg', 32, 'url://3', 'recommendation_photo')
+
+	file1 = test.createFile('file1.jpg', 32, 'https://s3.amazonaws.com/hairydolphins/11.png', 'entity_photo')
+	file2 = test.createFile('file2.jpg', 32, 'https://s3.amazonaws.com/hairydolphins/13.png', 'entity_photo')	
+	file3 = test.createFile('file3.jpg', 32, 'https://s3.amazonaws.com/hairydolphins/14.png', 'recommendation_photo')
 	pic1 = test.createEntityPhoto(visitor1, file1)
 	pic2 = test.createEntityPhoto(visitor2, file2)
 	pic3 = test.createRecommendationPhoto(visitor1, recommend1, file3)

@@ -4,7 +4,7 @@ if __name__ == '__main__' and __package__ is None:
 
 from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
-
+import boto
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
     role = Role.query.filter_by(label=label).first()
@@ -26,7 +26,7 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
         if message != None:
             print 'list of message'
             user.sent_messages = message
-            user.add(user)
+        user.add(user)
     else:
         print 'duplicate email or username'
     print '------ user added -----'
@@ -34,6 +34,7 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
 
 def createMessage(body, receiver):
     message = Message(message_body=body, receiver=receiver)
+    message.add(message)
     print '----- message sent ------'
     return message
 
@@ -61,6 +62,7 @@ def checkType(label):
 
 def createEntityRecommendation(entity, entity_recommendation_type, recommend):
     entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=EntityRecommendationType(label=entity_recommendation_type), recommendation=recommend)
+    entity_recommendation.add(entity_recommendation)
     print '----- entity recommendation updated -----'
     return entity_recommendation
 
@@ -69,7 +71,7 @@ def createRecommendation(title, description, address_line_one, zip_code, city, c
     recommendation_category = checkCategory(category)
     recommend = Recommendation(title=title, description=description, address_line_one=address_line_one, zip_code=zip_code, city=city, 
                                recommendation_category=recommendation_category, recommender=recommender)
-
+    recommend.add(recommend)
     print recommend
     print '----- recommendation updated -----'
     return recommend
@@ -83,8 +85,8 @@ def createFile(name, checksum, download_link, type_name):
     else:
         print file_type
     print '------ type checked -----'
-
     files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
+    files.add(files)
     print files
     print '------ file added -----'
     return files
@@ -125,7 +127,7 @@ def createAdvisorProfile(description, city=None, dates=None):
     if dates != None:
         print '---- available dates set for advisor ----'
         advisor.available_dates = dates
-        advisor.add(advisor)
+    advisor.add(advisor)
     print advisor
     print '------ advisor checked -----'
     return advisor
@@ -133,14 +135,12 @@ def createAdvisorProfile(description, city=None, dates=None):
 def createReview(rating, title, reviewer, advisor_profile=None, posted=None, recommend=None):
     review = Review(rating=rating, title=title, reviewer=reviewer)
     if posted != None:
-        review.posted=posted
-        review.add(review)
+        review.posted = posted
     if advisor_profile != None:
         review.local_advisor_profile = advisor_profile
-        review.add(review) 
     elif recommend != None:
         review.recommendation = recommend
-        review.add(review)
+    review.add(review)
     print review
     print '----- review checked -----'
     return review
@@ -148,12 +148,20 @@ def createReview(rating, title, reviewer, advisor_profile=None, posted=None, rec
 
 def createEntityPhoto(entity, files):
     photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
+    photo.add(photo)
     print photo
     print '----- entity photo checked -----'
     return photo
 
 def createRecommendationPhoto(uploader, recommendation, files):
     photo = RecommendationPhoto(uploader=uploader, recommendation=recommendation, file=files)
+    photo.add(photo)
     print photo
     print '----- recommendation photo checked -----'
     return photo
+
+def uploadPhoto(phote_type, name):
+    bucket = s3.get_bucket('hairydolphins')
+    key = bucket.new_key(photo_type + '/' + name)
+    key.set_contents_from_filename('/Users/jinghong/Desktop/Icons/CP.png')
+    
