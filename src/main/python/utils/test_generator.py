@@ -179,25 +179,25 @@ def createTest():
 
 	# generating entity recommendations
 	print '\nvisitor dun recommends an attraction'
-	recommend1 = test.createRecommendation('ATL is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend1 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor2)
 	print '\ncreating entity recommendation for dun'
 	entity_recommend1 = test.createEntityRecommendation(visitor2, 'dun_recommendation', recommend1)
 
 	print '\nvisitor sam recommends an attraction'
-	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
 	print '\ncreating entity recommendation for sam'
 	entity_recommend2 = test.createEntityRecommendation(visitor3, 'sam_recommendation', recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
-	recommend3 = test.createRecommendation('Jia is a great place', 'I love jia', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend3 = test.createRecommendation('Jia is a great place', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'restaurant', visitor1)
 	print '\ncreating entity recommendation for jing'
 	entity_recommend3 = test.createEntityRecommendation(visitor1, 'jing_recommendation', recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
-	recommend4 = test.createRecommendation('ATL is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend4 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor5)
 	print '\ncreating entity recommendation for kelvin'
 	entity_recommend4 = test.createEntityRecommendation(visitor5, 'kelvin_recommendation', recommend4)
@@ -213,11 +213,18 @@ def createTest():
 
 	print '\ncreating photoes!!!'
 
-	file1 = test.createFile('entity1.png', 32, '/Users/jinghong/Desktop/Icons/11.png', 'entity_photo')
-	file2 = test.createFile('entity2.png', 32, '/Users/jinghong/Desktop/Icons/13.png', 'entity_photo')	
-	file3 = test.createFile('recommendation1.png', 32, '/Users/jinghong/Desktop/Icons/14.png', 'recommendation_photo')
-	pic1 = test.createEntityPhoto(visitor1, file1)
-	pic2 = test.createEntityPhoto(visitor2, file2)
-	pic3 = test.createRecommendationPhoto(visitor1, recommend1, file3)
-
+	src = path.dirname(path.realpath('__file__'))
+	print src
+	file1 = test.createFile('entity1.png', 32, src + '/test_files/entity1.png', 'entity_photo')
+	file2 = test.createFile('entity2.png', 32, src + '/test_files/entity2.png', 'entity_photo')	
+	file3 = test.createFile('entity3.png', 32, src + '/test_files/entity3.png', 'entity_photo')
+	file4 = test.createFile('recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'recommendation_photo')
+	file5 = test.createFile('recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'recommendation_photo')	
+	file6 = test.createFile('recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'recommendation_photo')
+	test.createEntityPhoto(visitor1, file1)
+	test.createEntityPhoto(visitor2, file2)
+	test.createEntityPhoto(advisor3, file3)
+	test.createRecommendationPhoto(visitor1, recommend1, file4)
+	test.createRecommendationPhoto(visitor2, recommend1, file5)
+	test.createRecommendationPhoto(visitor3, recommend1, file6)
 createTest()
