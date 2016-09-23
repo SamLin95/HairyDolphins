@@ -96,7 +96,7 @@ def createTest():
 							     'Branson', 'Branson', birthday=dates1[19])
 
 	# generating messages
-	print 'sending\nmessage\n!!!!!\n'
+	print '\nsending message !!!!!\n'
 	message1 = test.createMessage('this a message from visitor jing, sent to advisor dun', advisor2)
 	visitor1.sent_messages.append(message1)
 	visitor1.phone_number = '4044363903'
@@ -211,20 +211,39 @@ def createTest():
 	print '\nvisitor jing write a review for an attraction'
 	test.createReview(5, 'this place is so great', visitor1, recommend=recommend5)
 
-	print '\ncreating photoes!!!'
-
+	# generating photoes
+	print '\ncreating photoes for advisors and recommendations!!!'
 	src = path.dirname(path.realpath('__file__'))
-	print src
-	file1 = test.createFile('entity1.png', 32, src + '/test_files/entity1.png', 'entity_photo')
-	file2 = test.createFile('entity2.png', 32, src + '/test_files/entity2.png', 'entity_photo')	
-	file3 = test.createFile('entity3.png', 32, src + '/test_files/entity3.png', 'entity_photo')
-	file4 = test.createFile('recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'recommendation_photo')
-	file5 = test.createFile('recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'recommendation_photo')	
-	file6 = test.createFile('recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'recommendation_photo')
-	test.createEntityPhoto(visitor1, file1)
-	test.createEntityPhoto(visitor2, file2)
+	file1 = test.createFile('advisor1.jpg', 32, src + '/test_files/advisor1.jpg', 'entity_photo')
+	file2 = test.createFile('advisor2.jpg', 32, src + '/test_files/advisor2.jpg', 'entity_photo')	
+	file3 = test.createFile('advisor3.jpg', 32, src + '/test_files/advisor3.jpg', 'entity_photo')
+	file4 = test.createFile('advisor4.jpg', 32, src + '/test_files/advisor4.jpg', 'entity_photo')
+	file5 = test.createFile('advisor5.jpg', 32, src + '/test_files/advisor5.jpg', 'entity_photo')	
+	file6 = test.createFile('advisor6.jpg', 32, src + '/test_files/advisor6.jpg', 'entity_photo')
+	file7 = test.createFile('advisor7.jpg', 32, src + '/test_files/advisor7.jpg', 'entity_photo')
+	file8 = test.createFile('advisor8.jpg', 32, src + '/test_files/advisor8.jpg', 'entity_photo')	
+	file9 = test.createFile('advisor9.jpg', 32, src + '/test_files/advisor9.jpg', 'entity_photo')
+
+	file10 = test.createFile('recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'recommendation_photo')
+	file11 = test.createFile('recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'recommendation_photo')	
+	file12 = test.createFile('recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'recommendation_photo')
+	file13 = test.createFile('recommendation4.jpg', 32, src + '/test_files/atl4.jpg', 'recommendation_photo')	
+	file14 = test.createFile('recommendation5.jpg', 32, src + '/test_files/atl5.jpg', 'recommendation_photo')
+
+	test.createEntityPhoto(advisor1, file1)
+	test.createEntityPhoto(advisor2, file2)
 	test.createEntityPhoto(advisor3, file3)
-	test.createRecommendationPhoto(visitor1, recommend1, file4)
-	test.createRecommendationPhoto(visitor2, recommend1, file5)
-	test.createRecommendationPhoto(visitor3, recommend1, file6)
+	test.createEntityPhoto(advisor4, file4)
+	test.createEntityPhoto(advisor5, file5)
+	test.createEntityPhoto(advisor6, file6)
+	test.createEntityPhoto(advisor7, file7)
+	test.createEntityPhoto(advisor8, file8)
+	test.createEntityPhoto(advisor9, file9)
+
+	test.createRecommendationPhoto(visitor2, recommend1, file10)
+	test.createRecommendationPhoto(visitor3, recommend2, file11)
+	test.createRecommendationPhoto(visitor1, recommend3, file12)
+	test.createRecommendationPhoto(visitor5, recommend4, file13)
+	test.createRecommendationPhoto(visitor1, recommend5, file14)
+
 createTest()

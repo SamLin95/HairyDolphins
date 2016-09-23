@@ -11,7 +11,7 @@ db.configure_mappers()
 db.create_all()
 db.session.commit()
 
-# delete all keys in buckdets in amazon s3
+# delete all keys in buckets in amazon s3
 keys = boto.connect_s3().get_bucket('hairydolphins').get_all_keys()
 for key in keys:
 	key.delete()
