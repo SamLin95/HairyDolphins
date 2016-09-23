@@ -191,7 +191,7 @@ def createTest():
 										   'attraction', visitor3)
 	print '\ncreating entity recommendation for sam'
 	entity_recommend2 = test.createEntityRecommendation(visitor3, 'sam_recommendation', recommend2)
-		print '\nvisitor sam write a review for a place'
+	print '\nvisitor sam write a review for a place'
 	test.createReview(5, 'I love gt', visitor3, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
