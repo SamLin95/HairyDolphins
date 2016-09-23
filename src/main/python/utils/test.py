@@ -4,6 +4,7 @@ if __name__ == '__main__' and __package__ is None:
 
 from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
+# amazon s3
 import boto
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
@@ -76,7 +77,7 @@ def createRecommendation(title, description, address_line_one, zip_code, city, c
     print '----- recommendation updated -----'
     return recommend
 
-def createFile(name, checksum, download_link, type_name):
+def createFile(name, checksum, photo, type_name):
     file_type = FileType.query.filter_by(label=type_name).first()
     if file_type == None:
         print '----- new type, updating ------'
@@ -85,12 +86,12 @@ def createFile(name, checksum, download_link, type_name):
     else:
         print file_type
     print '------ type checked -----'
-    files = File(name=name, checksum=checksum, download_link=download_link, file_type=file_type)
+    link = uploadPhoto(type_name, name, photo)
+    files = File(name=name, checksum=checksum, download_link=link, file_type=file_type)
     files.add(files)
     print files
     print '------ file added -----'
     return files
-
 
 def createCity(city_name, state_name, country_name):
     country = Country.query.filter_by(label=country_name).first()
@@ -111,7 +112,6 @@ def createCity(city_name, state_name, country_name):
         print state
     print '------ state checked -----'
 
-    # city_name = 'ATL'
     city = City.query.filter_by(label=city_name, state=state).first()
     if city == None:
         print '----- new city, updating ------'
@@ -145,7 +145,6 @@ def createReview(rating, title, reviewer, advisor_profile=None, posted=None, rec
     print '----- review checked -----'
     return review
 
-
 def createEntityPhoto(entity, files):
     photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
     photo.add(photo)
@@ -160,8 +159,9 @@ def createRecommendationPhoto(uploader, recommendation, files):
     print '----- recommendation photo checked -----'
     return photo
 
-def uploadPhoto(phote_type, name):
-    bucket = s3.get_bucket('hairydolphins')
-    key = bucket.new_key(photo_type + '/' + name)
-    key.set_contents_from_filename('/Users/jinghong/Desktop/Icons/CP.png')
-    
+def uploadPhoto(type_name, photo_name, photo):
+    bucket = boto.connect_s3().get_bucket('hairydolphins')
+    link = type_name + '/' + photo_name
+    print link
+    bucket.new_key(link).set_contents_from_filename(photo)
+    return link   
