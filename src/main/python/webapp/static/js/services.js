@@ -2,7 +2,7 @@ var app = angular.module('HairyDolphinsApp');
 
 app.factory('AuthService',
   ['$q', '$timeout', '$http', 'utils',
-  function ($q, $timeout, $http, utils) {
+  function ($q, $timeout, $http, utils, $rootScope) {
 
     // create user variable
     var user = null;
@@ -31,13 +31,17 @@ app.factory('AuthService',
     function login(username, password) {
 	    // create a new instance of deferred
 	    utils.requestStart();
+
 	    var deferred = $q.defer();
 
 	    // send a post request to the server
 	    $http({
 	    	method: 'POST',
 	    	url : '/auth/signin', 
-	    	params: {username: username, password: password}
+	    	params: {
+	    		username: username,
+	    		password: password
+	    	}
 	    })
 	    // handle success
 	    .success(function (data, status) {
@@ -48,21 +52,26 @@ app.factory('AuthService',
 	        	user = null;
 	        	deferred.reject();
 	        }
+
+	        utils.requestEnd();
 	    })
 	    // handle error
 	    .error(function (data) {
 	      user = null;
 	      deferred.reject();
+
+	      utils.requestEnd();
 	    });
 
-	    utils.requestEnd();
+	
 
 	  // return promise object
-	  return deferred.promise;
+	    return deferred.promise;
 
     }
 
     function logout() {
+      utils.requestStart();
     	  // create a new instance of deferred
 	  var deferred = $q.defer();
 
@@ -72,11 +81,13 @@ app.factory('AuthService',
 	    .success(function (data) {
 	      user = null;
 	      deferred.resolve();
+	      utils.requestEnd();
 	    })
 	    // handle error
 	    .error(function (data) {
 	      user = null;
 	      deferred.reject();
+	      utils.requestEnd();
 	    });
 
 	  // return promise object
@@ -154,11 +165,12 @@ app.factory('searchHelper', function($q, $http, utils) {
 	return factory;
 })
 
-app.factory('utils', function($rootScope) {
+app.factory('utils', function($q, $timeout, $rootScope, $http) {
 	var factory = {};
 
 	factory.requestStart = requestStart;
 	factory.requestEnd = requestEnd;
+	factory.replaceInvalidImages = replaceInvalidImages;
 
 	function requestStart() {
 		$rootScope.isLoading = true
@@ -166,6 +178,49 @@ app.factory('utils', function($rootScope) {
 
 	function requestEnd() {
 		$rootScope.isLoading = false
+	}
+
+	function replaceInvalidImages(imageHolder, imageCol) {
+		promises = []
+
+		if(Array.isArray(imageHolder)) {
+			for(var i = 0; i < imageHolder.length; i++) {
+				promises.push(valdiateImageUrl(imageHolder[i], imageCol))
+			}
+		} else {
+			promises.push(valdiateImageUrl(imageHolder, imageCol))
+		}
+
+
+		$q.all(promises)
+	}
+
+	function valdiateImageUrl(imageHolder, imageCol)
+	{
+		var d = $q.defer();
+
+		replacement = "/static/images/placeholder.png"
+
+		$timeout(function(){
+			if(!imageHolder[imageCol]) {
+					imageHolder[imageCol] = replacement
+					d.resolve()
+			} else {
+				$http.get(imageHolder[imageCol])
+				.error(function() {
+						$http.get($rootScope.s3url + imageHolder[imageCol])
+						.success(function(){
+							imageHolder[imageCol] =$rootScope.s3url + imageHolder[imageCol]
+							d.resolve()
+						}).error(function(){
+							imageHolder[imageCol] = replacement	
+							d.resolve()
+						})
+				})
+			}
+	    }, 1000, false);
+
+	    return d.promise;
 	}
 
 	return factory

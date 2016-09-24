@@ -10,7 +10,14 @@ app.controller('mainController', function($scope, $state) {
             '^.laSearch',
             {
                 keyword: $scope.searchString,
-                available_date: available_date
+                available_date: available_date,
+                request_fields: [
+                    'first_name',
+                    'local_advisor_profile',
+                    'last_name',
+                    'average_rating',
+                    'profile_photo_url'
+                ]
             }
         )
     }
@@ -149,10 +156,11 @@ app.controller('signupController', function($scope, $uibModalInstance, $rootScop
                     $ctrl.alerts = []
                     alert("Your account has been successfully created!")
                     $uibModalInstance.close('login');
+                    utils.requestEnd()
                 }, function errorCallback(response) { 
                     $ctrl.addAlert('danger', response.data.message)
+                    utils.requestEnd()
                 });
-                utils.requestEnd()
             }
         }
 
@@ -167,6 +175,7 @@ app.controller('signupController', function($scope, $uibModalInstance, $rootScop
 );
 
 app.controller('laSearchController', function($scope, localAdvisors, $state, $stateParams, searchHelper, utils){
+  utils.replaceInvalidImages(localAdvisors, 'profile_photo_url')
   $scope.localAdvisors = localAdvisors
   $scope.sendSearchRequest = sendSearchRequest;
   $scope.displayCollection = [].concat($scope.localAdvisors);
@@ -179,12 +188,18 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
         keyword = $scope.searchString? $scope.searchString:undefined
 
-        searchHelper.searchLocalAdvisors(
-            {
+        searchHelper.searchLocalAdvisors({
                 keyword: keyword,
-                available_date: available_date
-            }
-        ).then(function(data){
+                available_date: available_date,
+                request_fields: [
+                    'first_name',
+                    'local_advisor_profile',
+                    'last_name',
+                    'average_rating',
+                    'profile_photo_url'
+                ]
+        }).then(function(data){
+            utils.replaceInvalidImages(data, 'profile_photo_url')
             $scope.localAdvisors = data
             $scope.displayCollection = [].concat($scope.localAdvisors);
             $scope.isLoading = false

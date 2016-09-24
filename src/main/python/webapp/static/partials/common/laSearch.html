@@ -22,7 +22,7 @@
 			</tr>
 			<tr ng-repeat="localAdvisor in displayCollection">
 				<td style="width: 25%">
-					<img ng-click="alert()" style="width:75%" ng-src="{{$root.s3url + localAdvisor.profile_photo_url}}" class="img-rounded pull-xs-left" alt="No image">
+					<img ng-click="alert()" style="width:75%" ng-src="{{localAdvisor.profile_photo_url}}" class="img-rounded pull-xs-left" alt="No image">
 				</td>
 				<td>
 					<div>
