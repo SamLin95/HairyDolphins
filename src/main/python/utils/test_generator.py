@@ -181,61 +181,141 @@ def createTest():
 	print '\nvisitor dun recommends an attraction'
 	recommend1 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor2)
-	print '\ncreating entity recommendation for dun'
-	entity_recommend1 = test.createEntityRecommendation(visitor2, 'dun_recommendation', recommend1)
+	print '\njing and kelvin like this recommendation!!'
+	test.createEntityRecommendation(visitor1, 'like', recommend1)
+	test.createEntityRecommendation(visitor5, 'like', recommend1)
+
+	print '\nkyrsten and sam dislike this recommendation!!'
+	test.createEntityRecommendation(visitor3, 'dislike', recommend1)
+	test.createEntityRecommendation(visitor4, 'dislike', recommend1)
+
 	print '\nvisitor dun write a review for a place'
 	test.createReview(5, 'I love the atlanta', visitor2, recommend=recommend1)
 
 	print '\nvisitor sam recommends an attraction'
 	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
-	print '\ncreating entity recommendation for sam'
-	entity_recommend2 = test.createEntityRecommendation(visitor3, 'sam_recommendation', recommend2)
+	print '\nlike!'
+	test.createEntityRecommendation(visitor1, 'like', recommend2)
+	test.createEntityRecommendation(visitor2, 'like', recommend2)
+	test.createEntityRecommendation(visitor4, 'like', recommend2)
+	test.createEntityRecommendation(visitor5, 'like', recommend2)
+	test.createEntityRecommendation(visitor6, 'like', recommend2)
+	test.createEntityRecommendation(visitor7, 'like', recommend2)
+	test.createEntityRecommendation(visitor8, 'like', recommend2)
+	test.createEntityRecommendation(visitor9, 'like', recommend2)
+	test.createEntityRecommendation(visitor10, 'like', recommend2)
+	test.createEntityRecommendation(visitor11, 'like', recommend2)
+	test.createEntityRecommendation(visitor12, 'like', recommend2)
+	test.createEntityRecommendation(visitor13, 'like', recommend2)
+	test.createEntityRecommendation(visitor14, 'like', recommend2)
+
+	print '\ndislike!'
+	test.createEntityRecommendation(visitor15, 'dislike', recommend2)
+	test.createEntityRecommendation(visitor16, 'dislike', recommend2)
+	test.createEntityRecommendation(visitor18, 'dislike', recommend2)
+	test.createEntityRecommendation(visitor19, 'dislike', recommend2)
+
 	print '\nvisitor sam write a review for a place'
 	test.createReview(5, 'I love gt', visitor3, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
 	recommend3 = test.createRecommendation('Jia is a great restaurant', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'restaurant', visitor1)
-	print '\ncreating entity recommendation for jing'
-	entity_recommend3 = test.createEntityRecommendation(visitor1, 'jing_recommendation', recommend3)
+	test.createEntityRecommendation(visitor2, 'like', recommend3)
+	test.createEntityRecommendation(visitor3, 'like', recommend3)
+	test.createEntityRecommendation(visitor4, 'like', recommend3)
+	test.createEntityRecommendation(visitor5, 'like', recommend3)
+	test.createEntityRecommendation(visitor6, 'like', recommend3)
+	test.createEntityRecommendation(visitor7, 'like', recommend3)
+	test.createEntityRecommendation(visitor8, 'like', recommend3)
+	test.createEntityRecommendation(visitor9, 'dislike', recommend3)
+	test.createEntityRecommendation(visitor10, 'like', recommend3)
+	test.createEntityRecommendation(visitor11, 'like', recommend3)
+	test.createEntityRecommendation(visitor12, 'dislike', recommend3)
+	test.createEntityRecommendation(visitor13, 'like', recommend3)
+	test.createEntityRecommendation(visitor14, 'like', recommend3)
+	test.createEntityRecommendation(visitor15, 'like', recommend3)
+	test.createEntityRecommendation(visitor16, 'dislike', recommend3)
+	test.createEntityRecommendation(visitor17, 'like', recommend3)
+	test.createEntityRecommendation(visitor18, 'like', recommend3)
+	test.createEntityRecommendation(visitor19, 'like', recommend3)
+	test.createEntityRecommendation(visitor20, 'like', recommend3)
+
 	print '\nvisitor jing write a review for a restaurant'
 	test.createReview(5, 'I love the shan city chicken', visitor1, recommend=recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
 	recommend4 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor5)
-	print '\ncreating entity recommendation for kelvin'
-	entity_recommend4 = test.createEntityRecommendation(visitor5, 'kelvin_recommendation', recommend4)
+	test.createEntityRecommendation(visitor1, 'like', recommend4)	
+	test.createEntityRecommendation(visitor2, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor3, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor4, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor6, 'like', recommend4)
+	test.createEntityRecommendation(visitor7, 'like', recommend4)
+	test.createEntityRecommendation(visitor8, 'like', recommend4)
+	test.createEntityRecommendation(visitor9, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor10, 'like', recommend4)
+	test.createEntityRecommendation(visitor11, 'like', recommend4)
+	test.createEntityRecommendation(visitor12, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor13, 'like', recommend4)
+	test.createEntityRecommendation(visitor14, 'like', recommend4)
+	test.createEntityRecommendation(visitor15, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor16, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor17, 'like', recommend4)
+	test.createEntityRecommendation(visitor18, 'like', recommend4)
+	test.createEntityRecommendation(visitor19, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor20, 'dislike', recommend4)
+
 	print '\nvisitor kelvin write a review for an attraction'
 	test.createReview(5, 'Atlanta is so great and i love it', visitor5, recommend=recommend4)
 
 	print '\nvisitor jing recommends an attraction'
 	recommend5 = test.createRecommendation('Suzhou is a great place', 'Suzhou is so beautiful', 'Suzhou', '215400', test.createCity('Suzhou', 'Jiangsu', 'China'),
 										   'attraction', visitor1)
-	print '\ncreating entity recommendation for jing'
-	entity_recommend5 = test.createEntityRecommendation(visitor1, 'jing_recommendation2', recommend5)
+
+	test.createEntityRecommendation(visitor2, 'like', recommend5)
+	test.createEntityRecommendation(visitor3, 'like', recommend5)
+	test.createEntityRecommendation(visitor4, 'like', recommend5)
+	test.createEntityRecommendation(visitor5, 'like', recommend5)
+	test.createEntityRecommendation(visitor6, 'like', recommend5)
+	test.createEntityRecommendation(visitor7, 'like', recommend5)
+	test.createEntityRecommendation(visitor8, 'like', recommend5)
+	test.createEntityRecommendation(visitor9, 'like', recommend5)
+	test.createEntityRecommendation(visitor10, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor11, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor12, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor13, 'like', recommend5)
+	test.createEntityRecommendation(visitor14, 'like', recommend5)
+	test.createEntityRecommendation(visitor15, 'like', recommend5)
+	test.createEntityRecommendation(visitor16, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor17, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor18, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor19, 'like', recommend5)
+	test.createEntityRecommendation(visitor20, 'like', recommend5)
+
 	print '\nvisitor jing write a review for an attraction'
 	test.createReview(5, 'suzhou is so beautiful', visitor1, recommend=recommend5)
 
 	# generating photoes
 	print '\ncreating photoes for advisors and recommendations!!!'
 	src = path.dirname(path.realpath('__file__'))
-	file1 = test.createFile('advisor1.jpg', 32, src + '/test_files/advisor1.jpg', 'entity_photo')
-	file2 = test.createFile('advisor2.jpg', 32, src + '/test_files/advisor2.jpg', 'entity_photo')	
-	file3 = test.createFile('advisor3.jpg', 32, src + '/test_files/advisor3.jpg', 'entity_photo')
-	file4 = test.createFile('advisor4.jpg', 32, src + '/test_files/advisor4.jpg', 'entity_photo')
-	file5 = test.createFile('advisor5.jpg', 32, src + '/test_files/advisor5.jpg', 'entity_photo')	
-	file6 = test.createFile('advisor6.jpg', 32, src + '/test_files/advisor6.jpg', 'entity_photo')
-	file7 = test.createFile('advisor7.jpg', 32, src + '/test_files/advisor7.jpg', 'entity_photo')
-	file8 = test.createFile('advisor8.jpg', 32, src + '/test_files/advisor8.jpg', 'entity_photo')	
-	file9 = test.createFile('advisor9.jpg', 32, src + '/test_files/advisor9.jpg', 'entity_photo')
+	file1 = test.createFile('advisor1.jpg', 32, src + '/test_files/advisor1.jpg', 'jpg')
+	file2 = test.createFile('advisor2.jpg', 32, src + '/test_files/advisor2.jpg', 'jpg')	
+	file3 = test.createFile('advisor3.jpg', 32, src + '/test_files/advisor3.jpg', 'jpg')
+	file4 = test.createFile('advisor4.jpg', 32, src + '/test_files/advisor4.jpg', 'jpg')
+	file5 = test.createFile('advisor5.jpg', 32, src + '/test_files/advisor5.jpg', 'jpg')	
+	file6 = test.createFile('advisor6.jpg', 32, src + '/test_files/advisor6.jpg', 'jpg')
+	file7 = test.createFile('advisor7.jpg', 32, src + '/test_files/advisor7.jpg', 'jpg')
+	file8 = test.createFile('advisor8.jpg', 32, src + '/test_files/advisor8.jpg', 'jpg')	
+	file9 = test.createFile('advisor9.jpg', 32, src + '/test_files/advisor9.jpg', 'jpg')
 
-	file10 = test.createFile('recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'recommendation_photo')
-	file11 = test.createFile('recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'recommendation_photo')	
-	file12 = test.createFile('recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'recommendation_photo')
-	file13 = test.createFile('recommendation4.jpg', 32, src + '/test_files/atl4.jpg', 'recommendation_photo')	
-	file14 = test.createFile('recommendation5.jpg', 32, src + '/test_files/atl5.jpg', 'recommendation_photo')
+	file10 = test.createFile('recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'jpg')
+	file11 = test.createFile('recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'jpg')	
+	file12 = test.createFile('recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'jpg')
+	file13 = test.createFile('recommendation4.jpg', 32, src + '/test_files/atl4.jpg', 'jpg')	
+	file14 = test.createFile('recommendation5.jpg', 32, src + '/test_files/atl5.jpg', 'jpg')
 
 	test.createEntityPhoto(advisor1, file1)
 	test.createEntityPhoto(advisor2, file2)
