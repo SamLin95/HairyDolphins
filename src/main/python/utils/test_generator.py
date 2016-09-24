@@ -96,7 +96,7 @@ def createTest():
 							     'Branson', 'Branson', birthday=dates1[19])
 
 	# generating messages
-	print 'sending\nmessage\n!!!!!\n'
+	print '\nsending message !!!!!\n'
 	message1 = test.createMessage('this a message from visitor jing, sent to advisor dun', advisor2)
 	visitor1.sent_messages.append(message1)
 	visitor1.phone_number = '4044363903'
@@ -179,36 +179,143 @@ def createTest():
 
 	# generating entity recommendations
 	print '\nvisitor dun recommends an attraction'
-	recommend1 = test.createRecommendation('ATL is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend1 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor2)
-	print '\ncreating entity recommendation for dun'
-	entity_recommend1 = test.createEntityRecommendation(visitor2, 'dun_recommendation', recommend1)
+	print '\njing and kelvin like this recommendation!!'
+	test.createEntityRecommendation(visitor1, 'like', recommend1)
+	test.createEntityRecommendation(visitor5, 'like', recommend1)
+
+	print '\nkyrsten and sam dislike this recommendation!!'
+	test.createEntityRecommendation(visitor3, 'dislike', recommend1)
+	test.createEntityRecommendation(visitor4, 'dislike', recommend1)
+
+	print '\nvisitor dun write a review for a place'
+	test.createReview(5, 'I love the atlanta', visitor2, recommend=recommend1)
 
 	print '\nvisitor sam recommends an attraction'
-	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
-	print '\ncreating entity recommendation for sam'
-	entity_recommend2 = test.createEntityRecommendation(visitor3, 'sam_recommendation', recommend2)
+	print '\nlike!'
+	test.createEntityRecommendation(visitor1, 'like', recommend2)
+	test.createEntityRecommendation(visitor2, 'like', recommend2)
+	test.createEntityRecommendation(visitor4, 'like', recommend2)
+	test.createEntityRecommendation(visitor5, 'like', recommend2)
+	# test.createEntityRecommendation(visitor6, 'like', recommend2)
+	# test.createEntityRecommendation(visitor7, 'like', recommend2)
+	# test.createEntityRecommendation(visitor8, 'like', recommend2)
+	# test.createEntityRecommendation(visitor9, 'like', recommend2)
+	# test.createEntityRecommendation(visitor10, 'like', recommend2)
+	# test.createEntityRecommendation(visitor11, 'like', recommend2)
+	# test.createEntityRecommendation(visitor12, 'like', recommend2)
+	# test.createEntityRecommendation(visitor13, 'like', recommend2)
+	# test.createEntityRecommendation(visitor14, 'like', recommend2)
+
+	# print '\ndislike!'
+	# test.createEntityRecommendation(visitor15, 'dislike', recommend2)
+	# test.createEntityRecommendation(visitor16, 'dislike', recommend2)
+	# test.createEntityRecommendation(visitor18, 'dislike', recommend2)
+	# test.createEntityRecommendation(visitor19, 'dislike', recommend2)
+
+	print '\nvisitor sam write a review for a place'
+	test.createReview(5, 'I love gt', visitor3, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
-	recommend3 = test.createRecommendation('Jia is a great place', 'I love jia', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend3 = test.createRecommendation('Jia is a great restaurant', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'restaurant', visitor1)
-	print '\ncreating entity recommendation for jing'
-	entity_recommend3 = test.createEntityRecommendation(visitor1, 'jing_recommendation', recommend3)
+	# test.createEntityRecommendation(visitor2, 'like', recommend3)
+	# test.createEntityRecommendation(visitor3, 'like', recommend3)
+	# test.createEntityRecommendation(visitor4, 'like', recommend3)
+	# test.createEntityRecommendation(visitor5, 'like', recommend3)
+	# test.createEntityRecommendation(visitor6, 'like', recommend3)
+	# test.createEntityRecommendation(visitor7, 'like', recommend3)
+	# test.createEntityRecommendation(visitor8, 'like', recommend3)
+	# test.createEntityRecommendation(visitor9, 'dislike', recommend3)
+	# test.createEntityRecommendation(visitor10, 'like', recommend3)
+	# test.createEntityRecommendation(visitor11, 'like', recommend3)
+	# test.createEntityRecommendation(visitor12, 'dislike', recommend3)
+	# test.createEntityRecommendation(visitor13, 'like', recommend3)
+	# test.createEntityRecommendation(visitor14, 'like', recommend3)
+	test.createEntityRecommendation(visitor15, 'like', recommend3)
+	test.createEntityRecommendation(visitor16, 'dislike', recommend3)
+	test.createEntityRecommendation(visitor17, 'like', recommend3)
+	test.createEntityRecommendation(visitor18, 'like', recommend3)
+	test.createEntityRecommendation(visitor19, 'like', recommend3)
+	test.createEntityRecommendation(visitor20, 'like', recommend3)
+
+	print '\nvisitor jing write a review for a restaurant'
+	test.createReview(5, 'I love the shan city chicken', visitor1, recommend=recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
-	recommend4 = test.createRecommendation('ATL is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('ATL', 'GA', 'USA'),
+	recommend4 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor5)
-	print '\ncreating entity recommendation for kelvin'
-	entity_recommend4 = test.createEntityRecommendation(visitor5, 'kelvin_recommendation', recommend4)
+	test.createEntityRecommendation(visitor1, 'like', recommend4)	
+	test.createEntityRecommendation(visitor2, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor3, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor4, 'dislike', recommend4)
+	test.createEntityRecommendation(visitor6, 'like', recommend4)
+	# test.createEntityRecommendation(visitor7, 'like', recommend4)
+	# test.createEntityRecommendation(visitor8, 'like', recommend4)
+	# test.createEntityRecommendation(visitor9, 'dislike', recommend4)
+	# test.createEntityRecommendation(visitor10, 'like', recommend4)
+	# test.createEntityRecommendation(visitor11, 'like', recommend4)
+	# test.createEntityRecommendation(visitor12, 'dislike', recommend4)
+	# test.createEntityRecommendation(visitor13, 'like', recommend4)
+	# test.createEntityRecommendation(visitor14, 'like', recommend4)
+	# test.createEntityRecommendation(visitor15, 'dislike', recommend4)
+	# test.createEntityRecommendation(visitor16, 'dislike', recommend4)
+	# test.createEntityRecommendation(visitor17, 'like', recommend4)
+	# test.createEntityRecommendation(visitor18, 'like', recommend4)
+	# test.createEntityRecommendation(visitor19, 'dislike', recommend4)
+	# test.createEntityRecommendation(visitor20, 'dislike', recommend4)
+
+	print '\nvisitor kelvin write a review for an attraction'
+	test.createReview(5, 'Atlanta is so great and i love it', visitor5, recommend=recommend4)
 
 	print '\nvisitor jing recommends an attraction'
 	recommend5 = test.createRecommendation('Suzhou is a great place', 'Suzhou is so beautiful', 'Suzhou', '215400', test.createCity('Suzhou', 'Jiangsu', 'China'),
 										   'attraction', visitor1)
-	print '\ncreating entity recommendation for jing'
-	entity_recommend5 = test.createEntityRecommendation(visitor1, 'jing_recommendation2', recommend5)
+
+	# test.createEntityRecommendation(visitor2, 'like', recommend5)
+	# test.createEntityRecommendation(visitor3, 'like', recommend5)
+	# test.createEntityRecommendation(visitor4, 'like', recommend5)
+	# test.createEntityRecommendation(visitor5, 'like', recommend5)
+	# test.createEntityRecommendation(visitor6, 'like', recommend5)
+	# test.createEntityRecommendation(visitor7, 'like', recommend5)
+	# test.createEntityRecommendation(visitor8, 'like', recommend5)
+	# test.createEntityRecommendation(visitor9, 'like', recommend5)
+	# test.createEntityRecommendation(visitor10, 'dislike', recommend5)
+	# test.createEntityRecommendation(visitor11, 'dislike', recommend5)
+	# test.createEntityRecommendation(visitor12, 'dislike', recommend5)
+	# test.createEntityRecommendation(visitor13, 'like', recommend5)
+	# test.createEntityRecommendation(visitor14, 'like', recommend5)
+	# test.createEntityRecommendation(visitor15, 'like', recommend5)
+	test.createEntityRecommendation(visitor16, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor17, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor18, 'dislike', recommend5)
+	test.createEntityRecommendation(visitor19, 'like', recommend5)
+	test.createEntityRecommendation(visitor20, 'like', recommend5)
 
 	print '\nvisitor jing write a review for an attraction'
-	test.createReview(5, 'this place is so great', visitor1, recommend=recommend5)
+	test.createReview(5, 'suzhou is so beautiful', visitor1, recommend=recommend5)
+
+	# generating photoes
+	print '\ncreating photoes for advisors and recommendations!!!'
+	src = path.dirname(path.realpath('__file__'))
+
+	test.createEntityPhoto(advisor1, 'advisor1.jpg', 32, src + '/test_files/advisor1.jpg', 'jpg')
+	test.createEntityPhoto(advisor2, 'advisor2.jpg', 32, src + '/test_files/advisor2.jpg', 'jpg')
+	test.createEntityPhoto(advisor3, 'advisor3.jpg', 32, src + '/test_files/advisor3.jpg', 'jpg')
+	test.createEntityPhoto(advisor4, 'advisor4.jpg', 32, src + '/test_files/advisor4.jpg', 'jpg')
+	test.createEntityPhoto(advisor5, 'advisor5.jpg', 32, src + '/test_files/advisor5.jpg', 'jpg')
+	test.createEntityPhoto(advisor6, 'advisor6.jpg', 32, src + '/test_files/advisor6.jpg', 'jpg')
+	test.createEntityPhoto(advisor7, 'advisor7.jpg', 32, src + '/test_files/advisor7.jpg', 'jpg')
+	test.createEntityPhoto(advisor8, 'advisor8.jpg', 32, src + '/test_files/advisor8.jpg', 'jpg')
+	test.createEntityPhoto(advisor9, 'advisor9.jpg', 32, src + '/test_files/advisor9.jpg', 'jpg')
+
+	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/test_files/atl4.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.jpg', 32, src + '/test_files/atl5.jpg', 'jpg')
 
 createTest()
