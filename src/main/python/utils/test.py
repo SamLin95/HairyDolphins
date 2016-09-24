@@ -62,7 +62,16 @@ def checkType(label):
     return recommendation_type
 
 def createEntityRecommendation(entity, entity_recommendation_type, recommend):
-    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=EntityRecommendationType(label=entity_recommendation_type), recommendation=recommend)
+    types = EntityRecommendationType.query.filter_by(label=entity_recommendation_type).first()
+    if types == None:
+        print '----- new type, updating -----'
+        types = EntityRecommendationType(label=entity_recommendation_type)
+        types.add(types)
+    else:
+        print types
+    print '------ recommendation type checked -----'
+
+    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=types, recommendation=recommend)
     entity_recommendation.add(entity_recommendation)
     print '----- entity recommendation updated -----'
     return entity_recommendation
@@ -76,22 +85,6 @@ def createRecommendation(title, description, address_line_one, zip_code, city, c
     print recommend
     print '----- recommendation updated -----'
     return recommend
-
-def createFile(name, checksum, photo, type_name):
-    file_type = FileType.query.filter_by(label=type_name).first()
-    if file_type == None:
-        print '----- new type, updating ------'
-        file_type = FileType(label=type_name)
-        file_type.add(file_type)
-    else:
-        print file_type
-    print '------ type checked -----'
-    link = uploadPhoto(type_name, name, photo)
-    files = File(name=name, checksum=checksum, download_link=link, file_type=file_type)
-    files.add(files)
-    print files
-    print '------ file added -----'
-    return files
 
 def createCity(city_name, state_name, country_name):
     country = Country.query.filter_by(label=country_name).first()
@@ -145,14 +138,32 @@ def createReview(rating, title, reviewer, advisor_profile=None, posted=None, rec
     print '----- review checked -----'
     return review
 
-def createEntityPhoto(entity, files):
+def createFile(name, checksum, photo, type_name):
+    file_type = FileType.query.filter_by(label=type_name).first()
+    if file_type == None:
+        print '----- new type, updating ------'
+        file_type = FileType(label=type_name)
+        file_type.add(file_type)
+    else:
+        print file_type
+    print '------ type checked -----'
+    link = uploadPhoto(type_name, name, photo)
+    files = File(name=name, checksum=checksum, download_link=link, file_type=file_type)
+    files.add(files)
+    print files
+    print '------ file added -----'
+    return files
+
+def createEntityPhoto(entity, name, checksum, photo, type):
+    files = createFile(name, checksum, photo, 'entity_photo')
     photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
     photo.add(photo)
     print photo
     print '----- entity photo checked -----'
     return photo
 
-def createRecommendationPhoto(uploader, recommendation, files):
+def createRecommendationPhoto(uploader, recommendation, name, checksum, photo, type):
+    files = createFile(name, checksum, photo, 'recommendation_photo')
     photo = RecommendationPhoto(uploader=uploader, recommendation=recommendation, file=files)
     photo.add(photo)
     print photo
