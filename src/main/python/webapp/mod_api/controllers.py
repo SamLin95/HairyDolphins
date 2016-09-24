@@ -49,7 +49,6 @@ api = swagger.docs(api, apiVersion=API_VERSION, api_spec_url='/spec')
 class Recommendations(flask_restful.Resource):
     def get(self):
         recommendations = Recommendation.query.all()
-        print recommendations
         recommendation_schema=RecommendationSchema();
         return recommendation_schema.dump(recommendations, many=True).data
 
@@ -206,8 +205,6 @@ class Users(flask_restful.Resource):
                 combined_search_vector = ( Entity.search_vector | LocalAdvisorProfile.search_vector | City.search_vector | State.search_vector | Country.search_vector )
 
                 entity_query = entity_query.join((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).join(City).join(State).join(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
-
-                print str(entity_query)
 
             if(args['limit']):
                 limit = args['limit']
