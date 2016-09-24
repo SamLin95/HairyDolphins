@@ -114,6 +114,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
 app.run(function($rootScope){
   $rootScope.isLoading = false;
+  $rootScope.s3url = "https://s3.amazonaws.com/hairydolphins/"
 })
 
 app.run(function ($rootScope, $state, AuthService) {

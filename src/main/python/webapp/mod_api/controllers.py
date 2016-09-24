@@ -101,6 +101,7 @@ class User(flask_restful.Resource):
             return {"message" :"User not found"}, HTTP_NOT_FOUND
 
         try:
+            entity.load_hybrid_properties();
             entity_json = entity_schema.dump(entity).data
             return entity_json
         except AttributeError as err:
@@ -182,6 +183,7 @@ class Users(flask_restful.Resource):
                 return {"message" :"User not found"}, HTTP_NOT_FOUND
 
             try:
+                entity.load_hybrid_properties();
                 entity_json = entity_schema.dump(entity).data
                 return entity_json
             except AttributeError as err:
@@ -216,6 +218,8 @@ class Users(flask_restful.Resource):
                 return {"message" :"No expected user found"}, HTTP_NOT_FOUND
 
             try:
+                for entity in entities:
+                    entity.load_hybrid_properties()
                 entity_json = entity_schema.dump(entities, many=True).data
                 return entity_json
             except AttributeError as err:

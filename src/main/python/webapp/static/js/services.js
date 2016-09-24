@@ -138,7 +138,7 @@ app.factory('searchHelper', function($q, $http, utils) {
 
 	function searchLocalAdvisors(params) {
 		utils.requestStart()
-		params.role = 2;
+		params.role_id = 2;
 
 		return $http({
 	    	method: 'GET',

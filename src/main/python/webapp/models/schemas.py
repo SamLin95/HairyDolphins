@@ -1,5 +1,5 @@
 from marshmallow import fields
-from marshmallow_sqlalchemy import ModelSchema
+from marshmallow_sqlalchemy import ModelSchema, field_for
 from models import *
 
 class RoleSchema(ModelSchema):
@@ -10,6 +10,8 @@ class EntitySchema(ModelSchema):
     role = fields.Nested(RoleSchema, exclude=('entities',))
     local_advisor_profile = fields.Nested('LocalAdvisorProfileSchema', exclude=('entity',))
     entity_photos = fields.Nested('EntityPhotoSchema', many=True, exclude=('entity',))
+    average_rating = fields.Float()
+    profile_photo_url = fields.String()
     class Meta:
         model = Entity
         exclude = ('search_vector',)
