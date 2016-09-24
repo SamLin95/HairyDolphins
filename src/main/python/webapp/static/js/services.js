@@ -1,8 +1,8 @@
 var app = angular.module('HairyDolphinsApp');
 
 app.factory('AuthService',
-  ['$q', '$timeout', '$http',
-  function ($q, $timeout, $http) {
+  ['$q', '$timeout', '$http', 'utils',
+  function ($q, $timeout, $http, utils) {
 
     // create user variable
     var user = null;
@@ -30,6 +30,7 @@ app.factory('AuthService',
 
     function login(username, password) {
 	    // create a new instance of deferred
+	    utils.requestStart();
 	    var deferred = $q.defer();
 
 	    // send a post request to the server
@@ -53,6 +54,8 @@ app.factory('AuthService',
 	      user = null;
 	      deferred.reject();
 	    });
+
+	    utils.requestEnd();
 
 	  // return promise object
 	  return deferred.promise;
@@ -126,4 +129,45 @@ app.factory('alertFactory', function() {
 	}
 
 	return factory;
+})
+
+app.factory('searchHelper', function($q, $http, utils) {
+	var factory = {};
+
+	factory.searchLocalAdvisors = searchLocalAdvisors;
+
+	function searchLocalAdvisors(params) {
+		utils.requestStart()
+		params.role = 2;
+
+		return $http({
+	    	method: 'GET',
+	    	url : '/api/users', 
+	    	params: params
+	    }).then(function(data, status){
+	    	return data.data
+	    }, function(data) {
+	    	return []
+	    })
+	}
+
+	return factory;
+})
+
+app.factory('utils', function($rootScope) {
+	var factory = {};
+
+	factory.requestStart = requestStart;
+	factory.requestEnd = requestEnd;
+
+	function requestStart() {
+		$rootScope.isLoading = true
+	}
+
+	function requestEnd() {
+		$rootScope.isLoading = false
+	}
+
+	return factory
+
 })

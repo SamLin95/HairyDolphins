@@ -46,6 +46,15 @@ api = flask_restful.Api()
 api.init_app(mod_api)
 api = swagger.docs(api, apiVersion=API_VERSION, api_spec_url='/spec')
 
+class Recommendations(flask_restful.Resource):
+    def get(self):
+        recommendations = Recommendation.query.all()
+        print recommendations
+        recommendation_schema=RecommendationSchema();
+        return recommendation_schema.dump(recommendations, many=True).data
+
+api.add_resource(Recommendations, '/recommendations')
+
 class User(flask_restful.Resource):
     """An User"""
 

@@ -1,5 +1,21 @@
 var app = angular.module('HairyDolphinsApp');
 
+app.controller('mainController', function($scope, $state) {
+    $scope.sendSearchRequest = sendSearchRequest;
+
+    function sendSearchRequest() {
+        available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
+
+        $state.go(
+            '^.laSearch',
+            {
+                keyword: $scope.searchString,
+                available_date: available_date
+            }
+        )
+    }
+})
+
 app.controller('unauthNavController', ['$scope', '$uibModal', function ($scope, $uibModal) {
     var $ctrl = this;
     $ctrl.openSignupModal = openSignupModal;
@@ -103,7 +119,7 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
     }
 );
 
-app.controller('signupController', function($scope, $uibModalInstance, $http, $state, alertFactory) {
+app.controller('signupController', function($scope, $uibModalInstance, $rootScope, $http, $state, utils, alertFactory) {
         var $ctrl = this;
         $ctrl.alerts = [];
         $ctrl.openLoginModal = openLoginModal;
@@ -118,6 +134,7 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
         function submitSignupRequest() {
             if($scope.signupForm.$valid)
             {
+                utils.requestStart()
                 $http({
                     method: 'POST',
                     url: 'api/users',
@@ -135,6 +152,7 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
                 }, function errorCallback(response) { 
                     $ctrl.addAlert('danger', response.data.message)
                 });
+                utils.requestEnd()
             }
         }
 
@@ -147,3 +165,29 @@ app.controller('signupController', function($scope, $uibModalInstance, $http, $s
         }
     }
 );
+
+app.controller('laSearchController', function($scope, localAdvisors, $state, $stateParams, searchHelper, utils){
+  $scope.localAdvisors = localAdvisors
+  $scope.sendSearchRequest = sendSearchRequest;
+  $scope.displayCollection = [].concat($scope.localAdvisors);
+
+  function sendSearchRequest() {
+        available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
+        keyword = $scope.searchString? $scope.searchString:undefined
+
+        searchHelper.searchLocalAdvisors(
+            {
+                keyword: keyword,
+                available_date: available_date
+            }
+        ).then(function(data){
+            $scope.localAdvisors = data
+            $scope.displayCollection = [].concat($scope.localAdvisors);
+            $scope.isLoading = false
+            utils.requestEnd();
+        })
+    }
+
+
+
+})

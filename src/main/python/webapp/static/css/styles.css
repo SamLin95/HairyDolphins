@@ -99,3 +99,16 @@ Button-Primary
     background: #007299;
     box-shadow: none;
 }
+
+
+/*************
+Pangination Buttons
+**************/
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+    background-color: #40E0D0;
+    border-color: #40E0D0;
+}
+
+.pagination>li>a, .pagination>li>span{
+    color: #40E0D0;
+}

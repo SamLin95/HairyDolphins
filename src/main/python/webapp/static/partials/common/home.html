@@ -8,7 +8,9 @@
             <input type="text" class="form-control" placeholder="What do you expect?" style="width:100%" ng-model='searchString'>
         </div>
         <div class='col-md-3 form-group'>
-            <button type="button" class="btn btn-primary pull-left" style="width:50%">Search</button>
+            <button type="button" class="btn btn-primary pull-left" style="width:50%" ng-click="sendSearchRequest()">
+              Search
+            </button>
         </div>
     </div>
   </form>

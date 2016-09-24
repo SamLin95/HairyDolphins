@@ -1,0 +1,38 @@
+<div style="height:50px"></div>
+<div class="panel panel-default" style="border-bottom:transparent;">
+<div class="panel-heading">
+	<h3 style="margin-top:10px;">Search Local Advisors</h3>
+</div>
+<div class="panel-body smart-table-container">
+	<form class="form-inline">
+	    <div class="row">
+	        <div class='col-md-2 form-group' datepicker></div>
+	        <div class='col-md-8 form-group'>
+	            <input type="text" class="form-control" placeholder="What do you expect?" style="width:100%" ng-model='searchString'>
+	        </div>
+	        <div class='col-md-2 form-group'>
+	            <button type="button" class="btn btn-primary pull-left" style="width:100%" ng-click="sendSearchRequest()">Search</button>
+	        </div>
+	    </div>
+    </form>
+	<table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="localAdvisors" class="table smart-table">
+		<tbody ng-if="!isLoading">
+			<tr ng-if="displayCollection.length == 0">
+				<td class="text-center">No local advisor found.</td>
+			</tr>
+			<tr ng-repeat="localAdvisor in displayCollection">
+				<td st-ratio="50">{{localAdvisor.first_name}}</td>
+				<td st-ratio="50">{{localAdvisor.last_name}}</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="5" class="text-center">
+					<div st-pagination st-items-by-page="5" st-displayed-pages="5">
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
+</div>

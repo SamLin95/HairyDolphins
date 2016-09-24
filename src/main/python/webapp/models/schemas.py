@@ -9,11 +9,7 @@ class RoleSchema(ModelSchema):
 class EntitySchema(ModelSchema):
     role = fields.Nested(RoleSchema, exclude=('entities',))
     local_advisor_profile = fields.Nested('LocalAdvisorProfileSchema', exclude=('entity',))
-    post_reviews = fields.Nested('ReviewSchema', many=True, exclude=('reviwer',))
     entity_photos = fields.Nested('EntityPhotoSchema', many=True, exclude=('entity',))
-    recommendations = fields.Nested('RecommendationSchema', many=True, exclude=('recommender',))
-    entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('entity',))
-    uploaded_recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('uploader',))
     class Meta:
         model = Entity
         exclude = ('search_vector',)
@@ -70,7 +66,7 @@ class RecommendationSchema(ModelSchema):
     recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
     reviews = fields.Nested(ReviewSchema, exclude=('recommendation',))
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
-    recommendation_photos = fields.Nested('RecommendationSchema', many=True, exclude=('recommendation',))
+    recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))
     recommendation_category = fields.Nested('RecommendationCategorySchema', exclude=('recommendations',))
     city = fields.Nested('CitySchema', exclude=('recommendations',))
     class Meta:

@@ -1,6 +1,11 @@
 'use strict';
 
-var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router', 'bootstrap.angular.validation']);
+var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router',
+  'bootstrap.angular.validation', 'smart-table', 'angularSpinner']);
+
+app.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
+    usSpinnerConfigProvider.setDefaults({radius:6, length: 1});
+}]);
 
 app.config(['bsValidationConfigProvider', function(bsValidationConfigProvider) {
   bsValidationConfigProvider.global.setValidateFieldsOn('submit');
@@ -11,7 +16,6 @@ app.config(['bsValidationConfigProvider', function(bsValidationConfigProvider) {
 }])
 
 app.config(function($stateProvider, $urlRouterProvider) {
-  // An array of state definitions
   $stateProvider
     .state('unauth', {
       abstract: true,
@@ -29,10 +33,34 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: '/home', 
       views: { 
         'content@' : {
-          templateUrl: '/static/partials/common/home.html'
+          templateUrl: '/static/partials/common/home.html',
+          controller: 'mainController',
+          controllerAs: 'main'
         }
       },
-      auth_redirect: "auth.home"
+      auth_redirect: "auth.home",
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('unauth.laSearch', { 
+      url: '/laSearch?keyword&available_date', 
+      views: { 
+        'content@' : {
+          templateUrl: '/static/partials/common/laSearch.html',
+          controller: 'laSearchController',
+          controllerAs: 'laSearch'
+        }
+      },
+      auth_redirect: "auth.laSearch",
+      resolve: {
+        localAdvisors: function($stateParams, searchHelper){
+          return searchHelper.searchLocalAdvisors($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
     })
     .state('auth', {
       abstract: true,
@@ -50,15 +78,43 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: '/home', 
       views: { 
         'content@' : {
-          templateUrl: '/static/partials/common/home.html'
+          templateUrl: '/static/partials/common/home.html',
+          controller: 'mainController',
+          controllerAs: 'main'
         }
       },
-      unauth_redirect: "unauth.home"
+      unauth_redirect: "unauth.home",
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.laSearch', { 
+      url: '/laSearch?keyword&available_date', 
+      views: { 
+        'content@' : {
+          templateUrl: '/static/partials/common/laSearch.html',
+          controller: 'laSearchController',
+          controllerAs: 'laSearch'
+        }
+      },
+      unauth_redirect: "unauth.laSearch",
+      resolve: {
+        localAdvisors: function($stateParams, searchHelper){
+          return searchHelper.searchLocalAdvisors($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
     })
 
     $urlRouterProvider.otherwise('/unauth/home');
   
 });
+
+app.run(function($rootScope){
+  $rootScope.isLoading = false;
+})
 
 app.run(function ($rootScope, $state, AuthService) {
   $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
@@ -78,5 +134,4 @@ app.run(function ($rootScope, $state, AuthService) {
       })
   });
 });
-
 
