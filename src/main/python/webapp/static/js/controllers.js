@@ -171,6 +171,10 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
   $scope.sendSearchRequest = sendSearchRequest;
   $scope.displayCollection = [].concat($scope.localAdvisors);
 
+  $scope.alert = function() {
+    alert('clicked')
+  }
+
   function sendSearchRequest() {
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
         keyword = $scope.searchString? $scope.searchString:undefined

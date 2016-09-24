@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_searchable import make_searchable
 from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 import datetime
 from .. import app
@@ -81,6 +82,27 @@ class Entity(TableTemplate, db.Model, CRUD):
     def get_id(self):
         return unicode(self.id)
 
+    @hybrid_property
+    def profile_photo_url(self):
+        profile_photos = filter(lambda entity_photo: entity_photo.is_profile_picture  == True, self.entity_photos)
+
+        if(profile_photos):
+            profile_photo = profile_photos[0];
+            return profile_photo.file.download_link
+        else:
+            return None
+
+    @hybrid_property
+    def average_rating(self):
+        if(self.local_advisor_profile):
+            return self.local_advisor_profile.average_rating
+        else:
+            return None
+
+    def load_hybrid_properties(self):
+        self.average_rating
+        self.profile_photo_url
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -110,6 +132,13 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
 
     #Seach Vector
     search_vector = db.Column(TSVectorType('description'))
+
+    @hybrid_property
+    def average_rating(self):
+        if(self.reviews):
+            return float(sum(review.rating for review in self.reviews))/float(len(self.reviews))
+        else:
+            return None
 
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)

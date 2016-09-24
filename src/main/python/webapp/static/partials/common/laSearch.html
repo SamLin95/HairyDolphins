@@ -21,8 +21,16 @@
 				<td class="text-center">No local advisor found.</td>
 			</tr>
 			<tr ng-repeat="localAdvisor in displayCollection">
-				<td st-ratio="50">{{localAdvisor.first_name}}</td>
-				<td st-ratio="50">{{localAdvisor.last_name}}</td>
+				<td style="width: 25%">
+					<img ng-click="alert()" style="width:75%" ng-src="{{$root.s3url + localAdvisor.profile_photo_url}}" class="img-rounded pull-xs-left" alt="No image">
+				</td>
+				<td>
+					<div>
+						<p>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</p>
+						<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>
+						<p>{{localAdvisor.local_advisor_profile.description}}</p>
+					</div>
+				</td>
 			</tr>
 		</tbody>
 		<tfoot>
