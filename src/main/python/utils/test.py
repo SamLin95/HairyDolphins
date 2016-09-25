@@ -176,5 +176,7 @@ def uploadPhoto(type_name, photo_name, photo):
     bucket = boto.connect_s3().get_bucket('hairydolphins')
     link = type_name + '/' + photo_name
     print link
-    bucket.new_key(link).set_contents_from_filename(photo)
+    key = bucket.new_key(link)
+    key.set_contents_from_filename(photo)
+    key.set_acl('public-read')
     return link   
