@@ -44,7 +44,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('unauth.laSearch', { 
-      url: '/laSearch?keyword&available_date&request_fields', 
+      url: '/laSearch?keyword&available_date&request_fields&limit', 
       views: { 
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
@@ -89,7 +89,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('auth.laSearch', { 
-      url: '/laSearch?keyword&available_date&request_fields', 
+      url: '/laSearch?keyword&available_date&request_fields&limit', 
       views: { 
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
