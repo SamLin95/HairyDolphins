@@ -138,32 +138,34 @@ def createReview(rating, title, reviewer, advisor_profile=None, posted=None, rec
     print '----- review checked -----'
     return review
 
-def createFile(name, checksum, photo, type_name):
-    file_type = FileType.query.filter_by(label=type_name).first()
+def createFile(name, checksum, photo, format, type_name):
+    link = uploadPhoto(type_name, name, photo)
+
+    file_type = FileType.query.filter_by(label=format).first()
     if file_type == None:
         print '----- new type, updating ------'
-        file_type = FileType(label=type_name)
+        file_type = FileType(label=format)
         file_type.add(file_type)
     else:
         print file_type
     print '------ type checked -----'
-    link = uploadPhoto(type_name, name, photo)
+
     files = File(name=name, checksum=checksum, download_link=link, file_type=file_type)
     files.add(files)
     print files
     print '------ file added -----'
     return files
 
-def createEntityPhoto(entity, name, checksum, photo, type):
-    files = createFile(name, checksum, photo, 'entity_photo')
+def createEntityPhoto(entity, name, checksum, photo, format):
+    files = createFile(name, checksum, photo, format, 'entity_photo')
     photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
     photo.add(photo)
     print photo
     print '----- entity photo checked -----'
     return photo
 
-def createRecommendationPhoto(uploader, recommendation, name, checksum, photo, type):
-    files = createFile(name, checksum, photo, 'recommendation_photo')
+def createRecommendationPhoto(uploader, recommendation, name, checksum, photo, format):
+    files = createFile(name, checksum, photo, format, 'recommendation_photo')
     photo = RecommendationPhoto(uploader=uploader, recommendation=recommendation, file=files)
     photo.add(photo)
     print photo
@@ -174,5 +176,7 @@ def uploadPhoto(type_name, photo_name, photo):
     bucket = boto.connect_s3().get_bucket('hairydolphins')
     link = type_name + '/' + photo_name
     print link
-    bucket.new_key(link).set_contents_from_filename(photo)
+    key = bucket.new_key(link)
+    key.set_contents_from_filename(photo)
+    key.set_acl('public-read')
     return link   
