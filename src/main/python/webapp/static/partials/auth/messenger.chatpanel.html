@@ -20,10 +20,10 @@
 	          		</div>
 				</div>
 				<!--From the other -->
-				<div class="col-xs-2" ng-if="self_id == message.sender">
+				<div class="col-xs-2" ng-if="self_id == message.receiver">
          			<img ng-src="{{contact_profile_photo_url}}" class="img-thumbnail img-responsive img-circle pull-right" style="width:75%">
         		</div>  
-				<div class="col-xs-10" ng-if="self_id == message.sender">
+				<div class="col-xs-10" ng-if="self_id == message.receiver">
 					<div class="panel panel-default">
 			            <div class="panel-body">
 			              <p style="font-weight:bold">{{contact_name}}:</p><br>
