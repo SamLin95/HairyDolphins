@@ -27,7 +27,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'nav'
         }
       },
-      auth_redirect: "auth"
+      auth_redirect: "auth",
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
     })
     .state('unauth.home', { 
       url: '/home', 
@@ -72,7 +75,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'nav'
         }
       },
-      unauth_redirect: "unauth"
+      unauth_redirect: "unauth",
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
     })
     .state('auth.home', {
       url: '/home', 
@@ -101,6 +107,44 @@ app.config(function($stateProvider, $urlRouterProvider) {
       resolve: {
         localAdvisors: function($stateParams, searchHelper){
           return searchHelper.searchLocalAdvisors($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.messenger', {
+      url: '/messenger',
+      views: {
+        'content@' : {
+            templateUrl: '/static/partials/auth/messenger.html',
+            controller: "messengerController",
+            controllerAs: "mes"
+        }
+      },
+      resolve: {
+        userContacts: function(searchHelper) {
+          return searchHelper.searchUserContacts()
+        }
+      },
+      unauth_redirect: "unauth.home",
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.messenger.chatpanel', {
+      url: '/messenger/chatpanel?user_id&first_name&last_name',
+      views: {
+        'chatpanel@auth.messenger' : {
+            templateUrl: '/static/partials/auth/messenger.chatpanel.html',
+            controller: "messengerChatPanelController",
+            controllerAs: "mescp"
+        }
+      },
+      unauth_redirect: "unauth.home",
+      resolve: {
+        messageHistory: function(searchHelper, $stateParams) {
+          return searchHelper.searchMessageHistory($stateParams.user_id)
         }
       },
       onEnter: function(utils) {

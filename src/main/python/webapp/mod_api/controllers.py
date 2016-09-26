@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, Flask, jsonify
 import flask_restful
-from sqlalchemy import or_, exc
+from sqlalchemy import and_, or_, exc
 from flask_restful import reqparse
 from flask_restful_swagger import swagger
 from datetime import datetime
@@ -101,7 +101,6 @@ class User(flask_restful.Resource):
             return {"message" :"User not found"}, HTTP_NOT_FOUND
 
         try:
-            entity.load_hybrid_properties();
             entity_json = entity_schema.dump(entity).data
             return entity_json
         except AttributeError as err:
@@ -316,3 +315,28 @@ class Roles(flask_restful.Resource):
         return role_json
 
 api.add_resource(Roles, '/roles')
+
+
+class Messages(flask_restful.Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('bidirect_user_one', type=int, required=True)
+        parser.add_argument('bidirect_user_two', type=int, required=True)
+        parser.add_argument('limit', type=int, required=False)
+
+        args = parser.parse_args()
+        bidirect_user_one = args['bidirect_user_one']
+        bidirect_user_two = args['bidirect_user_two']
+        
+        messages = Message.query.filter(or_(and_(Message.sender_id==bidirect_user_one, Message.receiver_id==bidirect_user_two), and_(Message.sender_id==bidirect_user_two, Message.receiver_id==bidirect_user_one))).order_by(Message.sent_at.desc());
+
+        if(args['limit']):
+            messages = messages.limit(args['limit'])
+
+        message_schema = MessageSchema()
+        message_json = message_schema.dump(messages, many=True).data
+        message_json.sort(key=lambda message:message['sent_at'])
+
+        return message_json
+        
+api.add_resource(Messages, '/messages')

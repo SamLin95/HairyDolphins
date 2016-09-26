@@ -12,6 +12,7 @@ class EntitySchema(ModelSchema):
     entity_photos = fields.Nested('EntityPhotoSchema', many=True, exclude=('entity',))
     average_rating = fields.Float()
     profile_photo_url = fields.String()
+    contacts = fields.Nested('EntitySchema', only=('id','first_name','last_name', 'profile_photo_url'), many=True)
     class Meta:
         model = Entity
         exclude = ('search_vector',)
@@ -95,3 +96,7 @@ class RecommendationPhotoSchema(ModelSchema):
     file = fields.Nested(FileSchema, exclude=('file',))
     class Meta:
         model = RecommendationPhoto
+
+class MessageSchema(ModelSchema):
+    class Meta:
+        model = Message

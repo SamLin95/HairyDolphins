@@ -1,0 +1,42 @@
+<div style="height:50px"></div>
+<div class="panel panel-default" style="border-bottom:transparent;">
+<div class="panel-heading">
+	<h3 style="margin-top:10px;">Messenger</h3>
+</div>
+<div class="panel-body">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h5 style="margin-top:10px;">Contacts</h5>
+				</div>
+				<div class="panel-body smart-table-container">
+					<table ng-if="$root.isLoading == false" st-table="displayContacts" st-safe-src="userContacts" class="table smart-table table-striped" style="margin-bottom: 0px">
+						<tbody ng-if="!isLoading">
+							<tr ng-repeat="user in displayContacts" style="height:45px">
+								<td ng-if="user.id "ui-sref="auth.messenger.chatpanel({user_id:{{user.id}}, first_name:'{{user.first_name}}', last_name:'{{user.last_name}}'})">
+									<p class="text-center">{{user.first_name}} {{user.last_name}}</p>
+								</td>
+
+								<td ng-if="!user.id">
+								</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="5" class="text-center">
+									<div st-pagination st-items-by-page="10" st-displayed-pages="3">
+									</div>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div ui-view="chatpanel">
+		</div>
+	</div>
+</div>
+</div>

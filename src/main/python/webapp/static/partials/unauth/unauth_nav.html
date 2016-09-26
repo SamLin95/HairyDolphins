@@ -11,21 +11,8 @@
     <div class="collapse navbar-collapse" uib-collapse="isCollapsed">
       <ul class="nav navbar-nav">
         <li><a href="#">Home</a></li>
-        <li uib-dropdown>
-          <a uib-dropdown-toggle>Local Advisors <span class="caret"></span></a>
-          <ul uib-dropdown-menu>
-            <li><a ui-sref="unauth.laSearch({limit:5})">Search Local Advisors</a></li>
-            <li><a href="#">Become A Local Advisor</a></li>
-          </ul>
-        </li>
-        <li uib-dropdown>
-          <a uib-dropdown-toggle>Local Recommendations<span class="caret"></span></a>
-          <ul uib-dropdown-menu>
-            <li><a href="#">Search Local Recommendations</a></li>
-            <li><a href="#">Recommend A Place</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Messenger</a></li>
+        <li><a ui-sref="unauth.laSearch({limit:5})">Search Local Advisors</a></li>
+        <li><a href="#">Search Local Recommendations</a></li>
       </ul>
       </ul>
       <ul class="nav navbar-nav navbar-right">

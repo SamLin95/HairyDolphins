@@ -206,7 +206,19 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
             utils.requestEnd();
         })
     }
+});
+
+app.controller('messengerController', function($scope, userContacts, utils) {
+    $scope.userContacts = utils.fillFallbackList(userContacts, 10)
+    $scope.displayContacts = [].concat($scope.userContacts)
+})
 
 
-
+app.controller('messengerChatPanelController', function($scope, $stateParams, utils, messageHistory, AuthService) {
+    self_user = AuthService.getUser()
+    $scope.self_id = self_user.id
+    $scope.self_name = self_user.first_name + ' ' + self_user.last_name
+    $scope.contact_id = $stateParams.user_id
+    $scope.contact_name = $stateParams.first_name + ' ' +  $stateParams.last_name
+    $scope.messageHistory = messageHistory
 })

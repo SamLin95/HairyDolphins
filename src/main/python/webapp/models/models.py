@@ -99,9 +99,77 @@ class Entity(TableTemplate, db.Model, CRUD):
         else:
             return None
 
+    #This is the hybrid attribute designed for messenger to get recent contacts
+    @hybrid_property
+    def contacts(self):
+        messages=[]
+        if(self.sent_messages or self.received_messages):
+            for message in self.received_messages:
+                duplicate = False
+                replacable = False
+                repalce_index = None
+                for i in range(len(messages)):
+                    checked_message = messages[i]
+                    if(checked_message['user_id'] == message.sender.id):
+                        duplicate = True
+                        if(checked_message['sent_at'] < message.sent_at):
+                            replacable = True
+                            replace_index = i
+
+                if(duplicate):
+                    if(replacable):
+                        messages[replace_index] = \
+                        {\
+                            'sent_at':message.sent_at,\
+                            'user_id': message.sender.id\
+                        }
+                else:
+                    messages.append(\
+                    {\
+                        'sent_at':message.sent_at,\
+                        'user_id': message.sender.id\
+                    })
+
+            for message in self.sent_messages:
+                duplicate = False
+                replacable = False
+                repalce_index = None
+                for i in range(len(messages)):
+                    checked_message = messages[i]
+                    if(checked_message['user_id'] == message.receiver.id):
+                        duplicate = True
+                        if(checked_message['sent_at'] < message.sent_at):
+                            replacable = True
+                            replace_index = i
+
+                if(duplicate):
+                    if(replacable):
+                        messages[replace_index] =\
+                        {\
+                            'sent_at': message.sent_at,\
+                            'user_id': message.receiver.id\
+                        }
+                else:
+                    messages.append(\
+                    {\
+                            'sent_at': message.sent_at,\
+                            'user_id': message.receiver.id\
+                    })
+
+            messages.sort(key=lambda message:message['sent_at'], reverse=True)
+
+            contacts = []
+            for message in messages:
+                contacts.append(Entity.query.get(message['user_id']))
+                
+            return contacts
+        else:
+            return None
+
     def load_hybrid_properties(self):
         self.average_rating
         self.profile_photo_url
+        self.contacts
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -147,10 +215,9 @@ class Message(db.Model, CRUD):
     id           = db.Column(db.Integer, primary_key=True)
     message_body = db.Column(db.String(1024), nullable=False)
     sent_at      = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
-    delivered_at = db.Column(db.DateTime)
     read_at      = db.Column(db.DateTime)
-    sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'))
-    receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'))
+    sender_id    = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    receiver_id  = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
 
     #Relationships
     receiver = db.relationship('Entity', foreign_keys=[receiver_id], backref=db.backref('received_messages'))

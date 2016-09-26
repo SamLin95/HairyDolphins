@@ -1,0 +1,40 @@
+<div class="panel panel-info">
+<div class="panel-heading">
+	<h3 style="margin-top:10px;">{{contact_name}}</h3>
+</div>
+<div class="panel-body" style="height:650px">
+	<div class="row" style="height:60%; overflow: auto; margin:2%; padding-top:2%; border-style:ridge">
+		<div class="col-sm-12" ng-repeat="message in messageHistory">
+			<div class="row">
+				<div class="col-xs-12 pull-right" ng-if="self_id == message.sender">
+					<div class="panel panel-default">
+			            <div class="panel-body">
+			              <p style="font-weight:bold">{{self_name}}:</p><br>
+			              <p>{{message.message_body}}</p><br>
+			              <span class="label label-info">{{ message.sent_at }}</span>
+			            </div>
+	          		</div>
+				</div>
+				<div class="col-xs-12 pull-left" ng-if="self_id == message.sender">
+					<div class="panel panel-default">
+			            <div class="panel-body">
+			              <p style="font-weight:bold">{{contact_name}}:</p><br>
+			              <p>{{message.message_body}}</p><br>
+			              <span class="label label-info">{{ message.sent_at }}</span>
+			            </div>
+	          		</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<form style="width:90%; margin-left:5%; margin-right:5%">
+	<div class="form-group row">
+	  <label for="message">Message:</label>
+	  <textarea class="form-control" rows="5" id="message" style="overflow: auto"></textarea>
+	</div class="row">
+	<div>
+	    <button type="button" class="btn btn-primary pull-right" style="width:30%">Send</button>
+    </div>
+	</form>
+</div>
+</div>

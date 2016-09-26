@@ -142,10 +142,12 @@ app.factory('alertFactory', function() {
 	return factory;
 })
 
-app.factory('searchHelper', function($q, $http, utils) {
+app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	var factory = {};
 
 	factory.searchLocalAdvisors = searchLocalAdvisors;
+	factory.searchUserContacts = searchUserContacts;
+	factory.searchMessageHistory = searchMessageHistory;
 
 	function searchLocalAdvisors(params) {
 		utils.requestStart()
@@ -162,6 +164,53 @@ app.factory('searchHelper', function($q, $http, utils) {
 	    })
 	}
 
+	function searchUserContacts() {
+		utils.requestStart()
+
+		return AuthService.loadCurrentUser()
+		.then(function(){
+			current_user_id = AuthService.getUser().id
+			return $http({
+		    	method: 'GET',
+		    	url : '/api/users/' + current_user_id, 
+		    	params: {
+		    		request_fields : ['contacts']
+		    	}
+		    }).then(function(data, status){
+		    	return data.data.contacts
+		    }, function(data) {
+		    	return []
+		    })
+		}, function(){
+			utils.requestEnd()
+			return []
+		})
+	}
+
+	function searchMessageHistory(other_user_id) {
+		utils.requestStart()
+
+		return AuthService.loadCurrentUser()
+		.then(function(){
+			current_user_id = AuthService.getUser().id
+			return $http({
+		    	method: 'GET',
+		    	url : '/api/messages',
+		    	params: {
+		    		bidirect_user_one : current_user_id,
+		    		bidirect_user_two : other_user_id
+		    	}
+		    }).then(function(data, status){
+		    	return data.data
+		    }, function(data) {
+		    	return []
+		    })
+		}, function(){
+			utils.requestEnd()
+			return []
+		})
+	}
+
 	return factory;
 })
 
@@ -170,6 +219,7 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 
 	factory.requestStart = requestStart;
 	factory.requestEnd = requestEnd;
+	factory.fillFallbackList = fillFallbackList;
 	factory.replaceInvalidImages = replaceInvalidImages;
 
 	function requestStart() {
@@ -221,6 +271,44 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 	    }, 1000, false);
 
 	    return d.promise;
+	}
+
+	/*
+		fallback list is a list which will at least have a certain size of elements. When the list
+		is not filled, all elements are empty. To fill this list, empty element will be filled first,
+		and then new element can be appended.
+	*/
+	function fillFallbackList(fillList, fallbackSize)
+	{
+		list = []
+
+		for(i = 0; i < fallbackSize; i++)
+		{
+			list = list.concat({})
+		}
+
+		if(fillList.length > fallbackSize)
+		{
+			for(i = 0; i < fallbackSize; i++)
+			{
+				list[i] = fillList[i]
+			}
+
+			for(i = fallbackSize; i < fillList.length; i++)
+			{
+				list = list.concat(fillList[i])
+			}
+		}
+		else
+		{
+			for(i = 0 ; i < fillList.length; i++)
+			{
+				list[i] = fillList[i]
+			}
+		}
+
+		return list;
+
 	}
 
 	return factory
