@@ -133,7 +133,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('auth.messenger.chatpanel', {
-      url: '/messenger/chatpanel?user_id&first_name&last_name',
+      url: '/messenger/chatpanel?user_id&first_name&last_name&profile_photo_url',
       views: {
         'chatpanel@auth.messenger' : {
             templateUrl: '/static/partials/auth/messenger.chatpanel.html',

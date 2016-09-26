@@ -6,8 +6,12 @@
 	<div class="row" style="height:60%; overflow: auto; margin:2%; padding-top:2%; border-style:ridge">
 		<div class="col-sm-12" ng-repeat="message in messageHistory">
 			<div class="row">
-				<div class="col-xs-12" ng-if="self_id == message.sender">
-					<div class="panel panel-default pull-right" style="width:50%">
+				<!--From self -->
+				<div class="col-xs-2 col-xs-push-10" ng-if="self_id == message.sender">
+         			<img ng-src="{{self_profile_photo_url}}" class="img-thumbnail img-responsive img-circle pull-left" style="width:75%">
+        		</div>  
+				<div class="col-xs-10 col-xs-pull-2" ng-if="self_id == message.sender">
+					<div class="panel panel-default">
 			            <div class="panel-body">
 			              <p style="font-weight:bold">{{self_name}}:</p><br>
 			              <p>{{message.message_body}}</p><br>
@@ -15,8 +19,12 @@
 			            </div>
 	          		</div>
 				</div>
-				<div class="col-xs-12" ng-if="self_id == message.sender">
-					<div class="panel panel-default pull-left" style="width:50%">
+				<!--From the other -->
+				<div class="col-xs-2" ng-if="self_id == message.sender">
+         			<img ng-src="{{contact_profile_photo_url}}" class="img-thumbnail img-responsive img-circle pull-right" style="width:75%">
+        		</div>  
+				<div class="col-xs-10" ng-if="self_id == message.sender">
+					<div class="panel panel-default">
 			            <div class="panel-body">
 			              <p style="font-weight:bold">{{contact_name}}:</p><br>
 			              <p>{{message.message_body}}</p><br>

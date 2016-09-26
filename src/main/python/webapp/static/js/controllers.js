@@ -215,11 +215,19 @@ app.controller('messengerController', function($scope, userContacts, utils) {
 
 
 app.controller('messengerChatPanelController', function($scope, $stateParams, utils, messageHistory, AuthService, socketService) {
+    //Self
     self_user = AuthService.getUser()
     $scope.self_id = self_user.id
     $scope.self_name = self_user.first_name + ' ' + self_user.last_name
+    $scope.self_profile_photo_url = self_user.profile_photo_url
+    utils.replaceInvalidImages($scope, 'self_profile_photo_url')
+
+    //The other chatter
     $scope.contact_id = $stateParams.user_id
     $scope.contact_name = $stateParams.first_name + ' ' +  $stateParams.last_name
+    $scope.contact_profile_photo_url = $stateParams.profile_photo_url
+    utils.replaceInvalidImages($scope, 'contact_profile_photo_url')
+
     $scope.messageHistory = messageHistory
 
     $scope.send_message = send_message
