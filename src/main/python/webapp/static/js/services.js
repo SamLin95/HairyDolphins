@@ -312,5 +312,8 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 	}
 
 	return factory
-
 })
+
+app.factory('socketService', function (socketFactory) {
+  return socketFactory();
+});

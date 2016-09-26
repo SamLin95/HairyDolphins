@@ -8,3 +8,5 @@ SQLAlchemy-Searchable==0.10.2
 marshmallow==2.10.0
 marshmallow-sqlalchemy==0.10.0
 Flask-Triangle==0.5.4
+Flask-SocketIO==2.7.1
+eventlet==0.19.0

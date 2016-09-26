@@ -214,11 +214,17 @@ app.controller('messengerController', function($scope, userContacts, utils) {
 })
 
 
-app.controller('messengerChatPanelController', function($scope, $stateParams, utils, messageHistory, AuthService) {
+app.controller('messengerChatPanelController', function($scope, $stateParams, utils, messageHistory, AuthService, socketService) {
     self_user = AuthService.getUser()
     $scope.self_id = self_user.id
     $scope.self_name = self_user.first_name + ' ' + self_user.last_name
     $scope.contact_id = $stateParams.user_id
     $scope.contact_name = $stateParams.first_name + ' ' +  $stateParams.last_name
     $scope.messageHistory = messageHistory
+
+    $scope.send_message = send_message
+
+    function send_message(){
+        socketService.emit('message', $scope.message_to_send)
+    }
 })

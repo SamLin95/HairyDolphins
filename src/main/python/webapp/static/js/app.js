@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router',
-  'bootstrap.angular.validation', 'smart-table', 'angularSpinner']);
+  'bootstrap.angular.validation', 'smart-table', 'angularSpinner', 'btford.socket-io']);
 
 app.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({radius:6, length: 1});

@@ -30,10 +30,10 @@
 	<form style="width:90%; margin-left:5%; margin-right:5%">
 	<div class="form-group row">
 	  <label for="message">Message:</label>
-	  <textarea class="form-control" rows="5" id="message" style="overflow: auto"></textarea>
+	  <textarea class="form-control" rows="5" ng-model="message_to_send" id="message" style="overflow: auto"></textarea>
 	</div class="row">
 	<div>
-	    <button type="button" class="btn btn-primary pull-right" style="width:30%">Send</button>
+	    <button type="button" class="btn btn-primary pull-right" ng-click="send_message()" style="width:30%">Send</button>
     </div>
 	</form>
 </div>
