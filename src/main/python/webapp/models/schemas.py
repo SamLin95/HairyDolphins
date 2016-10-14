@@ -72,6 +72,7 @@ class RecommendationSchema(ModelSchema):
     recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))
     recommendation_category = fields.Nested('RecommendationCategorySchema', exclude=('recommendations',))
     city = fields.Nested('CitySchema', exclude=('recommendations',))
+    average_rating = fields.Float()
     class Meta:
         model = Recommendation
 
