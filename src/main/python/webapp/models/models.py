@@ -312,7 +312,7 @@ class EntityRecommendation(TableTemplate, db.Model, CRUD):
 
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations'))
-    entity_recommendation_type = db.relationship('EntityRecommendationType', backref=db.backref('entity_recommendations'))
+    entity_recommendation_type = db.relationship('EntityRecommendationType')
 
 class EntityRecommendationType(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)

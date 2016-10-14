@@ -67,7 +67,7 @@ class DateSchema(ModelSchema):
 
 class RecommendationSchema(ModelSchema):
     recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
-    reviews = fields.Nested(ReviewSchema, exclude=('recommendation',))
+    reviews = fields.Nested(ReviewSchema, exclude=('recommendation',), many=True)
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
     recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))
     recommendation_category = fields.Nested('RecommendationCategorySchema', exclude=('recommendations',))
@@ -80,7 +80,7 @@ class RecommendationCategorySchema(ModelSchema):
         model = RecommendationCategory
 
 class EntityRecommendationSchema(ModelSchema):
-    entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
     recommendation = fields.Nested(RecommendationSchema, only=('id', 'title', 'description', 'address_line_one', 'address_line_two', 'city', 'zip_code', 'is_draft'))
     entity_recommendation_type = fields.Nested('EntityRecommendationTypeSchema', exclude=('entity_recommendations'))
     class Meta:

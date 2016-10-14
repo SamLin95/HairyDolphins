@@ -47,12 +47,153 @@ api.init_app(mod_api)
 api = swagger.docs(api, apiVersion=API_VERSION, api_spec_url='/spec')
 
 class Recommendations(flask_restful.Resource):
+    "A list of recommendations"
+
+    @swagger.operation(
+        summary = "Returns the information of a list of recommendations which meet all given criteria",
+        nickname = "Search Recommendatons",
+        parameters=[
+            {
+              "name": "recommendation_id",
+              "description": "Primary key of the expected recommendation. Cannot put retriction on any other fields of a recommendation if this parameter is being used",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "recommendation_category_id",
+              "description": "The primary key of the category of recommendations in the expected recommendation list",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "city_id",
+              "description": "The primary key of city that the recommendationthat belongs to",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "request_fields",
+              "description": "Names of the fields of each recommendation that are required to be returned",
+              "required": False,
+              "allowMultiple": True,
+              "dataType": "string",
+              "paramType": "query"
+            },
+       ]
+    )
     def get(self):
-        recommendations = Recommendation.query.all()
-        recommendation_schema=RecommendationSchema();
-        return recommendation_schema.dump(recommendations, many=True).data
+        parser = reqparse.RequestParser()
+        parser.add_argument('recommendation_id', type=int)
+        parser.add_argument('recommendation_category_id', type=int)
+        parser.add_argument('city_id', type=int)
+        parser.add_argument('limit', type=int)
+        parser.add_argument('request_fields', type=str, action='append')
+        args = parser.parse_args()
+        recommendation_query = Recommendation.query
+
+        if(args['request_fields']):
+            request_fields = tuple(args['request_fields'])
+            recommendation_schema = RecommendationSchema(only=request_fields)
+        else:
+            recommendation_schema = RecommendationSchema()
+
+        if args['recommendation_id']:
+            recommendation_id = args['recommendation_id']
+            recommendation = recommendation_query.get(recommendation_id)
+
+            if(not recommendation):
+                return {"message" :"Recommendation not found"}, HTTP_NOT_FOUND
+
+            try:
+                recommendation_json = recommendation_schema.dump(recommendation).data
+                return recommendation_json
+            except AttributeError as err:
+                return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
+        else:
+            if(args['recommendation_category_id']):
+                recommendation_category_id = args['recommendation_category_id']
+                recommendation_query = recommendation_query.filter_by(recommendation_category_id=recommendation_category_id)
+
+            if(args['city_id']):
+                city_id = args['city_id']
+                recommendation_query = recommendation_query.filter_by(city_id=city_id)
+
+            if(args['limit']):
+                limit = args['limit']
+                recommendation_query = recommendation_query.limit(limit)
+
+            recommendations = recommendation_query.all()
+
+            if(not recommendations):
+                return {"message" :"No expected recommendation found"}, HTTP_NOT_FOUND
+
+            try:
+                recommendation_json = recommendation_schema.dump(recommendations, many=True).data
+                return recommendation_json
+            except AttributeError as err:
+                return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
 
 api.add_resource(Recommendations, '/recommendations')
+
+class RecommendationResource(flask_restful.Resource):
+    """A Recommendation"""
+
+    def __init__(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('request_fields', type=str, action='append')
+
+        self.parser = parser
+
+    @swagger.operation(
+        summary = "Returns the information of the recommendation with given id",
+        nickname = "Get Recommendation",
+        parameters=[
+            {
+              "name": "recommendation_id",
+              "description": "Primary key of the expected recommendation.",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "path"
+            },
+            {
+              "name": "request_fields",
+              "description": "Names of the fields of the recommnendation that are required to be returned",
+              "required": False,
+              "allowMultiple": True,
+              "dataType": "string",
+              "paramType": "query"
+            },
+       ]
+    )
+    def get(self, recommendation_id):
+        args = self.parser.parse_args()
+        recommendation_query = Recommendation.query
+
+        if(args['request_fields']):
+            request_fields = tuple(args['request_fields'])
+            recommendation_schema = RecommendationSchema(only=request_fields)
+        else:
+            recommendation_schema = RecommendationSchema()
+
+        recommendation = recommendation_query.get(recommendation_id)
+
+        if(not recommendation):
+            return {"message" :"Recommendation not found"}, HTTP_NOT_FOUND
+
+        try:
+            recommendation_json = recommendation_schema.dump(recommendation).data
+            return recommendation_json
+        except AttributeError as err:
+            return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
+
+api.add_resource(RecommendationResource, '/recommendations/<int:recommendation_id>')
 
 class User(flask_restful.Resource):
     """An User"""
@@ -182,7 +323,6 @@ class Users(flask_restful.Resource):
                 return {"message" :"User not found"}, HTTP_NOT_FOUND
 
             try:
-                entity.load_hybrid_properties();
                 entity_json = entity_schema.dump(entity).data
                 return entity_json
             except AttributeError as err:
@@ -217,8 +357,6 @@ class Users(flask_restful.Resource):
                 return {"message" :"No expected user found"}, HTTP_NOT_FOUND
 
             try:
-                for entity in entities:
-                    entity.load_hybrid_properties()
                 entity_json = entity_schema.dump(entities, many=True).data
                 return entity_json
             except AttributeError as err:
