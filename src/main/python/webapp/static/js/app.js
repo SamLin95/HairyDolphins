@@ -51,6 +51,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
       views: { 
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
+          params: {
+            keyword: null,
+            available_date: null,
+            request_fields:[],
+          },
           controller: 'laSearchController',
           controllerAs: 'laSearch'
         }
@@ -99,6 +104,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
       views: { 
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
+          params: {
+            keyword: null,
+            available_date: null,
+            request_fields:[],
+          },
           controller: 'laSearchController',
           controllerAs: 'laSearch'
         }
@@ -145,6 +155,44 @@ app.config(function($stateProvider, $urlRouterProvider) {
       resolve: {
         messageHistory: function(searchHelper, $stateParams) {
           return searchHelper.searchMessageHistory($stateParams.user_id)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.locRec', {
+      url: '/locRec?keyword&available_date&request_fields&limit',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/common/locRec.html',
+          controller: 'locRecController',
+          controllerAs: 'locRec'
+        }
+      },
+      auth_redirect: "unauth.locRec",
+      resolve: {
+        recommendations: function($stateParams, searchHelper){
+          return searchHelper.searchRecommendations($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('unauth.locRec', {
+      url: '/locRec?keyword&available_date&request_fields&limit',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/common/locRec.html',
+          controller: 'locRecController',
+          controllerAs: 'locRec'
+        }
+      },
+      auth_redirect: "auth.locRec",
+      resolve: {
+        recommendations: function($stateParams, searchHelper){
+          return searchHelper.searchRecommendations($stateParams)
         }
       },
       onEnter: function(utils) {

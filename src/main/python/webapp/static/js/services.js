@@ -146,8 +146,27 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	var factory = {};
 
 	factory.searchLocalAdvisors = searchLocalAdvisors;
+	factory.searchRecommendations = searchRecommendations;
 	factory.searchUserContacts = searchUserContacts;
 	factory.searchMessageHistory = searchMessageHistory;
+
+	function searchRecommendations(params) {
+		utils.requestStart()
+		params.role_id = 2;
+
+		return $http({
+			method: 'GET',
+			url : '/api/recommendations',
+			params: params
+		}).then(function(data, status){
+			return data.data
+			console.log('here: ' + data)
+		}, function(data) {
+			console.log('here1: ' + data)
+			return []
+		})
+	}
+
 
 	function searchLocalAdvisors(params) {
 		utils.requestStart()
@@ -317,3 +336,11 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 app.factory('socketService', function (socketFactory) {
   return socketFactory();
 });
+
+// app.factory('sharedSearch', function($rootScope) {
+// 	var sharedSearch = {};
+//
+// 	searchHelper.sharedSearch({
+// 		keyword:
+// 	})
+// });

@@ -2,14 +2,16 @@ var app = angular.module('HairyDolphinsApp');
 
 app.controller('mainController', function($scope, $state) {
     $scope.sendSearchRequest = sendSearchRequest;
-
+    $scope.flag = true;
     function sendSearchRequest() {
+        $scope.flag = false;
+        keyword = $scope.searchString
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
 
         $state.go(
             '^.laSearch',
             {
-                keyword: $scope.searchString,
+                keyword: keyword,
                 available_date: available_date,
                 request_fields: [
                     'first_name',
@@ -17,9 +19,11 @@ app.controller('mainController', function($scope, $state) {
                     'last_name',
                     'average_rating',
                     'profile_photo_url'
-                ]
+                ],
+                flag: false
             }
         )
+
     }
 })
 
@@ -205,7 +209,45 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
             $scope.isLoading = false
             utils.requestEnd();
         })
+
     }
+
+});
+
+app.controller('locRecController', function($scope, recommendations, $state, $stateParams, searchHelper, utils){
+    utils.replaceInvalidImages(recommendations, 'profile_photo_url')
+    $scope.recommendations = recommendations
+    $scope.sendSearchRequest = sendSearchRequest;
+    $scope.displayCollection = [].concat($scope.recommendations);
+
+    $scope.alert = function() {
+        alert('clicked')
+    }
+
+    function sendSearchRequest() {
+        available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
+        keyword = $scope.searchString? $scope.searchString:undefined
+
+        searchHelper.searchLocalAdvisors({
+            keyword: keyword,
+            available_date: available_date,
+            request_fields: [
+                'first_name',
+                'recommendation_profile',
+                'last_name',
+                'average_rating',
+                'profile_photo_url'
+            ]
+        }).then(function(data){
+            utils.replaceInvalidImages(data, 'profile_photo_url')
+            $scope.recommendations = data
+            $scope.displayCollection = [].concat($scope.recommendations);
+            $scope.isLoading = false
+            utils.requestEnd();
+        })
+
+    }
+
 });
 
 app.controller('messengerController', function($scope, userContacts, utils) {
