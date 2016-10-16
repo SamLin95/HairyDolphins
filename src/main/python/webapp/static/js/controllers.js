@@ -228,18 +228,19 @@ app.controller('locRecController', function($scope, recommendations, $state, $st
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
         keyword = $scope.searchString? $scope.searchString:undefined
 
-        searchHelper.searchLocalAdvisors({
+        searchHelper.searchRecommendations({
             keyword: keyword,
             available_date: available_date,
             request_fields: [
-                'first_name',
-                'recommendation_profile',
-                'last_name',
-                'average_rating',
-                'profile_photo_url'
+                'recommendation_category',
+                'recommendation_photos',
+                'recommender',
+                'reviews',
+                'title',
+                'average_rating'
             ]
         }).then(function(data){
-            utils.replaceInvalidImages(data, 'profile_photo_url')
+            utils.replaceInvalidImages(data, 'recommendation_photos.file.download_link')
             $scope.recommendations = data
             $scope.displayCollection = [].concat($scope.recommendations);
             $scope.isLoading = false

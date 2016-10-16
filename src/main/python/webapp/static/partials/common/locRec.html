@@ -27,7 +27,7 @@
             <div>
                 <td style="width: 25%">
                     <div class="squareImgContainer">
-                        <img ng-click="alert()" style="height: 70%;" ng-src="{{localRecommendation.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="No image">
+                        <img ng-click="alert()" style="height: 70%;" ng-src="{{localRecommendation.recommendation_photos.file.download_link}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="No image">
                         <!--<div>-->
                         <!--<p>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</p>-->
                         <!--<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>-->
@@ -37,7 +37,7 @@
                 </td>
                 <td>
                     <div>
-                        <p>{{localRecommendation.recommendation_id}}</p>
+                        <p>{{localRecommendation.title}} {{localRecommendation.recommender.first_name}} {{localRecommendation.recommender.last_name}}</p>
                         <span uib-rating max="5" ng-model="localRecommendation.average_rating" read-only="true"></span>
                         <p>{{localRecommendation.description}}</p>
                     </div>

@@ -152,17 +152,22 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 
 	function searchRecommendations(params) {
 		utils.requestStart()
-		params.role_id = 2;
 
 		return $http({
 			method: 'GET',
 			url : '/api/recommendations',
-			params: params
+			params: {
+				request_fields: [
+					'recommendation_category',
+					'recommendation_photos',
+					'recommender',
+					'reviews',
+					'title'
+				]
+			}
 		}).then(function(data, status){
 			return data.data
-			console.log('here: ' + data)
 		}, function(data) {
-			console.log('here1: ' + data)
 			return []
 		})
 	}
