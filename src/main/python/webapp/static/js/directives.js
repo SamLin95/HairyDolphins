@@ -28,7 +28,7 @@ app.directive("datepicker", function(){
 app.directive("locdropdown", function(){
     return{
         restrict: "A",
-        controller:'locDropDownController',
+        controller:'locRecController',
         templateUrl: "/static/directives/locdropdown.html"
     }
 });

@@ -1,6 +1,6 @@
 <form>
     <label for="locdropdown"> Location </label>
     <select name="locdropdown" id="locdropdown" ng-model="data.model">
-        <option ng-repeat="option in dropDownInfo" value="{{option.city.id}}">{{option.city.label}}</option>
+        <option ng-repeat="localRecommendation in displayCollection" value="{{localRecommendation.city.id}}" placeholder="Choose a city">{{localRecommendation.city.label}}</option>
     </select>
 </form>
