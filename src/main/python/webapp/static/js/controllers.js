@@ -237,12 +237,32 @@ app.controller('locRecController', function($scope, recommendations, $state, $st
                 'recommender',
                 'reviews',
                 'title',
-                'average_rating'
+                'average_rating',
+                'description'
             ]
         }).then(function(data){
-            utils.replaceInvalidImages(data, 'recommendation_photos.file.download_link')
+            utils.replaceInvalidImages(data, 'download_link')
             $scope.recommendations = data
             $scope.displayCollection = [].concat($scope.recommendations);
+            $scope.isLoading = false
+            utils.requestEnd();
+        })
+
+    }
+
+});
+
+app.controller('locDropDownController', function($scope, recommendations, $state, $stateParams, searchHelper, utils){
+    $scope.recommendations = recommendations
+    $scope.sendSearchRequest = sendSearchRequest;
+    $scope.dropDownInfo = [].concat($scope.recommendations);
+
+    function sendSearchRequest() {
+        searchHelper.searchRecommendations({
+            request_fields: ['city']
+        }).then(function(data){
+            $scope.recommendations = data
+            $scope.dropDownInfo = [].concat($scope.recommendations);
             $scope.isLoading = false
             utils.requestEnd();
         })

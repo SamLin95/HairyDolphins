@@ -24,3 +24,11 @@ app.directive("datepicker", function(){
     templateUrl: "/static/directives/datepicker.html",
   }
 });
+
+app.directive("locdropdown", function(){
+    return{
+        restrict: "A",
+        controller:'locDropDownController',
+        templateUrl: "/static/directives/locdropdown.html"
+    }
+});

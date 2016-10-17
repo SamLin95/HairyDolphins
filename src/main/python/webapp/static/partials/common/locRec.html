@@ -8,7 +8,7 @@
     <form class="form-inline">
 
         <div class="row">
-            <div class='col-md-2 form-group' datepicker></div>
+            <div class='col-md-2 form-group' locdropdown></div>
             <div class='col-md-8 form-group'>
                 <input type="text" class="form-control" placeholder="What do you expect?" style="width:100%" ng-model='searchString'>
             </div>
@@ -27,7 +27,7 @@
             <div>
                 <td style="width: 25%">
                     <div class="squareImgContainer">
-                        <img ng-click="alert()" style="height: 70%;" ng-src="{{localRecommendation.recommendation_photos.file.download_link}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="No image">
+                        <img ng-click="alert()" style="height: 70%;" ng-src="{{localRecommendation.download_link}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="No image">
                         <!--<div>-->
                         <!--<p>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</p>-->
                         <!--<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>-->
@@ -37,9 +37,10 @@
                 </td>
                 <td>
                     <div>
-                        <p>{{localRecommendation.title}} {{localRecommendation.recommender.first_name}} {{localRecommendation.recommender.last_name}}</p>
+                        <p>title: {{localRecommendation.title}} </p>
+                        <p>RFName: {{localRecommendation.recommender.first_name}} RLName:{{localRecommendation.recommender.last_name}}</p>
                         <span uib-rating max="5" ng-model="localRecommendation.average_rating" read-only="true"></span>
-                        <p>{{localRecommendation.description}}</p>
+                        <p>description: {{localRecommendation.description}}</p>
                     </div>
                 </td>
             </div>

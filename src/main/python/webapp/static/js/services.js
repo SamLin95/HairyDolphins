@@ -156,15 +156,7 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		return $http({
 			method: 'GET',
 			url : '/api/recommendations',
-			params: {
-				request_fields: [
-					'recommendation_category',
-					'recommendation_photos',
-					'recommender',
-					'reviews',
-					'title'
-				]
-			}
+			params: params
 		}).then(function(data, status){
 			return data.data
 		}, function(data) {
