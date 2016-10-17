@@ -149,6 +149,9 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	factory.searchRecommendations = searchRecommendations;
 	factory.searchUserContacts = searchUserContacts;
 	factory.searchMessageHistory = searchMessageHistory;
+	factory.getCityOptions = getCityOptions;
+	factory.getRecommendationCategoryOptions = getRecommendationCategoryOptions;
+
 
 	function searchRecommendations(params) {
 		utils.requestStart()
@@ -164,10 +167,8 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		})
 	}
 
-
 	function searchLocalAdvisors(params) {
 		utils.requestStart()
-		params.role_id = 2;
 
 		return $http({
 	    	method: 'GET',
@@ -223,6 +224,32 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		    })
 		}, function(){
 			utils.requestEnd()
+			return []
+		})
+	}
+
+	function getCityOptions() {
+		utils.requestStart()
+
+		return $http({
+			method: 'GET',
+			url : '/api/cities',
+		}).then(function(data, status){
+			return data.data
+		}, function(data) {
+			return []
+		})
+	}
+
+	function getRecommendationCategoryOptions() {
+		utils.requestStart()
+
+		return $http({
+			method: 'GET',
+			url : '/api/recommendation_categories',
+		}).then(function(data, status){
+			return data.data
+		}, function(data) {
 			return []
 		})
 	}

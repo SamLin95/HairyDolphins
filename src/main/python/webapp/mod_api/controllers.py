@@ -478,3 +478,19 @@ class Messages(flask_restful.Resource):
         return message_json
         
 api.add_resource(Messages, '/messages')
+
+class Cities(flask_restful.Resource):
+    def get(self):
+        cities = City.query.all()
+        city_schema = CitySchema()
+        return city_schema.dump(cities, many=True).data
+
+api.add_resource(Cities, '/cities')
+
+class RecommendationCategories(flask_restful.Resource):
+    def get(self):
+        recommendation_categories = RecommendationCategory.query.all()
+        recommendation_category_schema = RecommendationCategorySchema()
+        return recommendation_category_schema.dump(recommendation_categories, many=True).data
+
+api.add_resource(RecommendationCategories, '/recommendation_categories')

@@ -162,7 +162,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('auth.locRec', {
-      url: '/locRec?keyword&available_date&request_fields&limit',
+      url: '/locRec?city_id&recommendation_category_id&request_fields&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/locRec.html',
@@ -170,10 +170,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'locRec'
         }
       },
-      auth_redirect: "unauth.locRec",
+      unauth_redirect: "unauth.locRec",
       resolve: {
         recommendations: function($stateParams, searchHelper){
           return searchHelper.searchRecommendations($stateParams)
+        },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
+        recommendation_categories: function(searchHelper) {
+          return searchHelper.getRecommendationCategoryOptions()
         }
       },
       onEnter: function(utils) {
@@ -181,7 +187,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('unauth.locRec', {
-      url: '/locRec?keyword&available_date&request_fields&limit',
+      url: '/locRec?city_id&recommendation_category_id&request_fields&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/locRec.html',
@@ -193,6 +199,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
       resolve: {
         recommendations: function($stateParams, searchHelper){
           return searchHelper.searchRecommendations($stateParams)
+        },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
+        recommendation_categories: function(searchHelper) {
+          return searchHelper.getRecommendationCategoryOptions()
         }
       },
       onEnter: function(utils) {

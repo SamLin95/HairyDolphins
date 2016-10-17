@@ -214,8 +214,10 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 
 });
 
-app.controller('locRecController', function($scope, recommendations, $state, $stateParams, searchHelper, utils){
-    utils.replaceInvalidImages(recommendations, 'profile_photo_url')
+app.controller('locRecController', function($scope, recommendations, cities, recommendation_categories, $state, $stateParams, searchHelper, utils){
+    $scope.cities = cities
+    $scope.recommendation_categories = recommendation_categories
+    utils.replaceInvalidImages(recommendations, 'primary_picture')
     $scope.recommendations = recommendations
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.displayCollection = [].concat($scope.recommendations);
@@ -225,12 +227,12 @@ app.controller('locRecController', function($scope, recommendations, $state, $st
     }
 
     function sendSearchRequest() {
-        available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
-        keyword = $scope.searchString? $scope.searchString:undefined
+        city_id = $scope.selected_city ? $scope.selected_city.id:undefined
+        recommendation_category_id = $scope.selected_recommendation_category ? $scope.selected_recommendation_category.id:undefined
 
         searchHelper.searchRecommendations({
-            keyword: keyword,
-            available_date: available_date,
+            city_id: city_id,
+            recommendation_category_id: recommendation_category_id,
             request_fields: [
                 'recommendation_category',
                 'recommendation_photos',
@@ -239,10 +241,11 @@ app.controller('locRecController', function($scope, recommendations, $state, $st
                 'title',
                 'average_rating',
                 'description',
-                'city'
+                'city',
+                'primary_picture'
             ]
         }).then(function(data){
-            utils.replaceInvalidImages(data, 'download_link')
+            utils.replaceInvalidImages(data, 'primary_picture')
             $scope.recommendations = data
             $scope.displayCollection = [].concat($scope.recommendations);
             $scope.isLoading = false
@@ -252,25 +255,6 @@ app.controller('locRecController', function($scope, recommendations, $state, $st
     }
 
 });
-
-// app.controller('locDropDownController', function($scope, recommendations, $state, $stateParams, searchHelper, utils){
-//     $scope.recommendations = recommendations
-//     $scope.sendSearchRequest = sendSearchRequest;
-//     $scope.dropDownInfo = [].concat($scope.recommendations);
-//
-//     function sendSearchRequest() {
-//         searchHelper.searchRecommendations({
-//             request_fields: ['city']
-//         }).then(function(data){
-//             $scope.recommendations = data
-//             $scope.dropDownInfo = [].concat($scope.recommendations);
-//             $scope.isLoading = false
-//             utils.requestEnd();
-//         })
-//
-//     }
-//
-// });
 
 app.controller('messengerController', function($scope, userContacts, utils) {
     $scope.userContacts = utils.fillFallbackList(userContacts, 10)

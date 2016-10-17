@@ -305,6 +305,13 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation'))
 
     @hybrid_property
+    def primary_picture(self):
+        if(self.recommendation_photos):
+            return self.recommendation_photos[0].file.download_link
+        else:
+            return None
+
+    @hybrid_property
     def average_rating(self):
         if(self.reviews):
             return float(sum(review.rating for review in self.reviews))/float(len(self.reviews))
@@ -313,6 +320,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
 
     def load_hybrid_properties(self):
         self.average_rating
+        self.primary_picture
 
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                            = db.Column(db.Integer, primary_key=True)
