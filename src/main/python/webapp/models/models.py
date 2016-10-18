@@ -299,8 +299,8 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     recommender_id             = db.Column(db.Integer, db.ForeignKey('entity.id'))
 
     #Relationships
-    city                    = db.relationship('City', backref=db.backref('recommendations'))
-    recommendation_category = db.relationship('RecommendationCategory', backref=db.backref('recommendations'))
+    city                    = db.relationship('City')
+    recommendation_category = db.relationship('RecommendationCategory')
     recommender             = db.relationship('Entity', backref=db.backref('recommendations'))
     entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation'))
 

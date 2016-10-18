@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, Flask, jsonify
+import werkzeug
 import flask_restful
 from sqlalchemy import and_, or_, exc
 from flask_restful import reqparse
@@ -8,6 +9,7 @@ from sqlalchemy_searchable import search, parse_search_query
 
 from ..models.models import *
 from ..models.schemas import *
+from ..lib.s3_lib import *
 
 API_VERSION = 1
 
@@ -138,6 +140,44 @@ class Recommendations(flask_restful.Resource):
                 return recommendation_json
             except AttributeError as err:
                 return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('title', type=str, required=True)
+        parser.add_argument('description', type=str, required=True)
+        parser.add_argument('address_line_one', type=str, required=True)
+        parser.add_argument('address_line_two', type=str)
+        parser.add_argument('zip_code', type=str, required=True)
+        parser.add_argument('city_id', type=int, required=True)
+        parser.add_argument('recommender_id', type=int, required=True)
+        parser.add_argument('recommendation_category_id', type=int, required=True)
+        parser.add_argument('file_id', type=int, required=True)
+        args = parser.parse_args()
+
+        title = args['title']
+        description = args['description']
+        address_line_one = args['address_line_one']
+        address_line_two = args['address_line_two']
+        zip_code = args['zip_code']
+        city_id = args['city_id']
+        recommendation_category_id = args['recommendation_category_id']
+        recommender_id = args['recommender_id']
+        file_id = args['file_id']
+
+        try:
+            new_recommendation = Recommendation(title=title, description=description, address_line_one=address_line_one, address_line_two=address_line_two, zip_code=zip_code, recommender_id=recommender_id, city_id=city_id, recommendation_category_id=recommendation_category_id,is_draft=False)
+
+            new_recommendation.add(new_recommendation)
+
+            new_recommendation_photo = RecommendationPhoto(recommendation=new_recommendation, file_id=file_id, uploader_id=recommender_id)
+            new_recommendation_photo.add(new_recommendation_photo)
+
+            recommendation_schema = RecommendationSchema()
+            recommendation_json = recommendation_schema.dump(new_recommendation).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add recommendation during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return recommendation_json 
 
 api.add_resource(Recommendations, '/recommendations')
 
@@ -494,3 +534,39 @@ class RecommendationCategories(flask_restful.Resource):
         return recommendation_category_schema.dump(recommendation_categories, many=True).data
 
 api.add_resource(RecommendationCategories, '/recommendation_categories')
+
+class Files(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('photo', type=werkzeug.datastructures.FileStorage, location='files')
+
+        args = parser.parse_args()
+        photo = args['photo']
+        photo_basename = photo.filename.rsplit('.', 1)[0]
+        photo_ext = photo.filename.rsplit('.', 1)[1]
+
+        #Recompose filename to include current datetime
+        photo_filename = '{0}_{1}.{2}'.format(photo_basename, datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S'), photo_ext)
+        photo_tmp_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        photo.save(photo_tmp_path)
+
+        upload_error = None
+        try:
+            s3_helper = S3Helper()
+            s3_helper.upload_file(photo_tmp_path, photo_filename)
+        except:
+            upload_error = True
+        finally:
+            os.remove(photo_tmp_path)
+
+        if(upload_error):
+            return {"message" : "Failed to upload profile picture"}, HTTP_INTERNAL_SERVER_ERROR
+
+        photo_s3_url = 'https://s3.amazonaws.com/hairydolphins/{0}'.format(photo_filename)
+        photo_file = File(name = photo_filename, checksum = 0, download_link = photo_s3_url, file_type_id = 1)
+        photo_file.add(photo_file)
+        file_schema = FileSchema()
+
+        return file_schema.dump(photo_file).data
+        
+api.add_resource(Files, '/files')

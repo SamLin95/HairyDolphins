@@ -284,3 +284,56 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
         socketService.emit('message', $scope.message_to_send)
     }
 })
+
+app.controller('recCreationController', function($scope, cities, recommendation_categories, utils, fileManager, AuthService, recManager, alertFactory) {
+    $scope.alerts = [];
+    $scope.addAlert = addAlert;
+    $scope.closeAlert = closeAlert;
+    $scope.user = AuthService.getUser();
+
+    $scope.cities = cities
+    $scope.recommendation_categories = recommendation_categories
+    $scope.submitRecCreationRequest = submitRecCreationRequest
+    $scope.displayed_recommendation_photo = "/static/images/placeholder.png"
+    
+    $scope.doUpload = function() {
+        fileManager.uploadFile(event.target.files[0]).then(function(data){
+            $scope.displayed_recommendation_photo = data.download_link
+            $scope.current_photo = data
+            utils.requestEnd();
+        })
+    }
+
+    function addAlert(type, message) {
+        alertFactory.addAlert($scope, type, message);
+    }
+
+    function closeAlert(index) {
+        alertFactory.closeAlert($scope, index);
+    }
+
+    function submitRecCreationRequest() {
+        if($scope.recCrtForm.$valid)
+        {
+            recManager.createNewRec({
+                title : $scope.title,
+                description : $scope.description,
+                address_line_one : $scope.address_line_one,
+                address_line_two : $scope.address_line_two,
+                zip_code : $scope.zip_code,
+                city_id : $scope.selected_city.id,
+                recommendation_category_id : $scope.selected_recommendation_category.id,
+                recommender_id : $scope.user.id,
+                file_id : $scope.current_photo.id 
+            }).then(function(data){
+                utils.requestEnd();
+                $scope.addAlert('success', "Your recommendation has been successfully created!")
+            }).catch(function (data) {
+                utils.requestEnd();
+                addAlert('danger', "Failed to create the new recommendation")
+            })
+        }
+    }
+
+
+})

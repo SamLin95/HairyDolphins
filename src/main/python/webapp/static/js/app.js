@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router',
-  'bootstrap.angular.validation', 'smart-table', 'angularSpinner', 'btford.socket-io']);
+  'bootstrap.angular.validation', 'smart-table', 'angularSpinner', 'btford.socket-io', 'lr.upload']);
 
 app.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({radius:6, length: 1});
@@ -200,6 +200,27 @@ app.config(function($stateProvider, $urlRouterProvider) {
         recommendations: function($stateParams, searchHelper){
           return searchHelper.searchRecommendations($stateParams)
         },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
+        recommendation_categories: function(searchHelper) {
+          return searchHelper.getRecommendationCategoryOptions()
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.recCreation', {
+      url: '/recommendation_creation',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/auth/recommendation_creation.html',
+          controller: 'recCreationController',
+          controllerAs: 'recCre'
+        }
+      },
+      resolve: {
         cities: function(searchHelper){
           return searchHelper.getCityOptions()
         },

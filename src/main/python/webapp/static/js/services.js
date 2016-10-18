@@ -361,6 +361,52 @@ app.factory('socketService', function (socketFactory) {
   return socketFactory();
 });
 
+app.factory('fileManager', function($q, $timeout, utils, $http) {
+	var factory = {};
+
+	factory.uploadFile = uploadFile
+
+	function uploadFile(file_to_upload) {
+		utils.requestStart()
+		
+		fd = new FormData()
+		fd.append("photo", file_to_upload)
+
+		return $http({
+			method: 'POST',
+			url : '/api/files',
+			headers: {'Content-Type': undefined },
+			data: fd
+		}).then(function(data, status){
+			return data.data
+		}, function(data) {
+			return []
+		})
+	}
+
+	return factory
+})
+
+app.factory('recManager', function($q, $timeout, utils, $http) {
+	var factory = {};
+
+	factory.createNewRec = createNewRec
+
+	function createNewRec(params) {
+		utils.requestStart()
+
+		return $http({
+			method: 'POST',
+			url : '/api/recommendations',
+			params: params
+		}).then(function(data, status){
+			return data.data
+		})
+	}
+
+	return factory
+})
+
 // app.factory('sharedSearch', function($rootScope) {
 // 	var sharedSearch = {};
 //
