@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, Flask, jsonify
 import werkzeug
 import flask_restful
-from sqlalchemy import and_, or_, exc
+from sqlalchemy import and_, or_, exc, func
 from flask_restful import reqparse
 from flask_restful_swagger import swagger
 from datetime import datetime
@@ -383,9 +383,9 @@ class Users(flask_restful.Resource):
             if(args['keyword']):
                 keyword = args['keyword']
 
-                combined_search_vector = ( Entity.search_vector | LocalAdvisorProfile.search_vector | City.search_vector | State.search_vector | Country.search_vector )
+                combined_search_vector = ( Entity.search_vector | func.coalesce(LocalAdvisorProfile.search_vector, u'') | func.coalesce(City.search_vector, u'') | func.coalesce(State.search_vector, u'') | func.coalesce(Country.search_vector, u'') )
 
-                entity_query = entity_query.join((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).join(City).join(State).join(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
+                entity_query = entity_query.outerjoin((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).outerjoin(City).outerjoin(State).outerjoin(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
 
             if(args['limit']):
                 limit = args['limit']

@@ -259,9 +259,34 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
 
 });
 
-app.controller('messengerController', function($scope, userContacts, utils) {
+app.controller('messengerController', function($scope, searchHelper, userContacts, utils, AuthService) {
+    self_user = AuthService.getUser()
     $scope.userContacts = utils.fillFallbackList(userContacts, 10)
     $scope.displayContacts = [].concat($scope.userContacts)
+    $scope.searchUsers = searchUsers
+    $scope.onContactSelect = onContactSelect
+
+    function searchUsers(keyword) {
+        return searchHelper.searchUsers({
+            keyword : keyword,
+            limit : 8
+        }).then(function(data) {
+            return data
+        })
+    }
+
+    function onContactSelect(item, model, label) {
+        contact_id_list = userContacts.map(function(contact){
+            return contact.id
+        })
+
+        if(contact_id_list.indexOf(model.id) == -1 && model.id != self_user.id) 
+        {
+            userContacts.unshift(model)
+            $scope.userContacts = utils.fillFallbackList(userContacts, 10)
+            $scope.displayContacts = [].concat($scope.userContacts)
+        }
+    }
 })
 
 

@@ -10,11 +10,20 @@
 				<div class="panel-heading">
 					<h5 style="margin-top:10px;">Contacts</h5>
 				</div>
+				<div style="margin-top: 5%; margin-left:10%; margin-right:10%">
+					<input type="text" ng-model="selectedNewContact" placeholder="Enter a keyword to search user" uib-typeahead="user as user.first_name + ' ' + user.last_name + ' (' + user.username + ')' for user in searchUsers($viewValue) | limitTo: 8" typeahead-loading="searchingUsers" typeahead-no-results="noResults" typeahead-on-select="onContactSelect($item, $model, $label)" class="form-control">
+					<div ng-show="searchingUsers">
+						<i class="glyphicon glyphicon-refresh"></i> Searching Users...
+					</div>
+				    <div ng-show="noResults">
+				      <i class="glyphicon glyphicon-remove"></i> No Results Found
+				    </div>
+				</div>
 				<div class="panel-body smart-table-container">
 					<table ng-if="$root.isLoading == false" st-table="displayContacts" st-safe-src="userContacts" class="table smart-table table-striped" style="margin-bottom: 0px">
 						<tbody ng-if="!isLoading">
 							<tr ng-repeat="user in displayContacts" style="height:45px">
-								<td ng-if="user.id "ui-sref="auth.messenger.chatpanel({user_id:{{user.id}}, first_name:'{{user.first_name}}', last_name:'{{user.last_name}}', profile_photo_url:'{{user.profile_photo_url}}'})">
+								<td class="btn-default" ng-if="user.id "ui-sref="auth.messenger.chatpanel({user_id:{{user.id}}, first_name:'{{user.first_name}}', last_name:'{{user.last_name}}', profile_photo_url:'{{user.profile_photo_url}}'})">
 									<p class="text-center">{{user.first_name}} {{user.last_name}}</p>
 								</td>
 
