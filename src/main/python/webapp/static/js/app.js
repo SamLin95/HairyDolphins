@@ -13,7 +13,7 @@ app.config(['bsValidationConfigProvider', function(bsValidationConfigProvider) {
   //bsValidationConfigProvider.global.setValidateFieldsOn(['submit', 'blur]);
   
   bsValidationConfigProvider.global.errorMessagePrefix = '<span class="glyphicon glyphicon-warning-sign"></span> &nbsp;';
-}])
+}]);
 
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider

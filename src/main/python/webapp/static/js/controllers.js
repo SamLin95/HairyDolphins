@@ -223,7 +223,7 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
     utils.replaceInvalidImages($scope, 'self_profile_photo_url')
 
     //The other chatter
-    $scope.contact_id = $stateParams.user_id
+    $scope.contact_id = $stateParams.user_id;
     $scope.contact_name = $stateParams.first_name + ' ' +  $stateParams.last_name
     $scope.contact_profile_photo_url = $stateParams.profile_photo_url
     utils.replaceInvalidImages($scope, 'contact_profile_photo_url')
@@ -232,7 +232,26 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
 
     $scope.send_message = send_message
 
+    //$scope.$on('socket:message', function(ev, data) {
+    //    console.log(data);
+    //});
+
+    socketService.on('message', function(msg, str) {
+        console.log(msg);
+    });
+
+    socketService.on('join', function(data) {
+        console.log(data)
+    });
+
+    var room = {currentUser: $scope.self_id, targetUser : $scope.contact_id}
+
+    socketService.emit('join', room);
+
     function send_message(){
-        socketService.emit('message', $scope.message_to_send)
+        data = {};
+        data['message'] = $scope.message_to_send;
+        data['userid'] = $scope.contact_id;
+        socketService.emit('send message', data);
     }
-})
+});
