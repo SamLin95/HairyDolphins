@@ -191,8 +191,9 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
   function sendSearchRequest() {
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
         keyword = $scope.searchString? $scope.searchString:undefined
-
+,
         searchHelper.searchLocalAdvisors({
+                role_id: 2,
                 keyword: keyword,
                 available_date: available_date,
                 request_fields: [

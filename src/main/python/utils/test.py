@@ -185,4 +185,4 @@ def uploadPhoto(type_name, photo_name, photo):
     key = bucket.new_key(link)
     key.set_contents_from_filename(photo)
     key.set_acl('public-read')
-    return link   
+    return 'https://s3.amazonaws.com/hairydolphins/' + link   
