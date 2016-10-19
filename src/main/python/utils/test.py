@@ -33,8 +33,8 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
     print '------ user added -----'
     return user
 
-def createMessage(body, receiver):
-    message = Message(message_body=body, receiver=receiver)
+def createMessage(body, sender, receiver):
+    message = Message(message_body=body, sender=sender, receiver=receiver)
     message.add(message)
     print '----- message sent ------'
     return message
@@ -158,8 +158,14 @@ def createFile(name, checksum, photo, format, type_name):
 
 def createEntityPhoto(entity, name, checksum, photo, format):
     files = createFile(name, checksum, photo, format, 'entity_photo')
-    photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
-    photo.add(photo)
+    photo = EntityPhoto.query.filter_by(entity=entity).first()
+    if photo == None:
+        photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
+        photo.add(photo)
+    else:
+        print 'entity exists!! updating profile'
+        photo.file = files
+        photo.update()
     print photo
     print '----- entity photo checked -----'
     return photo

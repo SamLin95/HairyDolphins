@@ -30,8 +30,8 @@ def createTest():
 	advisor2 = test.createEntity('Local Advisor', 'dun_advisor@gmail', 'dun_advisor', 'pwd', 
 								  'Dun', 'Huang', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile2)
 
-	visitor3 = test.createEntity('Visitor', 'sam@gmail.com', 'Sam', 'helloworld',
-							     'Sizhe', 'Lin', birthday=dates1[2])
+	visitor3 = test.createEntity('Visitor', 'slin77@gatech.edu', 'samlin_95', 'linsizhe123',
+							     'Sizhe', 'Lin')
 	advisor_profile3 = test.createAdvisorProfile('im your advisor Sam', test.createCity('Duluth', 'GA', 'USA'), dates=dates2[2:8])
 	advisor3 = test.createEntity('Local Advisor', 'sam_advisor@gmail', 'sam_advisor', 'pwd', 
 								  'Sizhe', 'Lin', admin_profile=test.AdminProfile(), local_advisor_profile=advisor_profile3)
@@ -93,51 +93,52 @@ def createTest():
 	visitor19 = test.createEntity('Visitor', 'brandon@gmail.com', 'brandon', 'helloworld',
 							     'Brandon', 'Jackson', birthday=dates1[18])
 	visitor20 = test.createEntity('Visitor', 'branson@gmail.com', 'branson', 'helloworld',
-							     'Branson', 'Branson', birthday=dates1[19])
+							     'Branson', 'Dupuy', birthday=dates1[19])
 
 	# generating messages
 	print '\nsending message !!!!!\n'
-	message1 = test.createMessage('this a message from visitor jing, sent to advisor dun', advisor2)
+	message1 = test.createMessage('this a message from visitor jing, sent to advisor dun', visitor1, advisor2)
+	# message1.sender_id = visitor1.id
 	visitor1.sent_messages.append(message1)
 	visitor1.phone_number = '4044363903'
 	visitor1.add(visitor1)
 
-	message2 = test.createMessage('this a message from visitor dun, sent to advisor kelvin', advisor5)
+	message2 = test.createMessage('this a message from visitor dun, sent to advisor kelvin', visitor2, advisor5)
 	visitor2.sent_messages.append(message2)
 	visitor2.add(visitor2)	
 
-	message3 = test.createMessage('this a message from visitor kyrsten, sent to advisor sam', advisor3)
+	message3 = test.createMessage('this a message from visitor kyrsten, sent to advisor sam', visitor4, advisor3)
 	visitor4.sent_messages.append(message3)
 	visitor4.add(visitor4)	
 
-	message4 = test.createMessage('this a message from visitor jing, sent to advisor kelvin', advisor5)
+	message4 = test.createMessage('this a message from visitor jing, sent to advisor kelvin', visitor1, advisor5)
 	visitor1.sent_messages.append(message4)
 	visitor1.add(visitor1)	
 
-	message5 = test.createMessage('this a message from visitor kelvin, sent to advisor sam', advisor3)
+	message5 = test.createMessage('this a message from visitor kelvin, sent to advisor sam', visitor5, advisor3)
 	visitor5.sent_messages.append(message5)
 	visitor5.add(visitor5)
 
-	message1 = test.createMessage('this a message from advisor dun, sent to visitor jing', visitor1)
-	advisor2.sent_messages.append(message1)
+	message6 = test.createMessage('this a message from advisor dun, sent to visitor jing', advisor2, visitor1)
+	advisor2.sent_messages.append(message6)
 	advisor2.phone_number = '4044363904'
 	advisor2.add(advisor2)
 
-	message2 = test.createMessage('this a message from advisor yang, sent to visitor jing', visitor1)
-	visitor9.sent_messages.append(message2)
+	message7 = test.createMessage('this a message from advisor yang, sent to visitor jing', visitor9, visitor1)
+	visitor9.sent_messages.append(message7)
 	visitor9.add(visitor9)	
 
-	message3 = test.createMessage('this a message advisor jing, sent to visitor sam', visitor3)
-	advisor1.sent_messages.append(message3)
+	message8 = test.createMessage('this a message advisor jing, sent to visitor sam', advisor1, visitor3)
+	advisor1.sent_messages.append(message8)
 	advisor1.phone_number = '4044364903'
 	advisor1.add(advisor1)	
 
-	message4 = test.createMessage('this a message from advisor david, sent ot visitor branson', visitor20)
-	advisor8.sent_messages.append(message5)
+	message9 = test.createMessage('this a message from advisor david, sent ot visitor branson', advisor8, visitor20)
+	advisor8.sent_messages.append(message9)
 	advisor8.add(advisor8)
 
-	message5 = test.createMessage('this a message from advisor david, sent ot visitor sam', visitor3)
-	advisor8.sent_messages.append(message5)
+	message10 = test.createMessage('this a message from advisor david, sent ot visitor sam', advisor8, visitor3)
+	advisor8.sent_messages.append(message10)
 	advisor8.add(advisor8)
 
 	print '\nmore avaliable dates for advisor jing'
@@ -300,22 +301,33 @@ def createTest():
 
 	# generating photoes
 	print '\ncreating photoes for advisors and recommendations!!!'
-	src = path.dirname(path.realpath('__file__'))
+	src = path.dirname(path.realpath('__file__')) + "/utils/test_files/"
 
-	test.createEntityPhoto(advisor1, 'advisor1.jpg', 32, src + '/test_files/advisor1.jpg', 'jpg')
-	test.createEntityPhoto(advisor2, 'advisor2.jpg', 32, src + '/test_files/advisor2.jpg', 'jpg')
-	test.createEntityPhoto(advisor3, 'advisor3.jpg', 32, src + '/test_files/advisor3.jpg', 'jpg')
-	test.createEntityPhoto(advisor4, 'advisor4.jpg', 32, src + '/test_files/advisor4.jpg', 'jpg')
-	test.createEntityPhoto(advisor5, 'advisor5.jpg', 32, src + '/test_files/advisor5.jpg', 'jpg')
-	test.createEntityPhoto(advisor6, 'advisor6.jpg', 32, src + '/test_files/advisor6.jpg', 'jpg')
-	test.createEntityPhoto(advisor7, 'advisor7.jpg', 32, src + '/test_files/advisor7.jpg', 'jpg')
-	test.createEntityPhoto(advisor8, 'advisor8.jpg', 32, src + '/test_files/advisor8.jpg', 'jpg')
-	test.createEntityPhoto(advisor9, 'advisor9.jpg', 32, src + '/test_files/advisor9.jpg', 'jpg')
+	test.createEntityPhoto(advisor1, 'advisor1.jpg', 32, src + '/advisors/advisor1.jpg', 'jpg')
+	test.createEntityPhoto(advisor2, 'advisor2.jpg', 32, src + '/advisors/advisor2.jpg', 'jpg')
+	test.createEntityPhoto(advisor3, 'advisor3.jpg', 32, src + '/advisors/advisor3.jpg', 'jpg')
+	test.createEntityPhoto(advisor4, 'advisor4.jpg', 32, src + '/advisors/advisor4.jpg', 'jpg')
+	test.createEntityPhoto(advisor5, 'advisor5.jpg', 32, src + '/advisors/advisor5.jpg', 'jpg')
+	test.createEntityPhoto(advisor6, 'advisor6.jpg', 32, src + '/advisors/advisor6.jpg', 'jpg')
+	test.createEntityPhoto(advisor7, 'advisor7.jpg', 32, src + '/advisors/advisor7.jpg', 'jpg')
+	test.createEntityPhoto(advisor8, 'advisor8.jpg', 32, src + '/advisors/advisor8.jpg', 'jpg')
+	test.createEntityPhoto(advisor9, 'advisor9.jpg', 32, src + '/advisors/advisor9.jpg', 'jpg')
 
-	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/test_files/atl1.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/test_files/atl2.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/test_files/atl3.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/test_files/atl4.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.jpg', 32, src + '/test_files/atl5.jpg', 'jpg')
+	test.createEntityPhoto(visitor1, 'visitor1.jpg', 32, src + '/visitors/visitor1.jpg', 'jpg')
+	test.createEntityPhoto(visitor2, 'visitor2.jpg', 32, src + '/visitors/visitor2.jpg', 'jpg')
+	test.createEntityPhoto(visitor3, 'visitor3.jpg', 32, src + '/visitors/visitor3.jpg', 'jpg')
+	test.createEntityPhoto(visitor4, 'visitor4.jpg', 32, src + '/visitors/visitor4.jpg', 'jpg')
+	test.createEntityPhoto(visitor5, 'visitor5.jpg', 32, src + '/visitors/visitor5.jpg', 'jpg')
+	test.createEntityPhoto(visitor6, 'visitor6.jpg', 32, src + '/visitors/visitor6.jpg', 'jpg')
+	test.createEntityPhoto(visitor7, 'visitor7.jpg', 32, src + '/visitors/visitor7.jpg', 'jpg')
+	test.createEntityPhoto(visitor8, 'visitor8.jpg', 32, src + '/visitors/visitor8.jpg', 'jpg')
+	test.createEntityPhoto(visitor9, 'visitor9.jpg', 32, src + '/visitors/visitor9.jpg', 'jpg')
+
+	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/recommendations/atl1.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/recommendations/atl2.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/recommendations/atl3.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/recommendations/atl4.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.jpg', 32, src + '/recommendations/atl5.jpg', 'jpg')
+
 
 createTest()
