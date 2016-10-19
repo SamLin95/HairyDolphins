@@ -40,11 +40,11 @@
                 </td>
                 <td>
                     <div>
-                        <p>title: {{localRecommendation.title}} </p>
+                        <p>{{localRecommendation.title}} </p>
                         <p>Recommended by: {{localRecommendation.recommender.first_name}} {{localRecommendation.recommender.last_name}}</p>
                         <span uib-rating max="5" ng-model="localRecommendation.average_rating" read-only="true"></span>
-                        <p>description: {{localRecommendation.description}}</p>
-                        <p>city: {{localRecommendation.city.label}}</p>
+                        <p>Location: {{localRecommendation.address_line_one}} {{localRecommendation.address_line_two}}, {{localRecommendation.city.label}}, {{localRecommendation.city.state.label}}, {{localRecommendation.city.state.country.label}}  {{localRecommendation.zip_code}}</p>
+                        <p>{{localRecommendation.description}}</p>
                     </div>
                 </td>
             </div>

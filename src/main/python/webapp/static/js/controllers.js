@@ -193,7 +193,6 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
         keyword = $scope.searchString? $scope.searchString:undefined
 ,
         searchHelper.searchLocalAdvisors({
-                role_id: 2,
                 keyword: keyword,
                 available_date: available_date,
                 request_fields: [
@@ -243,7 +242,10 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
                 'average_rating',
                 'description',
                 'city',
-                'primary_picture'
+                'primary_picture',
+                'address_line_one',
+                'address_line_two',
+                'zip_code'
             ]
         }).then(function(data){
             utils.replaceInvalidImages(data, 'primary_picture')

@@ -169,6 +169,7 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 
 	function searchLocalAdvisors(params) {
 		utils.requestStart()
+		params.role_id = 2
 
 		return $http({
 	    	method: 'GET',
@@ -299,17 +300,19 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 					imageHolder[imageCol] = replacement
 					d.resolve()
 			} else {
-				$http.get(imageHolder[imageCol])
-				.error(function() {
-						$http.get($rootScope.s3url + imageHolder[imageCol])
-						.success(function(){
-							imageHolder[imageCol] =$rootScope.s3url + imageHolder[imageCol]
-							d.resolve()
-						}).error(function(){
-							imageHolder[imageCol] = replacement	
-							d.resolve()
-						})
-				})
+				if(imageHolder[imageCol].indexOf('s3.amazonaws.com/hairydolphins') === -1) {
+					$http.get(imageHolder[imageCol])
+					.error(function() {
+							$http.get($rootScope.s3url + imageHolder[imageCol])
+							.success(function(){
+								imageHolder[imageCol] =$rootScope.s3url + imageHolder[imageCol]
+								d.resolve()
+							}).error(function(){
+								imageHolder[imageCol] = replacement	
+								d.resolve()
+							})
+					})
+				}
 			}
 	    }, 1000, false);
 
