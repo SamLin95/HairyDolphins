@@ -269,7 +269,15 @@ app.controller('messengerController', function($scope, searchHelper, userContact
     function searchUsers(keyword) {
         return searchHelper.searchUsers({
             keyword : keyword,
-            limit : 8
+            limit : 8,
+            request_fields : [
+                'id',
+                'first_name',
+                'last_name',
+                'username',
+                'profile_photo_url',
+                'email'
+            ]
         }).then(function(data) {
             return data
         })
