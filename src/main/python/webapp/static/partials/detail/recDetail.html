@@ -4,6 +4,45 @@
         <h3 style="margin-top:10px;">Rec Detail</h3>
     </div>
     <div class="panel-body smart-table-container">
+        <table ng-if="$root.isLoading == false" st-safe-src="recomendation" class="table smart-table">
+            <tbody ng-if="!isLoading">
+            <!--<tr ng-if="displayCollection.length == 0">-->
+            <!--<td class="text-center">No local advisor found.</td>-->
+            <!--</tr>-->
+            <!--<tr ng-repeat="localAdvisor in displayCollection">-->
+            <div>
+                <td style="width: 25%">
+                    <div class="squareImgContainer">
+                        <img style="height: 70%;" ng-src="{{recomendation.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                    </div>
+                    <span uib-rating max="5" ng-model="recomendation.average_rating" read-only="true"></span>
+
+                    <!--</div>-->
+                </td>
+                <td>
+                    <div>
+                        {{recomendation.title}}
+                    </div>
+                    <div>
+                        <p>{{recomendation.description}}</p>
+                    </div>
+                    <div>
+                        <p> Address: {{recomendation.city.label}}, {{recomendation.city.state.label}} {{recomendation.zip_code}}</p>
+                    </div>
+
+                </td>
+                <td>
+                    <div>
+                        <p> Category: {{recomendation.recommendation_category.label}}</p>
+                    </div>
+                    <div>
+                        <p> Recommended by: {{recomendation.recommender.first_name}}  {{recomendation.recommender.last_name}}</p>
+                    </div>
+                </td>
+            </div>
+            </tbody>
+        </table>
+        <hr>
         {{recomendation}}
 
         <!--<table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="localAdvisors" class="table smart-table">-->
