@@ -250,6 +250,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
         advisor: function($stateParams, searchHelper){
           return searchHelper.getAdvisorDetail($stateParams)
         }
+        // review: function($stateParams, searchHelper){
+        //   return searchHelper.getAdvisorReview($stateParams)
+        // }
       },
       onEnter: function(utils) {
         utils.requestEnd()
@@ -273,6 +276,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
         advisor: function($stateParams, searchHelper){
           return searchHelper.getAdvisorDetail($stateParams)
         }
+        // review: function($stateParams, searchHelper){
+        //   return searchHelper.getAdvisorReview($stateParams)
+        // }
       },
       onEnter: function(utils) {
         utils.requestEnd()

@@ -4,7 +4,7 @@
         <h3 style="margin-top:10px;">{{advisor.first_name}} {{advisor.last_name}}</h3>
     </div>
     <div class="panel-body smart-table-container">
-        <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="localAdvisors" class="table smart-table">
+        <table ng-if="$root.isLoading == false" st-safe-src="advisor" class="table smart-table">
             <tbody ng-if="!isLoading">
             <!--<tr ng-if="displayCollection.length == 0">-->
                 <!--<td class="text-center">No local advisor found.</td>-->
@@ -25,28 +25,60 @@
                             <p>Email: {{advisor.email}}</p>
                             <p>Phone: {{advisor.phone_number}}</p>
                         </div>
-                        <!--<div>-->
-                            <!--<p>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</p>-->
-                            <!--<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>-->
-                            <!--<p>{{localAdvisor.local_advisor_profile.description}}</p>-->
-                        <!--</div>-->
+
                     </td>
                     <td>
                         <div>Location: {{advisor.local_advisor_profile.city.label}}, {{advisor.local_advisor_profile.city.state.label}}</div>
-                        <div class='col-md-2 form-group' datepicker></div>
                     </td>
                 </div>
-            <!--</tr>-->
             </tbody>
-            <!--<tfoot>-->
-            <!--<tr>-->
-                <!--<td colspan="5" class="text-center">-->
-                    <!--<div st-pagination st-items-by-page="5" st-displayed-pages="5">-->
-                    <!--</div>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!--</tfoot>-->
+        </table>
+        <hr>
+        <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="advisor.local_advisor_profile.reviews" class="table smart-table">
+            <tbody ng-if="!isLoading">
+            <h2>Reviews ({{displayCollection.length}})</h2>
+            <tr ng-if="displayCollection.length == 0">
+                <td class="text-center">No review found.</td>
+            </tr>
+            <tr ng-repeat="review in displayCollection">
+                <div>
+                    <td style="width: 25%">
+                        <div>
+                            <!--<img  style="height: 70%;" ng-src="{{advisor.local_advisor_profile.reviews.reviewer.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">-->
+                            <!--<div>-->
+
+                            <p>{{review.reviewer.first_name}} {{review.reviewer.last_name}}</p>
+                            <!--<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>-->
+                            <!--<p>{{localAdvisor.local_advisor_profile.description}}</p>-->
+                            <!--</div>-->
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <span uib-rating max="5" ng-model="review.rating" read-only="true"></span>
+                            <p>{{review.title}}</p>
+                            <!--<p>{{localAdvisor.local_advisor_profile.description}}</p>-->
+                        </div>
+                    </td>
+                </div>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination st-items-by-page="5" st-displayed-pages="5">
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
         </table>
     </div>
-    {{advisor}}
+
+
+    <!--reviews: {{advisor.local_advisor_profile.reviews}}-->
+    <!--<br><br>-->
+    <!--length: {{displayCollection.length}}-->
+    <!--display: {{displayCollection}}-->
+    <!--<br><br>-->
+    <!--{{advisor}}-->
 </div>

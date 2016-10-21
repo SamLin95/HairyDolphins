@@ -187,8 +187,7 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 
   $scope.alert = function(param) {
       id = param.id;
-      console.log('paramA:' + param)
-      console.log('id:' + id)
+
       $state.go(
           '^.advisorDetail',
           {
@@ -227,15 +226,16 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 app.controller('advisorDetailController', function($scope, advisor, $state, $stateParams, searchHelper, utils) {
     utils.replaceInvalidImages(advisor, 'profile_photo_url')
     $scope.advisor = advisor
+    $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
     id = advisor.id
-    console.log('adv:' + advisor)
-    console.log('id:' + id)
+
     searchHelper.getAdvisorDetail({
         id: id,
         request_fields: []
     }).then(function (data) {
         utils.replaceInvalidImages(data, 'profile_photo_url')
         $scope.advisor = data
+        $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
         $scope.isLoading = false
         utils.requestEnd();
     })
@@ -252,8 +252,6 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
 
     $scope.alert = function(param) {
         id = param.id;
-        console.log('paramR:' + param)
-        console.log('id:' + id)
         $state.go(
             '^.recDetail',
             {
@@ -300,8 +298,7 @@ app.controller('recDetailController', function($scope, recomendation, $state, $s
     utils.replaceInvalidImages(recomendation, 'profile_photo_url')
     $scope.recomendation = recomendation
     id = recomendation.id
-    console.log('rec:' + recomendation)
-    console.log('id:' + id)
+
     searchHelper.getRecDetail({
         id: id,
         request_fields: []
@@ -314,23 +311,6 @@ app.controller('recDetailController', function($scope, recomendation, $state, $s
 
 });
 
-// app.controller('recDetailController', function($scope, rec, $state, $stateParams, searchHelper, utils) {
-//     utils.replaceInvalidImages(rec, 'profile_photo_url')
-//     $scope.rec = rec
-//     id = rec.id
-//     console.log('here3:' + id)
-//     console.log('here3:' + rec)
-//     searchHelper.getRecDetail({
-//         id: id,
-//         request_fields: []
-//     }).then(function (data) {
-//         utils.replaceInvalidImages(data, 'profile_photo_url')
-//         $scope.rec = data
-//         $scope.isLoading = false
-//         utils.requestEnd();
-//     })
-//
-// });
 
 app.controller('messengerController', function($scope, searchHelper, userContacts, utils, AuthService) {
     self_user = AuthService.getUser()

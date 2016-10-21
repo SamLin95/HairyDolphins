@@ -184,6 +184,7 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		})
 	}
 
+
 	function getRecDetail(params) {
 		utils.requestStart()
 
