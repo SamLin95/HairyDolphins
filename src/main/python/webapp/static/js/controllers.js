@@ -297,6 +297,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
 app.controller('recDetailController', function($scope, recomendation, $state, $stateParams, searchHelper, utils) {
     utils.replaceInvalidImages(recomendation, 'profile_photo_url')
     $scope.recomendation = recomendation
+    $scope.displayCollection = [].concat($scope.recomendation.reviews)
     id = recomendation.id
 
     searchHelper.getRecDetail({
@@ -305,6 +306,7 @@ app.controller('recDetailController', function($scope, recomendation, $state, $s
     }).then(function (data) {
         utils.replaceInvalidImages(data, 'profile_photo_url')
         $scope.recomendation = data
+        $scope.displayCollection = [].concat($scope.recomendation.reviews)
         $scope.isLoading = false
         utils.requestEnd();
     })
