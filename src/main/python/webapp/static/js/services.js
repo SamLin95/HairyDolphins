@@ -146,6 +146,8 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	var factory = {};
 
 	factory.searchLocalAdvisors = searchLocalAdvisors;
+	factory.getAdvisorDetail = getAdvisorDetail;
+	factory.getRecDetail = getRecDetail;
 	factory.searchUsers = searchUsers;
 	factory.searchRecommendations = searchRecommendations;
 	factory.searchUserContacts = searchUserContacts;
@@ -162,6 +164,34 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			url : '/api/recommendations',
 			params: params
 		}).then(function(data, status){
+			return data.data
+		}, function(data) {
+			return []
+		})
+	}
+
+	function getAdvisorDetail(params) {
+		utils.requestStart()
+
+		return $http({
+			method: 'GET',
+			url: '/api/users/' + params.id,
+			params: params
+		}).then(function(data, status) {
+			return data.data
+		}, function(data) {
+			return []
+		})
+	}
+
+	function getRecDetail(params) {
+		utils.requestStart()
+
+		return $http({
+			method: 'GET',
+			url: '/api/recommendations/' + params.id,
+			params: params
+		}).then(function(data, status) {
 			return data.data
 		}, function(data) {
 			return []

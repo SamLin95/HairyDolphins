@@ -20,8 +20,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     .state('unauth', {
       abstract: true,
       url: '/unauth',
-      views: { 
-        'header' : { 
+      views: {
+        'header' : {
           templateUrl: '/static/partials/unauth/unauth_nav.html',
           controller: 'unauthNavController',
           controllerAs: 'nav'
@@ -32,9 +32,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
         utils.requestEnd()
       }
     })
-    .state('unauth.home', { 
-      url: '/home', 
-      views: { 
+    .state('unauth.home', {
+      url: '/home',
+      views: {
         'content@' : {
           templateUrl: '/static/partials/common/home.html',
           controller: 'mainController',
@@ -46,9 +46,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
         utils.requestEnd()
       }
     })
-    .state('unauth.laSearch', { 
-      url: '/laSearch?keyword&available_date&request_fields&limit', 
-      views: { 
+    .state('unauth.laSearch', {
+      url: '/laSearch?keyword&available_date&request_fields&limit',
+      views: {
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
           params: {
@@ -73,8 +73,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     .state('auth', {
       abstract: true,
       url: '/auth',
-      views: { 
-        'header' : { 
+      views: {
+        'header' : {
           templateUrl: '/static/partials/auth/auth_nav.html',
           controller: 'authNavController',
           controllerAs: 'nav'
@@ -86,8 +86,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('auth.home', {
-      url: '/home', 
-      views: { 
+      url: '/home',
+      views: {
         'content@' : {
           templateUrl: '/static/partials/common/home.html',
           controller: 'mainController',
@@ -99,9 +99,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
         utils.requestEnd()
       }
     })
-    .state('auth.laSearch', { 
-      url: '/laSearch?keyword&available_date&request_fields&limit', 
-      views: { 
+    .state('auth.laSearch', {
+      url: '/laSearch?keyword&available_date&request_fields&limit',
+      views: {
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
           params: {
@@ -226,6 +226,98 @@ app.config(function($stateProvider, $urlRouterProvider) {
         },
         recommendation_categories: function(searchHelper) {
           return searchHelper.getRecommendationCategoryOptions()
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.advisorDetail', {
+      url: '/advisorDetail?id',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/detail/advisorDetail.html',
+          params: {
+            id: 0,
+            request_fields: []
+          },
+          controller: 'advisorDetailController',
+          controllerAs: 'advisorDetail'
+        }
+      },
+      unauth_redirect: "unauth.advisorDetail",
+      resolve: {
+        advisor: function($stateParams, searchHelper){
+          return searchHelper.getAdvisorDetail($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('unauth.advisorDetail', {
+      url: '/advisorDetail?id',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/detail/advisorDetail.html',
+          params: {
+            id: 0,
+            request_fields: []
+          },
+          controller: 'advisorDetailController',
+          controllerAs: 'advisorDetail'
+        }
+      },
+      auth_redirect: "auth.advisorDetail",
+      resolve: {
+        advisor: function($stateParams, searchHelper){
+          return searchHelper.getAdvisorDetail($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('auth.recDetail', {
+      url: '/recDetail?id',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/detail/recDetail.html',
+          params: {
+            id: 0,
+            request_fields: []
+          },
+          controller: 'recDetailController',
+          controllerAs: 'recDetail'
+        }
+      },
+      unauth_redirect: "unauth.recDetail",
+      resolve: {
+        recomendation: function($stateParams, searchHelper){
+          return searchHelper.getRecDetail($stateParams)
+        }
+      },
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
+    .state('unauth.recDetail', {
+      url: '/recDetail?id',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/detail/recDetail.html',
+          params: {
+            id: 0,
+            request_fields: []
+          },
+          controller: 'recDetailController',
+          controllerAs: 'recDetail'
+        }
+      },
+      auth_redirect: "auth.recDetail",
+      resolve: {
+        recomendation: function($stateParams, searchHelper){
+          return searchHelper.getRecDetail($stateParams)
         }
       },
       onEnter: function(utils) {

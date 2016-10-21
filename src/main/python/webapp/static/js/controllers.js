@@ -17,6 +17,7 @@ app.controller('mainController', function($scope, $state) {
                     'first_name',
                     'local_advisor_profile',
                     'last_name',
+                    'id',
                     'average_rating',
                     'profile_photo_url'
                 ],
@@ -184,8 +185,16 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
   $scope.sendSearchRequest = sendSearchRequest;
   $scope.displayCollection = [].concat($scope.localAdvisors);
 
-  $scope.alert = function() {
-    alert('clicked')
+  $scope.alert = function(param) {
+      id = param.id;
+      console.log('paramA:' + param)
+      console.log('id:' + id)
+      $state.go(
+          '^.advisorDetail',
+          {
+              id: id,
+              request_fields: []
+          })
   }
 
   function sendSearchRequest() {
@@ -198,6 +207,7 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
                 request_fields: [
                     'first_name',
                     'local_advisor_profile',
+                    'id',
                     'last_name',
                     'average_rating',
                     'profile_photo_url'
@@ -214,6 +224,24 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 
 });
 
+app.controller('advisorDetailController', function($scope, advisor, $state, $stateParams, searchHelper, utils) {
+    utils.replaceInvalidImages(advisor, 'profile_photo_url')
+    $scope.advisor = advisor
+    id = advisor.id
+    console.log('adv:' + advisor)
+    console.log('id:' + id)
+    searchHelper.getAdvisorDetail({
+        id: id,
+        request_fields: []
+    }).then(function (data) {
+        utils.replaceInvalidImages(data, 'profile_photo_url')
+        $scope.advisor = data
+        $scope.isLoading = false
+        utils.requestEnd();
+    })
+
+});
+
 app.controller('locRecController', function($scope, recommendations, cities, recommendation_categories, $state, $stateParams, searchHelper, utils){
     $scope.cities = cities
     $scope.recommendation_categories = recommendation_categories
@@ -222,8 +250,16 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.displayCollection = [].concat($scope.recommendations);
 
-    $scope.alert = function() {
-        alert('clicked')
+    $scope.alert = function(param) {
+        id = param.id;
+        console.log('paramR:' + param)
+        console.log('id:' + id)
+        $state.go(
+            '^.recDetail',
+            {
+                id: id,
+                request_fields: []
+            })
     }
 
     function sendSearchRequest() {
@@ -242,6 +278,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
                 'average_rating',
                 'description',
                 'city',
+                'id',
                 'primary_picture',
                 'address_line_one',
                 'address_line_two',
@@ -258,6 +295,42 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
     }
 
 });
+
+app.controller('recDetailController', function($scope, recomendation, $state, $stateParams, searchHelper, utils) {
+    utils.replaceInvalidImages(recomendation, 'profile_photo_url')
+    $scope.recomendation = recomendation
+    id = recomendation.id
+    console.log('rec:' + recomendation)
+    console.log('id:' + id)
+    searchHelper.getRecDetail({
+        id: id,
+        request_fields: []
+    }).then(function (data) {
+        utils.replaceInvalidImages(data, 'profile_photo_url')
+        $scope.recomendation = data
+        $scope.isLoading = false
+        utils.requestEnd();
+    })
+
+});
+
+// app.controller('recDetailController', function($scope, rec, $state, $stateParams, searchHelper, utils) {
+//     utils.replaceInvalidImages(rec, 'profile_photo_url')
+//     $scope.rec = rec
+//     id = rec.id
+//     console.log('here3:' + id)
+//     console.log('here3:' + rec)
+//     searchHelper.getRecDetail({
+//         id: id,
+//         request_fields: []
+//     }).then(function (data) {
+//         utils.replaceInvalidImages(data, 'profile_photo_url')
+//         $scope.rec = data
+//         $scope.isLoading = false
+//         utils.requestEnd();
+//     })
+//
+// });
 
 app.controller('messengerController', function($scope, searchHelper, userContacts, utils, AuthService) {
     self_user = AuthService.getUser()

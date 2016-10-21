@@ -35,7 +35,13 @@
             <div>
                 <td style="width: 25%">
                     <div class="squareImgContainer">
-                        <img ng-click="alert()" style="height: 70%;" ng-src="{{localRecommendation.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                        {{localRecommendation}}
+                        -----------------
+                        {{localRecommendation.id}}
+                        <button type="button" class="btn btn-primary pull-left" style="width:50%" ng-click="alert(localRecommendation)">
+                            More
+                        </button>
+                        <!--<img ng-click="alert()" style="height: 70%;" ng-src="{{localRecommendation.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">-->
                     </div>
                 </td>
                 <td>
