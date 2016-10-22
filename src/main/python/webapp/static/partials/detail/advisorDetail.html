@@ -36,12 +36,14 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
             <div class="col-md-4">
                 <h3>Location</h3>
                 <hr>
                 <div>{{advisor.local_advisor_profile.city.label}}, {{advisor.local_advisor_profile.city.state.label}}</div>
+            </div>
+            <div>
+                <button class="btn btn-primary" ng-click="checkAvailability()" style="margin-top:15em; margin-left:10em">Check Availabilitiy!</button>
             </div>
         </div>
         <hr>
@@ -84,34 +86,36 @@
         </table>
         <div>
             <h3>Add Your Comment</h3>
-            <div ng-if="!user" class="bottom text-center">
-                 You need to log in to comment <a ng-click="openLoginModal()"><b>Login</b></a>
+            <div ng-show="!user" class="well bottom text-center">
+                <div>
+                You need to log in to comment. <a ng-click="openLoginModal()"><b>Login Now</b></a>
+                </div>
             </div>
-            <div ng-if="user">
+            <div ng-show="user">
                 <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
                 <form class="form-horizontal" style="margin-top:3em" role="form" name="reviewForm"> 
                     <div class="form-group row">
-                        <label class="col-md-2 control-label">Rating:</label>
-                        <div class="col-md-10" style="margin-top:0.6em">
+                        <label class="col-md-2 control-label">Select a Rating:</label>
+                        <div class="col-md-8" style="margin-top:0.6em">
                             <span uib-rating max="5" ng-model="newReview.rating" required></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-2 control-label">Title:</label>
-                        <div class="col-md-10">
+                        <div class="col-md-8">
                           <input class="form-control" type="text" ng_model="newReview.title" required maxlength="64">
                         </div>
                      </div>
                     <div class="form-group row">
                         <label class="col-md-2 control-label">Comment:</label>
-                        <div class="col-md-10">
+                        <div class="col-md-8">
                           <textarea class="form-control" rows="5" type="text" ng_model="newReview.content" required maxlength="1024">
                           </textarea>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 control-label"></label>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                           <span style="margin-left:45%">
                               <input type="submit" class="btn btn-success" value="Submit" ng-click="submitPostReviewRequest()" style="width: 25%; margin-right: 1em">
                               <input type="reset" class="btn btn-default" value="Cancel" style="width: 25%">

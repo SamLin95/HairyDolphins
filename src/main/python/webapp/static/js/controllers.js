@@ -187,13 +187,17 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 
 });
 
-app.controller('advisorDetailController', function($uibModal, $scope, advisor, $state, $stateParams, searchHelper, utils, alertFactory, AuthService, reviewManager) {
+app.controller('advisorDetailController', function($uibModal, $scope, advisor, $state, $stateParams, searchHelper, utils, alertFactory, AuthService, reviewManager, $uibModal) {
     $scope.alerts = [];
     $scope.addAlert = addAlert;
     $scope.closeAlert = closeAlert;
     $scope.user = AuthService.getUser();
     $scope.openLoginModal = AuthService.openLoginModal;
     $scope.openSignupModal = AuthService.openSignupModal;
+    $scope.checkAvailability = checkAvailability;
+    $scope.available_dates = advisor.local_advisor_profile.available_dates.map(function(available_date){
+        return available_date.date
+    })
 
     utils.replaceInvalidImages(advisor, 'profile_photo_url')
     $scope.advisor = advisor
@@ -209,7 +213,6 @@ app.controller('advisorDetailController', function($uibModal, $scope, advisor, $
     function closeAlert(index) {
         alertFactory.closeAlert($scope, index);
     }
-
 
     function submitPostReviewRequest() {
         if(!$scope.newReview.rating) {
@@ -237,6 +240,46 @@ app.controller('advisorDetailController', function($uibModal, $scope, advisor, $
                 addAlert('danger', response.data.message)
             })
         }
+    }
+
+    function checkAvailability() {
+        var modalInstance = $uibModal.open({
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: '/static/partials/detail/availabilityModal.html',
+            windowClass: 'dateModal',
+            scope: $scope,
+            size:'sm',
+            controller: function ($scope, $filter) {
+                $scope.dateOptions = {
+                    formatYear: 'yy',
+                    maxDate: new Date(2020, 5, 22),
+                    minDate: new Date(),
+                    startingDay: 1,
+                    dateDisabled: function(date, mode) {
+                        if(date.mode == 'day'){
+                            date_to_check = moment(date.date).format("YYYY-MM-DD")
+                            
+                            if($scope.available_dates.indexOf(date_to_check) == -1) {
+                                return true
+                            }
+                            return false
+                        }
+                    },
+                    customClass: function(date) {
+                         if(date.mode == 'day'){
+                            date_to_check = moment(date.date).format("YYYY-MM-DD")
+                            
+                            if($scope.available_dates.indexOf(date_to_check) == -1) {
+                                return ''
+                            }
+
+                            return 'btn-date-available'
+                        }
+                    }
+                };
+            }
+        })
     }
 });
 

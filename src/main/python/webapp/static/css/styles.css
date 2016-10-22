@@ -143,3 +143,13 @@ Pangination Buttons
   background-size: contain;
   background-image: url("/static/images/star_off.png");
 }
+
+.dateModal .modal-dialog {
+  width: 350px;
+}
+
+.btn-date-available button span{
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+}
