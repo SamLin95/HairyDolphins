@@ -570,3 +570,45 @@ class Files(flask_restful.Resource):
         return file_schema.dump(photo_file).data
         
 api.add_resource(Files, '/files')
+
+class Reviews(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('title', type=str, required=True)
+        parser.add_argument('content', type=str, required=True)
+        parser.add_argument('rating', type=str, required=True)
+        parser.add_argument('reviewer_id', type=int, required=True)
+        parser.add_argument('local_advisor_profile_id', type=int)
+        parser.add_argument('recommendation_id', type=int)
+        args = parser.parse_args()
+
+        title = args['title']
+        content = args['content']
+        rating = args['rating']
+        reviewer_id = args['reviewer_id']
+        local_advisor_profile_id = args['local_advisor_profile_id']
+        recommendation_id = args['recommendation_id']
+
+        if(local_advisor_profile_id):
+            existing_local_advisor_review = Review.query.filter(and_(Review.local_advisor_profile_id==local_advisor_profile_id, Review.reviewer_id==reviewer_id)).first()
+            if(existing_local_advisor_review):
+                return {"message" :"You cannot twice on the same local advisor."}, HTTP_BAD_REQUEST
+
+        if(recommendation_id):
+            existing_recommendation_review = Review.query.filter(and_(Review.recommendation_id==recommendation_id, Review.reviewer_id==reviewer_id)).first()
+            if(existing_recommendation_review):
+                return {"message" :"You cannot twice on the same recommendation."}, HTTP_BAD_REQUEST
+
+        try:
+            new_review = Review(title=title, content=content, rating=rating, reviewer_id=reviewer_id, recommendation_id=recommendation_id, local_advisor_profile_id=local_advisor_profile_id)
+
+            new_review.add(new_review)
+
+            review_schema = ReviewSchema()
+            review_json = review_schema.dump(new_review).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add review during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return review_json 
+
+api.add_resource(Reviews, '/reviews')

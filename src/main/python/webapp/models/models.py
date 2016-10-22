@@ -270,6 +270,7 @@ class Review(TableTemplate, db.Model, CRUD):
     id                       = db.Column(db.Integer, primary_key=True)
     rating                   = db.Column(db.Integer, nullable=False)
     title                    = db.Column(db.String(64), nullable=False)
+    content                  = db.Column(db.String(2048), nullable=False)
     posted                   = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     local_advisor_profile_id = db.Column(db.Integer, db.ForeignKey('local_advisor_profile.id'))
     recommendation_id        = db.Column(db.Integer, db.ForeignKey('recommendation.id'))

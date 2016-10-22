@@ -130,3 +130,16 @@ Pangination Buttons
     transform: translateX(-50%) translateY(-50%);
 }
 
+.star_on { 
+  height: 36px;
+  width: 36px;
+  background-size: contain;
+  background-image: url("/static/images/star_on.png");
+}
+
+.star_off {
+  height: 36px;
+  width: 36px;
+  background-size: contain;
+  background-image: url("/static/images/star_off.png");
+}

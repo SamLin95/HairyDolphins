@@ -18,8 +18,8 @@
       </div>
       
       <!-- edit form column -->
-      <div class="col-md-9 personal-info">
-        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="$ctrl.closeAlert($index)">{{alert.msg}}</div>
+      <div class="col-md-9">
+        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
         
         <form class="form-horizontal" role="form" name="recCrtForm">
           <div class="form-group">

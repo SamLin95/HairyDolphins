@@ -26,7 +26,7 @@ class LocalAdvisorProfileSchema(ModelSchema):
         exclude = ('search_vector',)
 
 class ReviewSchema(ModelSchema):
-    reviewer = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    reviewer = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
     class Meta:
         model = Review
 

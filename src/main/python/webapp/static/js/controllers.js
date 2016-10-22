@@ -28,48 +28,13 @@ app.controller('mainController', function($scope, $state) {
     }
 })
 
-app.controller('unauthNavController', ['$scope', '$uibModal', function ($scope, $uibModal) {
+app.controller('unauthNavController', function ($scope, AuthService ) {
     var $ctrl = this;
-    $ctrl.openSignupModal = openSignupModal;
-    $ctrl.openLoginModal = openLoginModal;
+    $ctrl.openSignupModal = AuthService.openSignupModal;
+    $ctrl.openLoginModal = AuthService.openLoginModal;
     $scope.isCollapsed = true;
 
-    function openLoginModal() {
-        var modalInstance = $uibModal.open({
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: '/static/directives/login.html',
-            controller: 'loginController',
-            controllerAs: '$ctrl',
-            size:'sm'
-        });
-
-        modalInstance.result.then( function(result) {
-            if(result === 'signup')
-            {
-                $ctrl.openSignupModal();
-            }
-        });
-    }
-
-    function openSignupModal(){
-        var modalInstance = $uibModal.open({
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: '/static/directives/signup.html',
-            controller: 'signupController',
-            controllerAs: '$ctrl',
-            size:'sm'
-        });
-
-        modalInstance.result.then( function(result) {
-            if(result === 'login')
-            {
-                $ctrl.openLoginModal();
-            }
-        });
-    }
-}]);
+});
 
 app.controller('authNavController', function ($scope, $state, AuthService) {
     var $ctrl = this;
@@ -81,12 +46,11 @@ app.controller('authNavController', function ($scope, $state, AuthService) {
         AuthService.logout()
             .then(function() {
                     alert("You have been logged out")
-                    $state.go('unauth.home');
+                    $state.reload();
                 }
             )
     }
 });
-
 
 app.controller('loginController', function($scope, $uibModalInstance, $http, $state, alertFactory, AuthService) {
         var $ctrl = this;
@@ -107,7 +71,7 @@ app.controller('loginController', function($scope, $uibModalInstance, $http, $st
                 AuthService.login($ctrl.username, $ctrl.password)
                     .then(function () {
                         $ctrl.clearData();
-                        $state.go('auth.home');
+                        $state.reload();
                         $uibModalInstance.close('success');
                     }).catch(function () {
                         $ctrl.clearData();
@@ -223,23 +187,57 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 
 });
 
-app.controller('advisorDetailController', function($scope, advisor, $state, $stateParams, searchHelper, utils) {
+app.controller('advisorDetailController', function($uibModal, $scope, advisor, $state, $stateParams, searchHelper, utils, alertFactory, AuthService, reviewManager) {
+    $scope.alerts = [];
+    $scope.addAlert = addAlert;
+    $scope.closeAlert = closeAlert;
+    $scope.user = AuthService.getUser();
+    $scope.openLoginModal = AuthService.openLoginModal;
+    $scope.openSignupModal = AuthService.openSignupModal;
+
     utils.replaceInvalidImages(advisor, 'profile_photo_url')
     $scope.advisor = advisor
+    $scope.review_count = advisor.local_advisor_profile.reviews.length
     $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
-    id = advisor.id
+    $scope.submitPostReviewRequest = submitPostReviewRequest
+    $scope.newReview = null
 
-    searchHelper.getAdvisorDetail({
-        id: id,
-        request_fields: []
-    }).then(function (data) {
-        utils.replaceInvalidImages(data, 'profile_photo_url')
-        $scope.advisor = data
-        $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
-        $scope.isLoading = false
-        utils.requestEnd();
-    })
+    function addAlert(type, message) {
+        alertFactory.addAlert($scope, type, message);
+    }
 
+    function closeAlert(index) {
+        alertFactory.closeAlert($scope, index);
+    }
+
+
+    function submitPostReviewRequest() {
+        if(!$scope.newReview.rating) {
+            addAlert('danger', "A rating needs to be submitted")
+        }
+
+        if($scope.reviewForm.$valid) {
+            reviewManager.createNewReview({
+                title : $scope.newReview.title,
+                content : $scope.newReview.content,
+                rating : $scope.newReview.rating,
+                reviewer_id : $scope.user.id,
+                local_advisor_profile_id : $scope.advisor.local_advisor_profile.id
+            }).then(function(review){
+                utils.requestEnd();
+                $scope.addAlert('success', "Your review has been successfully submitted")
+                $scope.advisor.local_advisor_profile.reviews.push(review)
+                $scope.advisor.average_rating = ($scope.advisor.average_rating * $scope.review_count + $scope.newReview.rating)/($scope.review_count + 1)
+                $scope.newReview = null
+
+                //refresh review_count
+                $scope.review_count += 1
+                $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
+            }).catch(function (response) {
+                addAlert('danger', response.data.message)
+            })
+        }
+    }
 });
 
 app.controller('locRecController', function($scope, recommendations, cities, recommendation_categories, $state, $stateParams, searchHelper, utils){

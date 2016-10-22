@@ -125,8 +125,8 @@ def createAdvisorProfile(description, city=None, dates=None):
     print '------ advisor checked -----'
     return advisor
 
-def createReview(rating, title, reviewer, advisor_profile=None, posted=None, recommend=None):
-    review = Review(rating=rating, title=title, reviewer=reviewer)
+def createReview(rating, title, content, reviewer, advisor_profile=None, posted=None, recommend=None):
+    review = Review(rating=rating, title=title, content=content, reviewer=reviewer)
     if posted != None:
         review.posted = posted
     if advisor_profile != None:

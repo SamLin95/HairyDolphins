@@ -1,20 +1,22 @@
 var app = angular.module('HairyDolphinsApp');
 
 app.factory('AuthService',
-  ['$q', '$timeout', '$http', 'utils',
-  function ($q, $timeout, $http, utils, $rootScope) {
+  function ($q, $timeout, $http, utils, $rootScope, $uibModal) {
 
     // create user variable
     var user = null;
-
-    // return available functions for use in controllers
-    return ({
+    var factory = {
       isLoggedIn: isLoggedIn,
       login: login,
       logout: logout,
       loadCurrentUser: loadCurrentUser,
       getUser: getUser,
-    });
+      openLoginModal : openLoginModal,
+      openSignupModal : openSignupModal,
+    }
+
+    // return available functions for use in controllers
+    return factory;
 
     function getUser() {
     	return user;
@@ -116,7 +118,43 @@ app.factory('AuthService',
 	  	return deferred.promise;
 	}
 
-}]);
+	 function openLoginModal() {
+        var modalInstance = $uibModal.open({
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: '/static/directives/login.html',
+            controller: 'loginController',
+            controllerAs: '$ctrl',
+            size:'sm'
+        });
+
+        modalInstance.result.then( function(result) {
+            if(result === 'signup')
+            {
+                factory.openSignupModal();
+            }
+        });
+    }
+
+    function openSignupModal(){
+        var modalInstance = $uibModal.open({
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: '/static/directives/signup.html',
+            controller: 'signupController',
+            controllerAs: '$ctrl',
+            size:'sm'
+        });
+
+        modalInstance.result.then( function(result) {
+            if(result === 'login')
+            {
+                factory.openLoginModal();
+            }
+        });
+    }
+
+});
 
 app.factory('alertFactory', function() {
 	var factory = {};
@@ -178,6 +216,9 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			url: '/api/users/' + params.id,
 			params: params
 		}).then(function(data, status) {
+			data.data.local_advisor_profile.reviews.forEach(function(review){
+				utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
+			})
 			return data.data
 		}, function(data) {
 			return []
@@ -453,6 +494,28 @@ app.factory('recManager', function($q, $timeout, utils, $http) {
 
 	return factory
 })
+
+app.factory('reviewManager', function($q, $timeout, utils, $http) {
+	var factory = {};
+
+	factory.createNewReview = createNewReview
+
+	function createNewReview(params) {
+		utils.requestStart()
+
+		return $http({
+			method: 'POST',
+			url : '/api/reviews',
+			params: params
+		}).then(function(data, status){
+			return data.data
+		})
+	}
+
+	return factory
+})
+
+
 
 // app.factory('sharedSearch', function($rootScope) {
 // 	var sharedSearch = {};

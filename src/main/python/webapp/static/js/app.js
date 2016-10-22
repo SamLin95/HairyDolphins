@@ -228,6 +228,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           return searchHelper.getRecommendationCategoryOptions()
         }
       },
+      unauth_redirect: "unauth.home",
       onEnter: function(utils) {
         utils.requestEnd()
       }
@@ -238,7 +239,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/advisorDetail.html',
           params: {
-            id: 0,
+            id: null,
             request_fields: []
           },
           controller: 'advisorDetailController',
@@ -250,9 +251,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         advisor: function($stateParams, searchHelper){
           return searchHelper.getAdvisorDetail($stateParams)
         }
-        // review: function($stateParams, searchHelper){
-        //   return searchHelper.getAdvisorReview($stateParams)
-        // }
       },
       onEnter: function(utils) {
         utils.requestEnd()
@@ -264,7 +262,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/advisorDetail.html',
           params: {
-            id: 0,
+            id: null,
             request_fields: []
           },
           controller: 'advisorDetailController',
@@ -276,9 +274,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         advisor: function($stateParams, searchHelper){
           return searchHelper.getAdvisorDetail($stateParams)
         }
-        // review: function($stateParams, searchHelper){
-        //   return searchHelper.getAdvisorReview($stateParams)
-        // }
       },
       onEnter: function(utils) {
         utils.requestEnd()
@@ -290,7 +285,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/recDetail.html',
           params: {
-            id: 0,
+            id: null,
             request_fields: []
           },
           controller: 'recDetailController',
@@ -313,7 +308,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/recDetail.html',
           params: {
-            id: 0,
+            id: null,
             request_fields: []
           },
           controller: 'recDetailController',
@@ -346,13 +341,13 @@ app.run(function ($rootScope, $state, AuthService) {
     AuthService.loadCurrentUser()
       .then(function(){
         if(toState.auth_redirect){
-          $state.transitionTo(toState.auth_redirect);
+          $state.transitionTo(toState.auth_redirect, toParams);
           event.preventDefault();
         }
       })
       .catch(function(){
         if(toState.unauth_redirect){
-          $state.transitionTo(toState.unauth_redirect);
+          $state.transitionTo(toState.unauth_redirect, toParams);
           event.preventDefault(); 
         }
       })
