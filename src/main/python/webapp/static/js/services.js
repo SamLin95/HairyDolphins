@@ -202,6 +202,17 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			url : '/api/recommendations',
 			params: params
 		}).then(function(data, status){
+			recommendations = data.data
+
+			data.data.forEach(function(recommendation){
+				recommendation.complete_address = recommendation.address_line_one
+		        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
+		        + recommendation.city.label + ', '
+		        + recommendation.city.state.label
+		        + recommendation.city.state.country.label + ', '
+		        + recommendation.zip_code
+		    })
+
 			return data.data
 		}, function(data) {
 			return []
@@ -234,7 +245,26 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			url: '/api/recommendations/' + params.id,
 			params: params
 		}).then(function(data, status) {
-			return data.data
+			recommendation = data.data
+			data.data.complete_address = recommendation.address_line_one
+		        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
+		        + recommendation.city.label + ', '
+		        + recommendation.city.state.label
+		        + recommendation.city.state.country.label + ', '
+		        + recommendation.zip_code
+
+			return $http({
+				method: 'GET',
+				url : 'https://maps.googleapis.com/maps/api/geocode/json',
+				params : {
+					address : data.data.complete_address,
+					key : 'AIzaSyCe4fuOg-Njod6WBo8P6UPeWhOaOdErsgE'
+				}
+			}).then(function(response) {
+				console.log(response.data.results[0].geometry.location)
+				data.data.geo = response.data.results[0].geometry.location
+				return data.data
+			})
 		}, function(data) {
 			return []
 		})

@@ -1,11 +1,21 @@
 'use strict';
 
 var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router',
-  'bootstrap.angular.validation', 'smart-table', 'angularSpinner', 'btford.socket-io', 'lr.upload']);
+  'bootstrap.angular.validation', 'smart-table', 'angularSpinner', 'btford.socket-io', 'lr.upload',
+  'uiGmapgoogle-maps']);
 
 app.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({radius:6, length: 1});
 }]);
+
+app.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.20', //defaults to latest 3.X anyhow
+        libraries: 'weather,geometry,visualization',
+        key: 'AIzaSyCe4fuOg-Njod6WBo8P6UPeWhOaOdErsgE'
+    });
+})
 
 app.config(['bsValidationConfigProvider', function(bsValidationConfigProvider) {
   bsValidationConfigProvider.global.setValidateFieldsOn('submit');
@@ -294,7 +304,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       },
       unauth_redirect: "unauth.recDetail",
       resolve: {
-        recomendation: function($stateParams, searchHelper){
+        recommendation: function($stateParams, searchHelper){
           return searchHelper.getRecDetail($stateParams)
         }
       },
@@ -317,7 +327,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       },
       auth_redirect: "auth.recDetail",
       resolve: {
-        recomendation: function($stateParams, searchHelper){
+        recommendation: function($stateParams, searchHelper){
           return searchHelper.getRecDetail($stateParams)
         }
       },

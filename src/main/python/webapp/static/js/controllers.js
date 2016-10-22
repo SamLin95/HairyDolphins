@@ -187,7 +187,7 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
 
 });
 
-app.controller('advisorDetailController', function($uibModal, $scope, advisor, $state, $stateParams, searchHelper, utils, alertFactory, AuthService, reviewManager, $uibModal) {
+app.controller('advisorDetailController', function($scope, advisor, $state, $stateParams, utils, alertFactory, AuthService, reviewManager, $uibModal) {
     $scope.alerts = [];
     $scope.addAlert = addAlert;
     $scope.closeAlert = closeAlert;
@@ -215,7 +215,7 @@ app.controller('advisorDetailController', function($uibModal, $scope, advisor, $
     }
 
     function submitPostReviewRequest() {
-        if(!$scope.newReview.rating) {
+        if(!$scope.newReview || !$scope.newReview.rating) {
             addAlert('danger', "A rating needs to be submitted")
         }
 
@@ -335,22 +335,58 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
 
 });
 
-app.controller('recDetailController', function($scope, recomendation, $state, $stateParams, searchHelper, utils) {
-    utils.replaceInvalidImages(recomendation, 'profile_photo_url')
-    $scope.recomendation = recomendation
-    $scope.displayCollection = [].concat($scope.recomendation.reviews)
-    id = recomendation.id
+app.controller('recDetailController', function($scope, recommendation, $state, $stateParams, utils, alertFactory, AuthService, reviewManager) {
+    $scope.alerts = [];
+    $scope.addAlert = addAlert;
+    $scope.closeAlert = closeAlert;
+    $scope.user = AuthService.getUser();
 
-    searchHelper.getRecDetail({
-        id: id,
-        request_fields: []
-    }).then(function (data) {
-        utils.replaceInvalidImages(data, 'profile_photo_url')
-        $scope.recomendation = data
-        $scope.displayCollection = [].concat($scope.recomendation.reviews)
-        $scope.isLoading = false
-        utils.requestEnd();
-    })
+    $scope.openLoginModal = AuthService.openLoginModal;
+    $scope.openSignupModal = AuthService.openSignupModal;
+    utils.replaceInvalidImages(recommendation, 'primary_picture')
+    $scope.recommendation = recommendation
+    $scope.review_count = recommendation.reviews.length
+    $scope.displayCollection = [].concat($scope.recommendation.reviews)
+    $scope.submitPostReviewRequest = submitPostReviewRequest
+    $scope.newReview = null
+
+    $scope.map = { center: { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }, zoom: 8 };
+
+    function addAlert(type, message) {
+        alertFactory.addAlert($scope, type, message);
+    }
+
+    function closeAlert(index) {
+        alertFactory.closeAlert($scope, index);
+    }
+
+    function submitPostReviewRequest() {
+        if(!$scope.newReview || !$scope.newReview.rating) {
+            addAlert('danger', "A rating needs to be submitted")
+        }
+
+        if($scope.reviewForm.$valid) {
+            reviewManager.createNewReview({
+                title : $scope.newReview.title,
+                content : $scope.newReview.content,
+                rating : $scope.newReview.rating,
+                reviewer_id : $scope.user.id,
+                recommendation_id : $scope.recommendation.id
+            }).then(function(review){
+                utils.requestEnd();
+                $scope.addAlert('success', "Your review has been successfully submitted")
+                $scope.recommendation.reviews.push(review)
+                $scope.recommendation.average_rating = ($scope.recommendation.average_rating * $scope.review_count + $scope.newReview.rating)/($scope.review_count + 1)
+                $scope.newReview = null
+
+                //refresh review_count
+                $scope.review_count += 1
+                $scope.displayCollection = [].concat($scope.recommendation.reviews)
+            }).catch(function (response) {
+                addAlert('danger', response.data.message)
+            })
+        }
+    }
 
 });
 

@@ -20,7 +20,9 @@ class EntitySchema(ModelSchema):
 class LocalAdvisorProfileSchema(ModelSchema):
     reviews = fields.Nested('ReviewSchema', many=True, exclude=('local_advisor_profile',))
     city = fields.Nested('CitySchema')
+    entity = fields.Nested(EntitySchema, only=('id', 'first_name', 'last_name', 'profile_photo_url'), many=True)
     available_dates = fields.Nested('DateSchema', many=True)
+    recommendations = fields.Nested('RecommendationSchema', only=('id', 'title', 'description', 'primary_picture'), many=True)
     class Meta:
         model = LocalAdvisorProfile
         exclude = ('search_vector',)
@@ -71,6 +73,7 @@ class RecommendationSchema(ModelSchema):
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
     recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))
     recommendation_category = fields.Nested('RecommendationCategorySchema', exclude=('recommendations',))
+    local_advisor_profiles = fields.Nested('LocalAdvisorProfileSchema', only=('id', 'entity'), many=True) 
     city = fields.Nested('CitySchema', exclude=('recommendations',))
     average_rating = fields.Float()
     primary_picture = fields.String()
@@ -84,13 +87,8 @@ class RecommendationCategorySchema(ModelSchema):
 class EntityRecommendationSchema(ModelSchema):
     entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
     recommendation = fields.Nested(RecommendationSchema, only=('id', 'title', 'description', 'address_line_one', 'address_line_two', 'city', 'zip_code', 'is_draft'))
-    entity_recommendation_type = fields.Nested('EntityRecommendationTypeSchema', exclude=('entity_recommendations'))
     class Meta:
         model = EntityRecommendation
-
-class EntityRecommendationTypeSchema(ModelSchema):
-    class Meta:
-        model = EntityRecommendationType
 
 class RecommendationPhotoSchema(ModelSchema):
     entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))

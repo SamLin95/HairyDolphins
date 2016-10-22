@@ -189,6 +189,12 @@ local_advisor_available_date = db.Table( 'local_advisor_available_date',
     db.UniqueConstraint('local_advisor_profile_id', 'date_id')
 )
 
+local_advisor_recommendation = db.Table('local_advisor_recommendation',
+    db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
+    db.Column('recommendation_id', db.Integer, db.ForeignKey('recommendation.id')),
+    db.UniqueConstraint('local_advisor_profile_id', 'recommendation_id')
+)
+
 class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
     id          = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(1024))
@@ -197,6 +203,7 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
     #Relationships
     city            = db.relationship('City')
     available_dates = db.relationship('Date', secondary=local_advisor_available_date)
+    recommendations = db.relationship('Recommendation', secondary=local_advisor_recommendation)
 
     #Seach Vector
     search_vector = db.Column(TSVectorType('description'))
@@ -304,6 +311,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     recommendation_category = db.relationship('RecommendationCategory')
     recommender             = db.relationship('Entity', backref=db.backref('recommendations'))
     entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation'))
+    local_advisor_profiles  = db.relationship('LocalAdvisorProfile', secondary=local_advisor_recommendation)
 
     @hybrid_property
     def primary_picture(self):
@@ -324,18 +332,13 @@ class Recommendation(TableTemplate, db.Model, CRUD):
         self.primary_picture
 
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
-    id                            = db.Column(db.Integer, primary_key=True)
-    entity_id                     = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
-    recommendation_id             = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
-    entity_recommendation_type_id = db.Column(db.Integer, db.ForeignKey('entity_recommendation_type.id'),nullable=False)
+    id                = db.Column(db.Integer, primary_key=True)
+    entity_id         = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
+    reason            = db.Column(db.String(2048), nullable=False)
 
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations'))
-    entity_recommendation_type = db.relationship('EntityRecommendationType')
-
-class EntityRecommendationType(db.Model, CRUD):
-    id = db.Column(db.Integer, primary_key=True)
-    label= db.Column(db.String(32), nullable=False, unique=True)
 
 class RecommendationCategory(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
