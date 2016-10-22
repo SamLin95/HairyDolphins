@@ -68,7 +68,7 @@ class DateSchema(ModelSchema):
         model = Date
 
 class RecommendationSchema(ModelSchema):
-    recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
     reviews = fields.Nested(ReviewSchema, exclude=('recommendation',), many=True)
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
     recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))

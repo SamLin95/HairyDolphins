@@ -144,7 +144,6 @@ app.controller('signupController', function($scope, $uibModalInstance, $rootScop
 );
 
 app.controller('laSearchController', function($scope, localAdvisors, $state, $stateParams, searchHelper, utils){
-  utils.replaceInvalidImages(localAdvisors, 'profile_photo_url')
   $scope.localAdvisors = localAdvisors
   $scope.sendSearchRequest = sendSearchRequest;
   $scope.displayCollection = [].concat($scope.localAdvisors);
@@ -176,7 +175,6 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
                     'profile_photo_url'
                 ]
         }).then(function(data){
-            utils.replaceInvalidImages(data, 'profile_photo_url')
             $scope.localAdvisors = data
             $scope.displayCollection = [].concat($scope.localAdvisors);
             $scope.isLoading = false
@@ -199,7 +197,6 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
         return available_date.date
     })
 
-    utils.replaceInvalidImages(advisor, 'profile_photo_url')
     $scope.advisor = advisor
     $scope.review_count = advisor.local_advisor_profile.reviews.length
     $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
@@ -286,7 +283,6 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
 app.controller('locRecController', function($scope, recommendations, cities, recommendation_categories, $state, $stateParams, searchHelper, utils){
     $scope.cities = cities
     $scope.recommendation_categories = recommendation_categories
-    utils.replaceInvalidImages(recommendations, 'primary_picture')
     $scope.recommendations = recommendations
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.displayCollection = [].concat($scope.recommendations);
@@ -324,7 +320,6 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
                 'zip_code'
             ]
         }).then(function(data){
-            utils.replaceInvalidImages(data, 'primary_picture')
             $scope.recommendations = data
             $scope.displayCollection = [].concat($scope.recommendations);
             $scope.isLoading = false
@@ -343,14 +338,29 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
 
     $scope.openLoginModal = AuthService.openLoginModal;
     $scope.openSignupModal = AuthService.openSignupModal;
-    utils.replaceInvalidImages(recommendation, 'primary_picture')
     $scope.recommendation = recommendation
     $scope.review_count = recommendation.reviews.length
     $scope.displayCollection = [].concat($scope.recommendation.reviews)
     $scope.submitPostReviewRequest = submitPostReviewRequest
+    $scope.recommendPlaceRequest = recommendPlaceRequest
     $scope.newReview = null
 
     $scope.map = { center: { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }, zoom: 8 };
+    $scope.geo = { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }
+
+    $scope.currentPage = 1
+    $scope.pageChanged = pageChanged   
+    $scope.numPerPage = 8
+    $scope.pageChanged()
+
+    if(
+        !$scope.user
+        || $scope.recommendation.recommenders.map(function(recommender) {return recommender.id}).indexOf($scope.user.id) == -1
+    ){
+        $scope.recommend_already = false
+    } else {
+        $scope.recommend_already = true
+    }
 
     function addAlert(type, message) {
         alertFactory.addAlert($scope, type, message);
@@ -386,6 +396,33 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 addAlert('danger', response.data.message)
             })
         }
+    }
+
+    function recommendPlaceRequest() {
+        if(!$scope.user) {
+            $scope.openLoginModal()
+        }else{
+            reviewManager.createNewEntityRecommendation({
+                user_id : $scope.user.id,
+                recommendation_id : $scope.recommendation.id
+            }).then(function(entity_recommendation){
+                utils.requestEnd();
+                $scope.addAlert('success', "Your review has been successfully submitted")
+                $scope.recommendation.entity_recommendations.push(entity_recommendation)
+                $scope.recommendation.recommenders.push(entity_recommendation.entity)
+                pageChanged()
+                $scope.recommend_already = true
+            }).catch(function (response) {
+                addAlert('danger', response.data.message)
+            })
+        }
+    }
+
+    function pageChanged() {
+        var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+        var end = begin + $scope.numPerPage;
+
+        $scope.recommenders_to_show = $scope.recommendation.recommenders.slice(begin, end);
     }
 
 });

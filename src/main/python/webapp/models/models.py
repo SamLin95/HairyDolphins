@@ -335,7 +335,7 @@ class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                = db.Column(db.Integer, primary_key=True)
     entity_id         = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
     recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
-    reason            = db.Column(db.String(2048), nullable=False)
+    reason            = db.Column(db.String(2048))
 
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations'))

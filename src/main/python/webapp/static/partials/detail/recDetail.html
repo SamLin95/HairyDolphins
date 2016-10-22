@@ -29,7 +29,7 @@
                     <h3>Map</h3>
                     <hr>
                         <ui-gmap-google-map center='map.center' zoom='map.zoom'>
-                            <ui-gmap-marker coords="map.center" idkey="0">
+                            <ui-gmap-marker coords="geo" idkey="0">
                         </ui-gmap-marker>
                     </ui-gmap-google-map>
                 </div>
@@ -41,10 +41,23 @@
                     <div>{{recommendation.recommendation_category.label}}</div>
                 </div>
                 <div>
-                    <h3>Recommended By</h3>
+                    <h3>Recommended By {{recommendation.recommenders.length}} People</h3>
                     <hr>
                     <div>
-                        <button class="btn btn-primary" ng-click="recommendPlaceRequest()" style="margin-top:15em; margin-left:10em">Also recommend this place!</button>
+                        <div class="row well well-sm" style="margin-left:1em; margin-right:1em; border: none">
+                            <div class="col-md-3" ng-repeat="recommender_to_show in recommenders_to_show">
+                                <div class="squareImgContainer" uib-popover="{{recommender_to_show.first_name}} {{recommender_to_show.last_name}}" popover-trigger="'mouseenter'">
+                                    <img ng-src="{{recommender_to_show.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                                </div>
+                            </div> 
+                        </div>
+                        <ul uib-pagination boundary-links="true" total-items="recommendation.recommenders.length" ng-model="currentPage" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged()" max-size="3" items-per-page="numPerPage" style="margin-left: 30%"></ul>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" ng-show="!recommend_already" ng-click="recommendPlaceRequest()" style="margin-top:2em; margin-left:10em">Also recommend this place!</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary disabled" ng-show="recommend_already" style="margin-top:2em; margin-left:10em">Already Recommended</button>
                     </div>
                 </div>
             </div>

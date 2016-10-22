@@ -612,3 +612,33 @@ class Reviews(flask_restful.Resource):
         return review_json 
 
 api.add_resource(Reviews, '/reviews')
+
+class EntityRecommendations(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('recommendation_id', type=int, required=True)
+        parser.add_argument('user_id', type=int, required=True)
+        parser.add_argument('reason', type=str)
+        args = parser.parse_args()
+
+        recommendation_id = args['recommendation_id']
+        entity_id = args['user_id']
+        reason = args['reason']
+
+        existing_entity_recommendation = EntityRecommendation.query.join(Recommendation).filter(or_(and_(EntityRecommendation.recommendation_id==recommendation_id, EntityRecommendation.entity_id==entity_id), Recommendation.recommender_id==entity_id)).first()
+        if(existing_entity_recommendation):
+            return {"message" :"You have already recommended this place!"}, HTTP_BAD_REQUEST
+
+        try:
+            new_entity_recommendation = EntityRecommendation(entity_id=entity_id, recommendation_id=recommendation_id, reason=reason)
+
+            new_entity_recommendation.add(new_entity_recommendation)
+
+            entity_recommendation_schema = EntityRecommendationSchema()
+            entity_recommendation_json = entity_recommendation_schema.dump(new_entity_recommendation).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add entity_recommendation during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return entity_recommendation_json 
+
+api.add_resource(EntityRecommendations, '/entity_recommendations')

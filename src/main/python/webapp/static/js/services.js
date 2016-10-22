@@ -205,12 +205,22 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			recommendations = data.data
 
 			data.data.forEach(function(recommendation){
+				utils.replaceInvalidImages(recommendation, 'primary_picture')
+
 				recommendation.complete_address = recommendation.address_line_one
 		        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
 		        + recommendation.city.label + ', '
-		        + recommendation.city.state.label
+		        + recommendation.city.state.label + ', '
 		        + recommendation.city.state.country.label + ', '
 		        + recommendation.zip_code
+
+		        recommendation.entity_recommendations.forEach(function(entity_recommendation){
+					utils.replaceInvalidImages(entity_recommendation.entity, 'profile_photo_url')
+				})
+
+		        recommendation.recommenders = [recommendation.recommender].concat(recommendation.entity_recommendations.map(function(entity_recommendation){
+		    		return entity_recommendation.entity
+		    	}))
 		    })
 
 			return data.data
@@ -227,6 +237,8 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			url: '/api/users/' + params.id,
 			params: params
 		}).then(function(data, status) {
+			utils.replaceInvalidImages(data.data, 'profile_photo_url')
+
 			data.data.local_advisor_profile.reviews.forEach(function(review){
 				utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
 			})
@@ -246,12 +258,27 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			params: params
 		}).then(function(data, status) {
 			recommendation = data.data
+			
+			utils.replaceInvalidImages(data.data, 'primary_picture')
+
+			data.data.reviews.forEach(function(review){
+				utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
+			})
+
+			data.data.entity_recommendations.forEach(function(entity_recommendation){
+				utils.replaceInvalidImages(entity_recommendation.entity, 'profile_photo_url')
+			})
+
 			data.data.complete_address = recommendation.address_line_one
 		        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
 		        + recommendation.city.label + ', '
-		        + recommendation.city.state.label
+		        + recommendation.city.state.label + ', '
 		        + recommendation.city.state.country.label + ', '
 		        + recommendation.zip_code
+
+		    data.data.recommenders = [data.data.recommender].concat(data.data.entity_recommendations.map(function(entity_recommendation){
+		    	return entity_recommendation.entity
+		    }))
 
 			return $http({
 				method: 'GET',
@@ -261,7 +288,6 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 					key : 'AIzaSyCe4fuOg-Njod6WBo8P6UPeWhOaOdErsgE'
 				}
 			}).then(function(response) {
-				console.log(response.data.results[0].geometry.location)
 				data.data.geo = response.data.results[0].geometry.location
 				return data.data
 			})
@@ -279,6 +305,10 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	    	url : '/api/users', 
 	    	params: params
 	    }).then(function(data, status){
+	    	data.data.forEach(function(user){
+				utils.replaceInvalidImages(user, 'profile_photo_url')
+			})
+
 	    	return data.data
 	    }, function(data) {
 	    	return []
@@ -291,6 +321,10 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	    	url : '/api/users', 
 	    	params: params
 	    }).then(function(data, status){
+	    	data.data.forEach(function(user){
+				utils.replaceInvalidImages(user, 'profile_photo_url')
+			})
+
 	    	return data.data
 	    }, function(data) {
 	    	return []
@@ -529,6 +563,7 @@ app.factory('reviewManager', function($q, $timeout, utils, $http) {
 	var factory = {};
 
 	factory.createNewReview = createNewReview
+	factory.createNewEntityRecommendation = createNewEntityRecommendation
 
 	function createNewReview(params) {
 		utils.requestStart()
@@ -538,6 +573,20 @@ app.factory('reviewManager', function($q, $timeout, utils, $http) {
 			url : '/api/reviews',
 			params: params
 		}).then(function(data, status){
+			utils.replaceInvalidImages(data.data.reviewer, 'profile_photo_url')
+			return data.data
+		})
+	}
+
+	function createNewEntityRecommendation(params) {
+		utils.requestStart()
+
+		return $http({
+			method: 'POST',
+			url : '/api/entity_recommendations',
+			params: params
+		}).then(function(data, status){
+			utils.replaceInvalidImages(data.data.entity, 'profile_photo_url')
 			return data.data
 		})
 	}
