@@ -345,9 +345,9 @@ app.run(function($rootScope){
   $rootScope.s3url = "https://s3.amazonaws.com/hairydolphins/"
 })
 
-app.run(function ($rootScope, $state, AuthService) {
+app.run(function ($rootScope, $state, AuthService, utils) {
   $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
-    toState.name
+    utils.requestStart()
     AuthService.loadCurrentUser()
       .then(function(){
         if(toState.auth_redirect){

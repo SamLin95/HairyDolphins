@@ -625,7 +625,8 @@ class EntityRecommendations(flask_restful.Resource):
         entity_id = args['user_id']
         reason = args['reason']
 
-        existing_entity_recommendation = EntityRecommendation.query.join(Recommendation).filter(or_(and_(EntityRecommendation.recommendation_id==recommendation_id, EntityRecommendation.entity_id==entity_id), Recommendation.recommender_id==entity_id)).first()
+        existing_entity_recommendation = EntityRecommendation.query.join(Recommendation).filter(and_(EntityRecommendation.recommendation_id==recommendation_id, and_(EntityRecommendation.entity_id==entity_id, Recommendation.recommender_id==entity_id))).first()
+
         if(existing_entity_recommendation):
             return {"message" :"You have already recommended this place!"}, HTTP_BAD_REQUEST
 

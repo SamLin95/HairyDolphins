@@ -214,13 +214,24 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		        + recommendation.city.state.country.label + ', '
 		        + recommendation.zip_code
 
-		        recommendation.entity_recommendations.forEach(function(entity_recommendation){
-					utils.replaceInvalidImages(entity_recommendation.entity, 'profile_photo_url')
-				})
+		        if(recommendation.entity_recommendations) {
+			        recommendation.entity_recommendations.forEach(function(entity_recommendation){
+						utils.replaceInvalidImages(entity_recommendation.entity, 'profile_photo_url')
+					})
 
-		        recommendation.recommenders = [recommendation.recommender].concat(recommendation.entity_recommendations.map(function(entity_recommendation){
-		    		return entity_recommendation.entity
-		    	}))
+					recommendation.recommenders = [recommendation.recommender].concat(recommendation.entity_recommendations.map(function(entity_recommendation){
+		    			return entity_recommendation.entity
+		    		}))
+		  		} else {
+		  			recommendation.recommenders = [recommendation.recommender]
+		  		}
+
+		  		if(recommendation.local_advisor_profiles) {
+					recommendation.local_advisor_profiles.forEach(function(local_advisor_profile){
+						utils.replaceInvalidImages(local_advisor_profile.entity[0], 'profile_photo_url')
+					})
+				}
+
 		    })
 
 			return data.data
@@ -239,9 +250,18 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		}).then(function(data, status) {
 			utils.replaceInvalidImages(data.data, 'profile_photo_url')
 
-			data.data.local_advisor_profile.reviews.forEach(function(review){
-				utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
-			})
+			if(data.data.local_advisor_profile.reviews) {
+				data.data.local_advisor_profile.reviews.forEach(function(review){
+					utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
+				})
+			}
+
+			if(data.data.local_advisor_profile.recommendations) {
+				data.data.local_advisor_profile.recommendations.forEach(function(recommendation){
+					utils.replaceInvalidImages(recommendation, 'primary_picture')
+				})
+			}
+
 			return data.data
 		}, function(data) {
 			return []
@@ -261,13 +281,29 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			
 			utils.replaceInvalidImages(data.data, 'primary_picture')
 
-			data.data.reviews.forEach(function(review){
-				utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
-			})
+			if(data.data.reviews) {
+				data.data.reviews.forEach(function(review){
+					utils.replaceInvalidImages(review.reviewer, 'profile_photo_url')
+				})
+			}
 
-			data.data.entity_recommendations.forEach(function(entity_recommendation){
-				utils.replaceInvalidImages(entity_recommendation.entity, 'profile_photo_url')
-			})
+			if(data.data.entity_recommendations) {
+				data.data.entity_recommendations.forEach(function(entity_recommendation){
+					utils.replaceInvalidImages(entity_recommendation.entity, 'profile_photo_url')
+				})
+
+				data.data.recommenders = [data.data.recommender].concat(data.data.entity_recommendations.map(function(entity_recommendation){
+		    		return entity_recommendation.entity
+		    	}))
+			} else {
+				data.data.recommenders = [data.data.recommender]
+			}
+
+			if(data.data.local_advisor_profiles) {
+				data.data.local_advisor_profiles.forEach(function(local_advisor_profile){
+					utils.replaceInvalidImages(local_advisor_profile.entity[0], 'profile_photo_url')
+				})
+			}
 
 			data.data.complete_address = recommendation.address_line_one
 		        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
@@ -275,10 +311,6 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 		        + recommendation.city.state.label + ', '
 		        + recommendation.city.state.country.label + ', '
 		        + recommendation.zip_code
-
-		    data.data.recommenders = [data.data.recommender].concat(data.data.entity_recommendations.map(function(entity_recommendation){
-		    	return entity_recommendation.entity
-		    }))
 
 			return $http({
 				method: 'GET',
@@ -307,6 +339,12 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 	    }).then(function(data, status){
 	    	data.data.forEach(function(user){
 				utils.replaceInvalidImages(user, 'profile_photo_url')
+
+				if(user.local_advisor_profile) {
+					user.local_advisor_profile.recommendations.forEach(function(recommendation){
+						utils.replaceInvalidImages(recommendation, 'primary_picture')
+					})
+				}
 			})
 
 	    	return data.data

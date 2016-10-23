@@ -41,7 +41,7 @@
                     <div>{{recommendation.recommendation_category.label}}</div>
                 </div>
                 <div>
-                    <h3>Recommended By {{recommendation.recommenders.length}} People</h3>
+                    <h3>Recommended By <em style="color:green">{{recommendation.recommenders.length}}</em> People</h3>
                     <hr>
                     <div>
                         <div class="row well well-sm" style="margin-left:1em; margin-right:1em; border: none">
@@ -51,7 +51,7 @@
                                 </div>
                             </div> 
                         </div>
-                        <ul uib-pagination boundary-links="true" total-items="recommendation.recommenders.length" ng-model="currentPage" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged()" max-size="3" items-per-page="numPerPage" style="margin-left: 30%"></ul>
+                        <ul uib-pagination boundary-links="true" total-items="recommendation.recommenders.length" ng-model="currentPage1" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged1()" max-size="3" items-per-page="numPerPage1" style="margin-left: 30%"></ul>
                     </div>
                     <div>
                         <button class="btn btn-primary" ng-show="!recommend_already" ng-click="recommendPlaceRequest()" style="margin-top:2em; margin-left:10em">Also recommend this place!</button>
@@ -64,47 +64,73 @@
                 <hr>
             </div>
         </div>
-        <hr>
-        <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="recommendation.reviews" class="table smart-table table-striped">
-            <tbody ng-if="!isLoading">
-            <h2>Reviews ({{review_count}})</h2>
-            <tr ng-if="displayCollection.length == 0">
-                <td class="text-center">No review found.</td>
-            </tr>
-            <tr ng-repeat="review in displayCollection">
-                <div>
-                    <td style="width: 10%">
+        <hr ng-show="local_advisors_to_show.length">
+        <div ng-show="local_advisors_to_show.length">
+            <h2 style="margin-left:1em">Book A Tour!</h2>
+            <div>
+                <div class="row">
+                    <div class="col-md-2" ng-repeat="local_advisor_to_show in local_advisors_to_show">
                         <div class="squareImgContainer">
-                            <img style="width: 70%; height: 70%" ng-src="{{review.reviewer.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                            <img ng-src="{{local_advisor_to_show.entity[0].profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image..." style="width:90%; height: 90%" ng-click="viewAdvisorDetails(local_advisor_to_show.entity[0])">
                         </div>
                         <div class="text-center">
-                            <p>{{review.reviewer.first_name}} {{review.reviewer.last_name}}</p>
+                                <b>{{local_advisor_to_show.entity[0].first_name}} {{local_advisor_to_show.entity[0].last_name}}</b>
                         </div>
-                    </td>
-                    <td>
                         <div>
-                            <span uib-rating max="5" ng-model="review.rating" read-only="true"></span>
+                            <span uib-rating max="5" ng-model="local_advisor_to_show.average_rating" read-only="true" style="margin-left:4.5em"></span>
                         </div>
-                        <div style="padding-top: 1em">
-                            <b>{{review.title}}</b>
-                            <p>{{review.content}}</p>
+                        <div>
+                            <button class="btn btn-primary" style="margin-top:2em; margin-left:25%; width:50%">Book</button>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <ul uib-pagination boundary-links="true" total-items="recommendation.local_advisor_profiles.length" ng-model="currentPage2" class="pagination-md" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged2()" max-size="5" items-per-page="numPerPage2" style="margin-left:50em"></ul>
+        </div>
+        <hr>
+        <div>
+            <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="recommendation.reviews" class="table smart-table table-striped" style="margin-top: 2em">
+                <tbody ng-if="!isLoading">
+                <h2 style="margin-left:1em">Reviews ({{review_count}})</h2>
+                <tr ng-if="displayCollection.length == 0">
+                    <td class="text-center">No review found.</td>
+                </tr>
+                <tr ng-repeat="review in displayCollection">
+                    <div>
+                        <td style="width: 10%">
+                            <div class="squareImgContainer">
+                                <img style="width: 70%; height: 70%" ng-src="{{review.reviewer.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                            </div>
+                            <div class="text-center">
+                                <p>{{review.reviewer.first_name}} {{review.reviewer.last_name}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span uib-rating max="5" ng-model="review.rating" read-only="true"></span>
+                            </div>
+                            <div style="padding-top: 1em">
+                                <b>{{review.title}}</b>
+                                <p>{{review.content}}</p>
+                            </div>
+                        </td>
+                    </div>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div st-pagination st-items-by-page="5" st-displayed-pages="5">
                         </div>
                     </td>
-                </div>
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="5" class="text-center">
-                    <div st-pagination st-items-by-page="5" st-displayed-pages="5">
-                    </div>
-                </td>
-            </tr>
-            </tfoot>
-        </table>
-                <div>
-            <h3>Add Your Comment</h3>
-            <div ng-show="!user" class="well bottom text-center">
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <hr>
+        <div>
+            <h3 style="margin-left:1em">Add Your Comment</h3>
+            <div ng-show="!user" class="well bottom text-center" style="margin-top:2em;margin-left:2em;margin-right:2em">
                 <div>
                 You need to log in to comment. <a ng-click="openLoginModal()"><b>Login Now</b></a>
                 </div>

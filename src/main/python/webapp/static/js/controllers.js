@@ -148,7 +148,7 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
   $scope.sendSearchRequest = sendSearchRequest;
   $scope.displayCollection = [].concat($scope.localAdvisors);
 
-  $scope.alert = function(param) {
+  $scope.viewDetails = function(param) {
       id = param.id;
 
       $state.go(
@@ -203,6 +203,11 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
     $scope.submitPostReviewRequest = submitPostReviewRequest
     $scope.newReview = null
 
+    $scope.currentPage = 1
+    $scope.pageChanged = pageChanged 
+    $scope.numPerPage = 6
+    $scope.pageChanged()
+
     function addAlert(type, message) {
         alertFactory.addAlert($scope, type, message);
     }
@@ -234,6 +239,7 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
                 $scope.review_count += 1
                 $scope.displayCollection = [].concat($scope.advisor.local_advisor_profile.reviews)
             }).catch(function (response) {
+                utils.requestEnd();
                 addAlert('danger', response.data.message)
             })
         }
@@ -278,6 +284,24 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
             }
         })
     }
+
+    function pageChanged() {
+        var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+        var end = begin + $scope.numPerPage;
+
+        $scope.recommendations_to_show = $scope.advisor.local_advisor_profile.recommendations.slice(begin, end);
+    }
+
+    $scope.viewRecommendationDetails = function(param) {
+        id = param.id;
+
+        $state.go(
+            '^.recDetail',
+            {
+                id: id,
+                request_fields: []
+            })
+    }
 });
 
 app.controller('locRecController', function($scope, recommendations, cities, recommendation_categories, $state, $stateParams, searchHelper, utils){
@@ -287,7 +311,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.displayCollection = [].concat($scope.recommendations);
 
-    $scope.alert = function(param) {
+    $scope.viewDetails = function(param) {
         id = param.id;
         $state.go(
             '^.recDetail',
@@ -348,10 +372,15 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
     $scope.map = { center: { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }, zoom: 8 };
     $scope.geo = { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }
 
-    $scope.currentPage = 1
-    $scope.pageChanged = pageChanged   
-    $scope.numPerPage = 8
-    $scope.pageChanged()
+    $scope.currentPage1 = 1
+    $scope.pageChanged1 = pageChanged1   
+    $scope.numPerPage1 = 8
+    $scope.pageChanged1()
+
+    $scope.currentPage2 = 1
+    $scope.pageChanged2 = pageChanged2 
+    $scope.numPerPage2 = 6
+    $scope.pageChanged2()
 
     if(
         !$scope.user
@@ -393,6 +422,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 $scope.review_count += 1
                 $scope.displayCollection = [].concat($scope.recommendation.reviews)
             }).catch(function (response) {
+                utils.requestEnd();
                 addAlert('danger', response.data.message)
             })
         }
@@ -410,19 +440,38 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 $scope.addAlert('success', "Your review has been successfully submitted")
                 $scope.recommendation.entity_recommendations.push(entity_recommendation)
                 $scope.recommendation.recommenders.push(entity_recommendation.entity)
-                pageChanged()
+                pageChanged1()
                 $scope.recommend_already = true
             }).catch(function (response) {
+                utils.requestEnd();
                 addAlert('danger', response.data.message)
             })
         }
     }
 
-    function pageChanged() {
-        var begin = (($scope.currentPage - 1) * $scope.numPerPage)
-        var end = begin + $scope.numPerPage;
+    function pageChanged1() {
+        var begin = (($scope.currentPage1 - 1) * $scope.numPerPage1)
+        var end = begin + $scope.numPerPage1;
 
         $scope.recommenders_to_show = $scope.recommendation.recommenders.slice(begin, end);
+    }
+
+    function pageChanged2() {
+        var begin = (($scope.currentPage2 - 1) * $scope.numPerPage2)
+        var end = begin + $scope.numPerPage2;
+
+        $scope.local_advisors_to_show = $scope.recommendation.local_advisor_profiles.slice(begin, end);
+    }
+
+    $scope.viewAdvisorDetails = function(param) {
+    id = param.id;
+
+    $state.go(
+        '^.advisorDetail',
+        {
+            id: id,
+            request_fields: []
+        })
     }
 
 });

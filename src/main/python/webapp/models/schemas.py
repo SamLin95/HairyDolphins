@@ -22,7 +22,7 @@ class LocalAdvisorProfileSchema(ModelSchema):
     city = fields.Nested('CitySchema')
     entity = fields.Nested(EntitySchema, only=('id', 'first_name', 'last_name', 'profile_photo_url'), many=True)
     available_dates = fields.Nested('DateSchema', many=True)
-    recommendations = fields.Nested('RecommendationSchema', only=('id', 'title', 'description', 'primary_picture'), many=True)
+    recommendations = fields.Nested('RecommendationSchema', only=('id', 'title', 'description', 'primary_picture', 'average_rating'), many=True)
     class Meta:
         model = LocalAdvisorProfile
         exclude = ('search_vector',)
@@ -73,7 +73,7 @@ class RecommendationSchema(ModelSchema):
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
     recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))
     recommendation_category = fields.Nested('RecommendationCategorySchema', exclude=('recommendations',))
-    local_advisor_profiles = fields.Nested('LocalAdvisorProfileSchema', only=('id', 'entity'), many=True) 
+    local_advisor_profiles = fields.Nested('LocalAdvisorProfileSchema', only=('id', 'entity', 'average_rating'), many=True) 
     city = fields.Nested('CitySchema', exclude=('recommendations',))
     average_rating = fields.Float()
     primary_picture = fields.String()

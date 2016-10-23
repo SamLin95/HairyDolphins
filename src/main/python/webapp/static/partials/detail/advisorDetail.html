@@ -46,10 +46,33 @@
                 <button class="btn btn-primary" ng-click="checkAvailability()" style="margin-top:15em; margin-left:10em">Check Availabilitiy!</button>
             </div>
         </div>
+        <hr ng-show="recommendations_to_show.length">
+        <div ng-show="recommendations_to_show.length">
+            <h2 style="margin-left:1em">Provided Tours</h2>
+            <div>
+                <div class="row">
+                    <div class="col-md-2" ng-repeat="recommendation_to_show in recommendations_to_show">
+                        <div class="squareImgContainer">
+                            <img ng-src="{{recommendation_to_show.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image..." style="width:90%; height: 90%" ng-click="viewRecommendationDetails(recommendation_to_show)">
+                        </div>
+                        <div class="text-center">
+                                <b>{{recommendation_to_show.title}}</b>
+                        </div>
+                        <div>
+                            <span uib-rating max="5" ng-model="recommendation_to_show.average_rating" read-only="true" style="margin-left:4.5em"></span>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" ng-click="viewRecommendationDetails(recommendation_to_show)" style="margin-top:2em; margin-left:25%; width:50%">View Details</button>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <ul uib-pagination boundary-links="true" total-items="advisor.local_advisor_profile.recommendations.length" ng-model="currentPage" class="pagination-md" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged()" max-size="5" items-per-page="numPerPage" style="margin-left:50em"></ul>
+        </div>
         <hr>
-        <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="advisor.local_advisor_profile.reviews" class="table smart-table table-striped">
+        <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="advisor.local_advisor_profile.reviews" class="table smart-table table-striped" style="margin-top: 2em">
             <tbody ng-if="!isLoading">
-            <h2>Reviews ({{review_count}})</h2>
+            <h2 style="margin-left:1em">Reviews ({{review_count}})</h2>
             <tr ng-if="displayCollection.length == 0">
                 <td class="text-center">No review found.</td>
             </tr>
@@ -85,8 +108,8 @@
             </tfoot>
         </table>
         <div>
-            <h3>Add Your Comment</h3>
-            <div ng-show="!user" class="well bottom text-center">
+            <h3 style="margin-left:1em">Add Your Comment</h3>
+            <div ng-show="!user" class="well bottom text-center" style="margin-top:2em;margin-left:2em;margin-right:2em">
                 <div>
                 You need to log in to comment. <a ng-click="openLoginModal()"><b>Login Now</b></a>
                 </div>
