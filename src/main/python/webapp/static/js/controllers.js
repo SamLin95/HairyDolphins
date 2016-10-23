@@ -331,8 +331,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
             request_fields: [
                 'recommendation_category',
                 'recommendation_photos',
-                'recommender',
-                'reviews',
+                'entity_recommendations',
                 'title',
                 'average_rating',
                 'description',

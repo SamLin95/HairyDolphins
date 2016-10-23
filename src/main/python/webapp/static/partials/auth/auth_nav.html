@@ -14,14 +14,38 @@
         <li uib-dropdown>
           <a uib-dropdown-toggle>Local Advisors <span class="caret"></span></a>
           <ul uib-dropdown-menu>
-            <li><a ui-sref="auth.laSearch({limit:5})">Search Local Advisors</a></li>
+            <li><a ui-sref="auth.laSearch({
+                    limit:5,
+                    request_fields: [
+                      'first_name',
+                      'local_advisor_profile',
+                      'last_name',
+                      'id',
+                      'average_rating',
+                      'profile_photo_url'
+                ]})">Search Local Advisors</a></li>
             <li><a href="#">Become A Local Advisor</a></li>
           </ul>
         </li>
         <li uib-dropdown>
           <a uib-dropdown-toggle>Local Recommendations<span class="caret"></span></a>
           <ul uib-dropdown-menu>
-            <li><a ui-sref="auth.locRec({limit:5})">Search Local Recommendations</a></li>
+            <li><a ui-sref="auth.locRec({
+              limit:5, 
+              request_fields: [
+                'recommendation_category',
+                'recommendation_photos',
+                'entity_recommendations',
+                'title',
+                'average_rating',
+                'description',
+                'city',
+                'id',
+                'primary_picture',
+                'address_line_one',
+                'address_line_two',
+                'zip_code'
+            ]})">Search Local Recommendations</a></li>
             <li><a ui-sref="auth.recCreation">Recommend A Place</a></li>
           </ul>
         </li>

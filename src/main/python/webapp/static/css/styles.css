@@ -159,3 +159,12 @@ Pangination Buttons
 hr{
   border-top: 1px solid #aaa;
 }
+
+.rec_tag {
+  background : aliceblue;
+  padding : 9px;
+  font-style : italic;
+  border-radius : 5px;
+  color : teal;
+  vertical-align: middle;
+}

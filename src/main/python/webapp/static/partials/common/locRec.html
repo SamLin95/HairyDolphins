@@ -35,17 +35,29 @@
             <div>
                 <td style="width: 25%">
                     <div class="squareImgContainer">
-                        <img ng-click="viewDetails(localRecommendation)" style="height: 70%;" ng-src="{{localRecommendation.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                        <img ng-click="viewDetails(localRecommendation)" style="width:80%; height: 80%;" ng-src="{{localRecommendation.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
                     </div>
                 </td>
-                <td>
+                <td style="width:70%">
                     <div>
-                        <p>{{localRecommendation.title}} </p>
-                        <p>Recommended by: {{localRecommendation.recommender.first_name}} {{localRecommendation.recommender.last_name}}</p>
-                        <span uib-rating max="5" ng-model="localRecommendation.average_rating" read-only="true"></span>
-                        <p>Location: {{localRecommendation.complete_address}}</p>
-                        <p>{{localRecommendation.description}}</p>
+                        <div>
+                            <h3>{{localRecommendation.title}}</h3>
+                            <h5 style="color:#aaa">At {{localRecommendation.complete_address}}</h5>
+                            <div>
+                                <span uib-rating max="5" ng-model="localRecommendation.average_rating" read-only="true"></span>
+                            </div>
+                            <div style="margin-top: 2em; height: 10em">
+                                <p>{{localRecommendation.description}}</p>
+                            </div>
+                            <div>
+                                <p class="rec_tag">Recommended by <em style="color:chocolate">{{localRecommendation.entity_recommendations.length+1}}</em> people</p>
+                            </div>
+
+                        </div>
                     </div>
+                </td>
+                <td style="width:15%; vertical-align: middle">
+                    <button class="btn btn-primary" ng-click="viewDetails(localRecommendation)">View Details</button>
                 </td>
             </div>
         </tr>
