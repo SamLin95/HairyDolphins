@@ -51,20 +51,27 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'main'
         }
       },
+      resolve: {
+        localAdvisors: function(searchHelper){
+          return searchHelper.searchLocalAdvisors({"limit":3, "request_fields":["id","first_name", "last_name", "profile_photo_url", "local_advisor_profile"]})
+        },
+        recommendations: function(searchHelper){
+          return searchHelper.searchRecommendations({"limit":3, "request_fields":["id","title", "description", "primary_picture"]})
+        }
+      },
       auth_redirect: "auth.home",
       onEnter: function(utils) {
         utils.requestEnd()
       }
     })
     .state('unauth.laSearch', {
-      url: '/laSearch?keyword&available_date&request_fields&limit',
+      url: '/laSearch?keyword&available_date&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
           params: {
             keyword: null,
-            available_date: null,
-            request_fields:[],
+            available_date: null
           },
           controller: 'laSearchController',
           controllerAs: 'laSearch'
@@ -73,6 +80,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
       auth_redirect: "auth.laSearch",
       resolve: {
         localAdvisors: function($stateParams, searchHelper){
+          $stateParams.request_fields = [
+            'first_name',
+            'local_advisor_profile',
+            'last_name',
+            'id',
+            'average_rating',
+            'profile_photo_url'
+          ]
+
           return searchHelper.searchLocalAdvisors($stateParams)
         }
       },
@@ -104,20 +120,27 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'main'
         }
       },
+      resolve: {
+        localAdvisors: function(searchHelper){
+          return searchHelper.searchLocalAdvisors({"limit":3, "request_fields":["id","first_name", "last_name", "profile_photo_url", "local_advisor_profile"]})
+        },
+        recommendations: function(searchHelper){
+          return searchHelper.searchRecommendations({"limit":3, "request_fields":["id", "title", "description", "primary_picture"]})
+        }
+      },
       unauth_redirect: "unauth.home",
       onEnter: function(utils) {
         utils.requestEnd()
       }
     })
     .state('auth.laSearch', {
-      url: '/laSearch?keyword&available_date&request_fields&limit',
+      url: '/laSearch?keyword&available_date&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
           params: {
             keyword: null,
-            available_date: null,
-            request_fields:[],
+            available_date: null
           },
           controller: 'laSearchController',
           controllerAs: 'laSearch'
@@ -126,6 +149,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
       unauth_redirect: "unauth.laSearch",
       resolve: {
         localAdvisors: function($stateParams, searchHelper){
+          $stateParams.request_fields = [
+            'first_name',
+            'local_advisor_profile',
+            'last_name',
+            'id',
+            'average_rating',
+            'profile_photo_url'
+          ]
           return searchHelper.searchLocalAdvisors($stateParams)
         }
       },
@@ -172,7 +203,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('auth.locRec', {
-      url: '/locRec?city_id&recommendation_category_id&request_fields&limit',
+      url: '/locRec?city_id&recommendation_category_id&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/locRec.html',
@@ -183,6 +214,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
       unauth_redirect: "unauth.locRec",
       resolve: {
         recommendations: function($stateParams, searchHelper){
+          $stateParams.request_fields = [
+                'recommendation_category',
+                'recommendation_photos',
+                'entity_recommendations',
+                'title',
+                'average_rating',
+                'description',
+                'city',
+                'id',
+                'reviews',
+                'primary_picture',
+                'address_line_one',
+                'address_line_two',
+                'zip_code'
+          ]
           return searchHelper.searchRecommendations($stateParams)
         },
         cities: function(searchHelper){
@@ -197,7 +243,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('unauth.locRec', {
-      url: '/locRec?city_id&recommendation_category_id&request_fields&limit',
+      url: '/locRec?city_id&recommendation_category_id&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/locRec.html',
@@ -208,6 +254,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
       auth_redirect: "auth.locRec",
       resolve: {
         recommendations: function($stateParams, searchHelper){
+          $stateParams.request_fields = [
+                'recommendation_category',
+                'recommendation_photos',
+                'entity_recommendations',
+                'title',
+                'average_rating',
+                'description',
+                'city',
+                'id',
+                'reviews',
+                'primary_picture',
+                'address_line_one',
+                'address_line_two',
+                'zip_code'
+          ]
           return searchHelper.searchRecommendations($stateParams)
         },
         cities: function(searchHelper){
@@ -249,8 +310,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/advisorDetail.html',
           params: {
-            id: null,
-            request_fields: []
+            id: null
           },
           controller: 'advisorDetailController',
           controllerAs: 'advisorDetail'
@@ -272,8 +332,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/advisorDetail.html',
           params: {
-            id: null,
-            request_fields: []
+            id: null
           },
           controller: 'advisorDetailController',
           controllerAs: 'advisorDetail'
@@ -295,8 +354,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/recDetail.html',
           params: {
-            id: null,
-            request_fields: []
+            id: null
           },
           controller: 'recDetailController',
           controllerAs: 'recDetail'
@@ -318,8 +376,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         'content@' : {
           templateUrl: '/static/partials/detail/recDetail.html',
           params: {
-            id: null,
-            request_fields: []
+            id: null
           },
           controller: 'recDetailController',
           controllerAs: 'recDetail'
@@ -340,8 +397,18 @@ app.config(function($stateProvider, $urlRouterProvider) {
   
 });
 
-app.run(function($rootScope){
+app.run(function($rootScope, $location, $anchorScroll){
   $rootScope.isLoading = false;
+
+  $rootScope.gotoTop = function() {
+      // set the location.hash to the id of
+      // the element you wish to scroll to.
+      $location.hash('pageBody');
+
+      // call $anchorScroll()
+      $anchorScroll();
+  };
+
   $rootScope.s3url = "https://s3.amazonaws.com/hairydolphins/"
 })
 

@@ -207,12 +207,14 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
 			data.data.forEach(function(recommendation){
 				utils.replaceInvalidImages(recommendation, 'primary_picture')
 
-				recommendation.complete_address = recommendation.address_line_one
-		        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
-		        + recommendation.city.label + ', '
-		        + recommendation.city.state.label + ', '
-		        + recommendation.city.state.country.label + ', '
-		        + recommendation.zip_code
+				if(recommendation.address_line_one) {
+					recommendation.complete_address = recommendation.address_line_one
+			        + (recommendation.address_line_two? ' ' + recommendation.address_line_two:'') + ', '
+			        + recommendation.city.label + ', '
+			        + recommendation.city.state.label + ', '
+			        + recommendation.city.state.country.label + ', '
+			        + recommendation.zip_code
+		    	}
 
 		        if(recommendation.entity_recommendations) {
 			        recommendation.entity_recommendations.forEach(function(entity_recommendation){

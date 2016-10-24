@@ -11,32 +11,8 @@
     <div class="collapse navbar-collapse" uib-collapse="isCollapsed">
       <ul class="nav navbar-nav">
         <li><a href="#">Home</a></li>
-        <li><a ui-sref="unauth.laSearch({
-                    limit:5, 
-                    request_fields: [
-                      'first_name',
-                      'local_advisor_profile',
-                      'last_name',
-                      'id',
-                      'average_rating',
-                      'profile_photo_url'
-                ]})">Search Local Advisors</a></li>
-        <li><a ui-sref="unauth.locRec({
-              limit:5,       
-              request_fields: [
-                    'recommendation_category',
-                    'recommendation_photos',
-                    'entity_recommendations',
-                    'title',
-                    'average_rating',
-                    'description',
-                    'city',
-                    'id',
-                    'primary_picture',
-                    'address_line_one',
-                    'address_line_two',
-                    'zip_code'
-            ]})">Search Local Recommendations</a></li>
+        <li><a ui-sref="unauth.laSearch({limit:5})">Search Local Advisors</a></li>
+        <li><a ui-sref="unauth.locRec({limit:5})">Search Local Recommendations</a></li>
       </ul>
       </ul>
       <ul class="nav navbar-nav navbar-right">

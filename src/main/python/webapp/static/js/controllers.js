@@ -1,8 +1,11 @@
 var app = angular.module('HairyDolphinsApp');
 
-app.controller('mainController', function($scope, $state) {
+app.controller('mainController', function($scope, $state, localAdvisors, recommendations) {
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.flag = true;
+    $scope.localAdvisors = localAdvisors;
+    $scope.recommendations = recommendations;
+
     function sendSearchRequest() {
         $scope.flag = false;
         keyword = $scope.searchString
@@ -13,20 +16,50 @@ app.controller('mainController', function($scope, $state) {
             {
                 keyword: keyword,
                 available_date: available_date,
-                request_fields: [
-                    'first_name',
-                    'local_advisor_profile',
-                    'last_name',
-                    'id',
-                    'average_rating',
-                    'profile_photo_url'
-                ],
                 flag: false
             }
         )
 
     }
-})
+
+    $scope.viewAdvisorDetails = function(param) {
+        id = param.id;
+
+        $state.go(
+            '^.advisorDetail',
+            {
+                id: id
+            })
+    }
+
+    $scope.viewRecommendationDetails = function(param) {
+        id = param.id;
+
+        $state.go(
+            '^.recDetail',
+            {
+                id: id
+            })
+    }
+
+    $scope.searchMoreRecommendations =function() {
+        $state.go(
+            '^.locRec',
+            {
+                limit : 5
+            })
+
+    }
+
+    $scope.searchMoreAdvisors =function() {
+        $state.go(
+            '^.laSearch',
+            {
+                limit : 5
+            })
+        
+    }
+ })
 
 app.controller('unauthNavController', function ($scope, AuthService ) {
     var $ctrl = this;
@@ -154,8 +187,7 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
       $state.go(
           '^.advisorDetail',
           {
-              id: id,
-              request_fields: []
+              id: id
           })
   }
 
@@ -298,8 +330,7 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
         $state.go(
             '^.recDetail',
             {
-                id: id,
-                request_fields: []
+                id: id
             })
     }
 });
@@ -316,8 +347,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
         $state.go(
             '^.recDetail',
             {
-                id: id,
-                request_fields: []
+                id: id
             })
     }
 
@@ -337,6 +367,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
                 'description',
                 'city',
                 'id',
+                'reviews',
                 'primary_picture',
                 'address_line_one',
                 'address_line_two',
@@ -468,8 +499,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
     $state.go(
         '^.advisorDetail',
         {
-            id: id,
-            request_fields: []
+            id: id
         })
     }
 

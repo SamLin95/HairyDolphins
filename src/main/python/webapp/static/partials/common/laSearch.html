@@ -36,10 +36,11 @@
 		                    <h5 style="color:#aaa">From {{localAdvisor.local_advisor_profile.city.label}}, {{localAdvisor.local_advisor_profile.city.state.label}}, {{localAdvisor.local_advisor_profile.city.state.country.label}}</h5>
 		                    <div>
                             	<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>
+                            	<b>(<i>{{localAdvisor.local_advisor_profile.reviews.length}} review{{localAdvisor.local_advisor_profile.reviews.length>1?'s':''}}</i>)</b>
                         	</div>
                         	<div style="margin-top: 2em">
 		                    	<p>{{localAdvisor.local_advisor_profile.description}}</p>
-		                	</div>
+		              		</div>
             			</div>
 					</div>
 				</td>

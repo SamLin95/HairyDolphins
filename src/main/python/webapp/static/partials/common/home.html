@@ -1,5 +1,5 @@
-<div class="jumbotron text-center">
-  <h1>HairyDolphins</h1>
+<div class="jumbotron text-center" id="searchBlock">
+  <h1 class=>HairyDolphins</h1>
   <h2>Find Your Local Advisor</h2>
   <form class="form-inline">
     <div class="row" style="margin-left:15%; margin-right:15%; margin-top:50px">
@@ -14,4 +14,52 @@
         </div>
     </div>
   </form>
+</div>
+<div class="container-fluid text-center bg-grey" style="padding-bottom: 5em">
+  <div class="text-center">
+    <h2 class="home-h2">TODAY'S RECOMMENDATIONS</h2>
+    <h4 class="home-h4">Discover this Amazing World</h4>
+  </div>
+  <div class="row text-center slideanim">
+    <div class="col-md-4" ng-repeat="recommendation in recommendations" uib-popover="Click To View Details" popover-trigger="'mouseenter'">
+      <div class="thumbnail">
+        <div class="squareImgContainer">
+            <img ng-click="viewRecommendationDetails(recommendation)" style="width:80%; height: 80%;" ng-src="{{recommendation.primary_picture}}" class="squareImg"  alt="loading image...">
+        </div>
+        <p><strong>{{recommendation.title}}</strong></p>
+        <div uib-popover="{{recommendation.description}}" popover-trigger="'mouseenter'">
+          <p class="one-line-text">{{recommendation.description}}</p>
+        </div>
+      </div>
+    </div>
+    <div>
+        <button class="btn btn-primary" ng-click="searchMoreRecommendations()" style="margin-top:2em; width:30%">View More Local Recommendations</button>
+    </div>
+  </div>
+</div>
+<div id="pricing" class="container-fluid" style="padding-bottom: 5em">
+  <div class="text-center">
+    <h2 class="home-h2">STAR ADVISORS</h2>
+    <h4 class="home-h4">Connect to Start a Wonderful Travel Experience</h4>
+  </div>
+  <div class="row slideanim">
+    <div class="col-sm-4 col-xs-12" ng-repeat="localAdvisor in localAdvisors" uib-popover="Click To View Details" popover-trigger="'mouseenter'">
+      <div class="panel panel-default panel-mainpage text-center" ng-click="viewAdvisorDetails(localAdvisor)">
+        <div class="panel-heading">
+          <h1>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</h1>
+        </div>
+        <div class="panel-body">
+          <div class="squareImgContainer">
+            <img style="width:80%; height: 80%;" ng-src="{{localAdvisor.profile_photo_url}}" class="squareImg"  alt="loading image...">
+          </div>
+          <div uib-popover="{{localAdvisor.local_advisor_profile.description}}" popover-trigger="'mouseenter'">
+            <p class="one-line-text">{{localAdvisor.local_advisor_profile.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+        <button class="btn btn-primary" ng-click="searchMoreAdvisors()" style="margin-top:2em; margin-left:35%; width:30%">View More Local Advisors</button>
+    </div>
+  </div>
 </div>

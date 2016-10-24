@@ -34,12 +34,16 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/css/styles.css" rel="stylesheet">
 </head>
-<body data-spy="scroll" data-target=".navbar" data-offset="60">
+<body data-spy="scroll" data-target=".navbar" data-offset="60" id="pageBody">
 
     <!-- THIS IS WHERE WE WILL INJECT OUR CONTENT ============================== -->
     <div ui-view="header"></div>
     <div ui-view="content"></div>
     <span us-spinner ng-if="isLoading"></span>
-
+    <footer class="container-fluid text-center bg-grey">
+        <a ng-click="gotoTop()" title="To Top">
+            <span>Back To Top</span>
+        </a>
+    </footer>
 </body>
 </html>

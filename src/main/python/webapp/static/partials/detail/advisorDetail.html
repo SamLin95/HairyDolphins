@@ -38,12 +38,20 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <h3>Location</h3>
-                <hr>
-                <div>{{advisor.local_advisor_profile.city.label}}, {{advisor.local_advisor_profile.city.state.label}}</div>
-            </div>
-            <div>  
-                <button class="btn btn-primary" ng-click="checkAvailability()" style="margin-top:15em; margin-left:10em">Check Availabilitiy!</button>
+                <div style="height:20em">
+                    <h3>Location</h3>
+                    <hr>
+                    <p>{{advisor.local_advisor_profile.city.label}}, {{advisor.local_advisor_profile.city.state.label}}</p>
+                </div>
+                <div style="width: 30%; margin-left: 35%; margin-right: 35%;">
+                    <div class="row">
+                        <button class="btn btn-warning" ng-click="checkAvailability()" style="width:100%">Check Availabilitiy</button>
+                    </div>
+                    <div class="row" style="margin-top:1em">
+                        <button ng-show="user" class="btn btn-primary" ui-sref="auth.messenger.chatpanel({user_id:{{advisor.id}}, first_name:'{{advisor.first_name}}', last_name:'{{advisor.last_name}}', profile_photo_url:'{{advisor.profile_photo_url}}'})" style="width:100%">Send Message!</button>
+                        <button ng-show="!user" class="btn btn-primary" ng-click="openLoginModal()" style="width:100%">Send Message!</button>
+                    </div>
+                </div>
             </div>
         </div>
         <hr ng-show="recommendations_to_show.length">
