@@ -4,21 +4,25 @@
     <h3 style="margin-top:10px;">Edit Recommendation</h3>
 </div>
 <div class="panel-body">
-	<div class="row">
+	<div class="row" style="margin-top:3em">
       <!-- left column -->
-      <div class="col-md-3">
+      <div class="col-md-3" style="margin-left:6%">
         <div class="text-center">
             <div class="squareImgContainer">
               <img ng-src="{{displayed_recommendation_photo}}" class="img-thumbnail squareImg"  alt="loading image...">
             </div>
           <h6>Upload a photo...</h6>
           
-          <input type="file" custom-on-change="doUpload"/>
+          <form>
+            <div class="form-group">
+              <input class="form-control" type="file" custom-on-change="doUpload"/>
+            </div>
+          </form>
         </div>
       </div>
       
       <!-- edit form column -->
-      <div class="col-md-9">
+      <div class="col-md-8">
         <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
         
         <form class="form-horizontal" role="form" name="recCrtForm">

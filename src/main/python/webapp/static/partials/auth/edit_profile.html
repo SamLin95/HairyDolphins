@@ -1,0 +1,68 @@
+<div style="height:50px"></div>
+<div class="panel panel-default" style="border-bottom:transparent;">
+<div class="panel-heading">
+    <h3 style="margin-top:10px;">Edit Profile</h3>
+</div>
+<div class="panel-body">
+	<div class="row" style="margin-top:3em">
+      <!-- left column -->
+      <div class="col-md-3" style="margin-left:6%">
+        <div class="text-center">
+            <div class="squareImgContainer">
+              <img ng-src="{{displayed_profile_photo}}" class="img-thumbnail squareImg"  alt="loading image...">
+            </div>
+          <h6>Upload a photo...</h6>
+          
+          <form>
+            <div class="form-group">
+              <input type="file" custom-on-change="doUpload"/>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- edit form column -->
+      <div class="col-md-8">
+        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+        
+        <form class="form-horizontal" role="form" name="recCrtForm">
+          <div class="form-group">
+            <label class="col-lg-3 control-label">First Name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="first_name" style="width: 30em" required maxlength="30">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Last Name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="last_name" style="width: 30em" required maxlength="30">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Phone Number:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="phone_number" ui-mask="(999) 999-9999" maxlength="10" style="width: 12em">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Email Address:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="email" ng_model="email" required maxlength="20" style="width: 30em">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Birthday:</label>
+            <div class='col-md-3' datepicker></div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+              <input type="submit" class="btn btn-success" value="Submit" ng-click="submitRecCreationRequest()">
+              <span></span>
+              <input type="reset" class="btn btn-default" value="Cancel">
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>

@@ -2,7 +2,7 @@
 
 var app = angular.module('HairyDolphinsApp', ['ui.bootstrap', 'ngAnimate', 'ui.router',
   'bootstrap.angular.validation', 'smart-table', 'angularSpinner', 'btford.socket-io', 'lr.upload',
-  'uiGmapgoogle-maps']);
+  'uiGmapgoogle-maps', 'ui.mask']);
 
 app.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({radius:6, length: 1});
@@ -392,6 +392,20 @@ app.config(function($stateProvider, $urlRouterProvider) {
         utils.requestEnd()
       }
     })
+    .state('auth.editProfile', {
+      url: '/edit_profile',
+      views: {
+        'content@' : {
+          templateUrl: '/static/partials/auth/edit_profile.html',
+          controller: 'editProfileController',
+          controllerAs: 'editProfile'
+        }
+      },
+      unauth_redirect: "unauth.home",
+      onEnter: function(utils) {
+        utils.requestEnd()
+      }
+    })
 
     $urlRouterProvider.otherwise('/unauth/home');
   
@@ -414,20 +428,31 @@ app.run(function($rootScope, $location, $anchorScroll){
 
 app.run(function ($rootScope, $state, AuthService, utils) {
   $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
-    utils.requestStart()
-    AuthService.loadCurrentUser()
-      .then(function(){
-        if(toState.auth_redirect){
-          $state.transitionTo(toState.auth_redirect, toParams);
-          event.preventDefault();
-        }
-      })
-      .catch(function(){
-        if(toState.unauth_redirect){
-          $state.transitionTo(toState.unauth_redirect, toParams);
-          event.preventDefault(); 
-        }
-      })
+    if(!angular.equals($rootScope.toState, toState) || !angular.equals($rootScope.toParams, toParams))
+    {
+      event.preventDefault();
+
+      $rootScope.toState = toState
+      $rootScope.toParams = toParams
+
+      AuthService.loadCurrentUser()
+        .then(function(){
+          if(toState.auth_redirect){
+            $state.transitionTo(toState.auth_redirect, toParams, {reload:true});
+          } else {
+            $state.transitionTo(toState, toParams);
+          }
+        }, function(){
+          if(toState.unauth_redirect){ 
+            $state.transitionTo(toState.unauth_redirect, toParams, {reload:true});
+          } else {
+            $state.transitionTo(toState, toParams);
+          }
+        })
+    } else {
+      $rootScope.toState = null
+      $rootScope.toParams = null
+    }
   });
 });
 

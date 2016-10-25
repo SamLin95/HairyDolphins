@@ -10,6 +10,7 @@ class EntitySchema(ModelSchema):
     role = fields.Nested(RoleSchema, exclude=('entities',))
     local_advisor_profile = fields.Nested('LocalAdvisorProfileSchema', exclude=('entity',))
     entity_photos = fields.Nested('EntityPhotoSchema', many=True, exclude=('entity',))
+    birthday = fields.Nested('DateSchema')
     average_rating = fields.Float()
     profile_photo_url = fields.String()
     contacts = fields.Nested('EntitySchema', only=('id','first_name','last_name', 'profile_photo_url'), many=True)

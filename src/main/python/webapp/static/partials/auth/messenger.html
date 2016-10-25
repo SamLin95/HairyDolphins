@@ -11,7 +11,11 @@
 					<h5 style="margin-top:10px;">Contacts</h5>
 				</div>
 				<div style="margin-top: 5%; margin-left:10%; margin-right:10%">
-					<input type="text" ng-model="selectedNewContact" placeholder="Enter a keyword to search user" uib-typeahead="user as user.first_name + ' ' + user.last_name + ' (' + user.username + ')' for user in searchUsers($viewValue) | limitTo: 8" typeahead-loading="searchingUsers" typeahead-no-results="noResults" typeahead-on-select="onContactSelect($item, $model, $label)" typeahead-wait-ms="300" class="form-control">
+					<form>
+						<div class="form-group">
+							<input type="text" ng-model="selectedNewContact" placeholder="Enter a keyword to search user" uib-typeahead="user as user.first_name + ' ' + user.last_name + ' (' + user.username + ')' for user in searchUsers($viewValue) | limitTo: 8" typeahead-loading="searchingUsers" typeahead-no-results="noResults" typeahead-on-select="onContactSelect($item, $model, $label)" typeahead-wait-ms="300" class="form-control">
+						</div>
+					</form>
 					<div ng-show="searchingUsers">
 						<i class="glyphicon glyphicon-refresh"></i> Searching Users...
 					</div>

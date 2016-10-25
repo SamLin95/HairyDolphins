@@ -14,16 +14,7 @@
         <li uib-dropdown>
           <a uib-dropdown-toggle>Local Advisors <span class="caret"></span></a>
           <ul uib-dropdown-menu>
-            <li><a ui-sref="auth.laSearch({
-                    limit:5,
-                    request_fields: [
-                      'first_name',
-                      'local_advisor_profile',
-                      'last_name',
-                      'id',
-                      'average_rating',
-                      'profile_photo_url'
-                ]})">Search Local Advisors</a></li>
+            <li><a ui-sref="auth.laSearch({limit:5})">Search Local Advisors</a></li>
             <li><a href="#">Become A Local Advisor</a></li>
           </ul>
         </li>
@@ -37,14 +28,23 @@
         <li><a ui-sref="auth.messenger">Messenger</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li uib-dropdown>
-          <a uib-dropdown-toggle>{{user.first_name}} {{user.last_name}}<span class="caret"></span></a>
-          <ul uib-dropdown-menu>
-            <li><a href="#">Edit Profils</a></li>
-            <li><a ng-click="nav.logout()">Logout</a></li>
-          </ul>
-        </li>
+          <li uib-dropdown class="pull-right">
+            <a uib-dropdown-toggle>
+              {{user.first_name}} {{user.last_name}}
+              <span class="caret"></span>
+            </a>
+            <ul uib-dropdown-menu>
+              <li><a ui-sref="auth.editProfile">Edit Profils</a></li>
+              <li><a ng-click="nav.logout()">Logout</a></li>
+            </ul>
+          </li>
+          <div class="pull-right" style="width:4em">
+            <div class="squareImgContainer">
+            <img style="width:80%; height: 80%; padding: 2px" ng-src="{{user.profile_photo_url}}" class="img-circle squareImg img-thumbnail"  alt="loading image...">
+            </div>
+          </div>
       </ul>
+
     </div>
     <login>
 </nav>

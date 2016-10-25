@@ -48,6 +48,7 @@ app.factory('AuthService',
 	    // handle success
 	    .success(function (data, status) {
 	    	if(status === 200){
+	    		utils.replaceInvalidImages(data, 'profile_photo_url')
 	        	user = data;
 	        	deferred.resolve();
 	    	} else {
@@ -98,11 +99,16 @@ app.factory('AuthService',
 	}
 
 	function loadCurrentUser() {
+		utils.requestStart()
+
 		var deferred = $q.defer();
 
 		$http.get('/auth/current_user')
 			.success(function (data, status) {
+				utils.requestEnd()
+
 			    if(status === 200){
+			      utils.replaceInvalidImages(data, 'profile_photo_url')
 			      user = data;
 			      deferred.resolve();
 			    } else {
@@ -111,6 +117,7 @@ app.factory('AuthService',
 			    }
 		    })
 		    .error(function (data) {
+		    	utils.requestEnd()
 		        user = null;
 		        deferred.reject();
 	  	    });
@@ -633,13 +640,3 @@ app.factory('reviewManager', function($q, $timeout, utils, $http) {
 
 	return factory
 })
-
-
-
-// app.factory('sharedSearch', function($rootScope) {
-// 	var sharedSearch = {};
-//
-// 	searchHelper.sharedSearch({
-// 		keyword:
-// 	})
-// });

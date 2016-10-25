@@ -5,6 +5,7 @@ app.controller('mainController', function($scope, $state, localAdvisors, recomme
     $scope.flag = true;
     $scope.localAdvisors = localAdvisors;
     $scope.recommendations = recommendations;
+    $scope.datepicker_placeholder = "Expected Date"
 
     function sendSearchRequest() {
         $scope.flag = false;
@@ -85,7 +86,7 @@ app.controller('authNavController', function ($scope, $state, AuthService) {
     }
 });
 
-app.controller('loginController', function($scope, $uibModalInstance, $http, $state, alertFactory, AuthService) {
+app.controller('loginController', function($scope, $uibModalInstance, $state, alertFactory, AuthService) {
         var $ctrl = this;
         $ctrl.alerts = [];
         $ctrl.openSignupModal = openSignupModal;
@@ -617,6 +618,38 @@ app.controller('recCreationController', function($scope, cities, recommendation_
             })
         }
     }
-
-
 })
+
+app.controller('editProfileController', function($scope, utils, fileManager, AuthService, alertFactory) {
+    $scope.alerts = [];
+    $scope.addAlert = addAlert;
+    $scope.closeAlert = closeAlert;
+    console.log('here2')
+    $scope.user = AuthService.getUser();
+    $scope.datepicker_placeholder = "Choose Your Birthday"
+
+    $scope.first_name = $scope.user.first_name
+    $scope.last_name = $scope.user.last_name
+    $scope.email = $scope.user.email
+    $scope.dt = new Date($scope.user.birthday.date)
+    $scope.phone_number = $scope.user.phone_number
+
+    $scope.displayed_profile_photo = $scope.user.profile_photo_url
+    
+    $scope.doUpload = function() {
+        fileManager.uploadFile(event.target.files[0]).then(function(data){
+            $scope.displayed_profile_photo = data.download_link
+            $scope.current_photo = data
+            utils.requestEnd();
+        })
+    }
+
+    function addAlert(type, message) {
+        alertFactory.addAlert($scope, type, message);
+    }
+
+    function closeAlert(index) {
+        alertFactory.closeAlert($scope, index);
+    }
+})
+
