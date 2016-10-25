@@ -4,13 +4,6 @@ app.directive("datepicker", function(){
   return {
     restrict: "A",
     controller: ['$scope', '$filter', function ($scope, $filter) {
-        $scope.dateOptions = {
-            formatYear: 'yy',
-            maxDate: new Date(2020, 5, 22),
-            minDate: new Date(),
-            startingDay: 1
-        };
-
         $scope.openDatePicker = function() {
             $scope.popup.opened = true;
         };

@@ -37,10 +37,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'nav'
         }
       },
-      auth_redirect: "auth",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      auth_redirect: "auth"
     })
     .state('unauth.home', {
       url: '/home',
@@ -59,10 +56,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           return searchHelper.searchRecommendations({"limit":3, "request_fields":["id","title", "description", "primary_picture"]})
         }
       },
-      auth_redirect: "auth.home",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      auth_redirect: "auth.home"
     })
     .state('unauth.laSearch', {
       url: '/laSearch?keyword&available_date&limit',
@@ -91,9 +85,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
           return searchHelper.searchLocalAdvisors($stateParams)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('auth', {
@@ -106,10 +97,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'nav'
         }
       },
-      unauth_redirect: "unauth",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      unauth_redirect: "unauth"
     })
     .state('auth.home', {
       url: '/home',
@@ -128,10 +116,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           return searchHelper.searchRecommendations({"limit":3, "request_fields":["id", "title", "description", "primary_picture"]})
         }
       },
-      unauth_redirect: "unauth.home",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      unauth_redirect: "unauth.home"
     })
     .state('auth.laSearch', {
       url: '/laSearch?keyword&available_date&limit',
@@ -159,9 +144,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
           ]
           return searchHelper.searchLocalAdvisors($stateParams)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('auth.messenger', {
@@ -178,10 +160,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           return searchHelper.searchUserContacts()
         }
       },
-      unauth_redirect: "unauth.home",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      unauth_redirect: "unauth.home"
     })
     .state('auth.messenger.chatpanel', {
       url: '/messenger/chatpanel?user_id&first_name&last_name&profile_photo_url',
@@ -197,9 +176,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         messageHistory: function(searchHelper, $stateParams) {
           return searchHelper.searchMessageHistory($stateParams.user_id)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('auth.locRec', {
@@ -237,9 +213,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         recommendation_categories: function(searchHelper) {
           return searchHelper.getRecommendationCategoryOptions()
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('unauth.locRec', {
@@ -277,9 +250,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         recommendation_categories: function(searchHelper) {
           return searchHelper.getRecommendationCategoryOptions()
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('auth.recCreation', {
@@ -299,10 +269,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
           return searchHelper.getRecommendationCategoryOptions()
         }
       },
-      unauth_redirect: "unauth.home",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      unauth_redirect: "unauth.home"
     })
     .state('auth.advisorDetail', {
       url: '/advisorDetail?id',
@@ -321,9 +288,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         advisor: function($stateParams, searchHelper){
           return searchHelper.getAdvisorDetail($stateParams)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('unauth.advisorDetail', {
@@ -343,9 +307,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         advisor: function($stateParams, searchHelper){
           return searchHelper.getAdvisorDetail($stateParams)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('auth.recDetail', {
@@ -365,9 +326,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         recommendation: function($stateParams, searchHelper){
           return searchHelper.getRecDetail($stateParams)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('unauth.recDetail', {
@@ -387,9 +345,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
         recommendation: function($stateParams, searchHelper){
           return searchHelper.getRecDetail($stateParams)
         }
-      },
-      onEnter: function(utils) {
-        utils.requestEnd()
       }
     })
     .state('auth.editProfile', {
@@ -401,17 +356,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controllerAs: 'editProfile'
         }
       },
-      unauth_redirect: "unauth.home",
-      onEnter: function(utils) {
-        utils.requestEnd()
-      }
+      unauth_redirect: "unauth.home"
     })
 
     $urlRouterProvider.otherwise('/unauth/home');
   
 });
 
-app.run(function($rootScope, $location, $anchorScroll){
+app.run(function($rootScope, $location, $anchorScroll, $window){
   $rootScope.isLoading = false;
 
   $rootScope.gotoTop = function() {
@@ -427,7 +379,9 @@ app.run(function($rootScope, $location, $anchorScroll){
 })
 
 app.run(function ($rootScope, $state, AuthService, utils) {
+  //Important authenticaion process. Think through before making any change.
   $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
+    utils.requestStart()
     if(!angular.equals($rootScope.toState, toState) || !angular.equals($rootScope.toParams, toParams))
     {
       event.preventDefault();
@@ -454,5 +408,11 @@ app.run(function ($rootScope, $state, AuthService, utils) {
       $rootScope.toParams = null
     }
   });
+
+  //Scroll the screen to top once a page is loaded
+  $rootScope.$on("$viewContentLoaded", function(event){
+    utils.requestEnd()
+    $rootScope.gotoTop()
+  })
 });
 

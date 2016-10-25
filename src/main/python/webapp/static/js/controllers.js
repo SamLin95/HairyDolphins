@@ -2,13 +2,18 @@ var app = angular.module('HairyDolphinsApp');
 
 app.controller('mainController', function($scope, $state, localAdvisors, recommendations) {
     $scope.sendSearchRequest = sendSearchRequest;
-    $scope.flag = true;
     $scope.localAdvisors = localAdvisors;
     $scope.recommendations = recommendations;
     $scope.datepicker_placeholder = "Expected Date"
+    $scope.dateOptions = {
+            formatYear: 'yy',
+            maxDate: new Date(2020, 5, 22),
+            minDate: new Date(),
+            startingDay: 1
+    };
+
 
     function sendSearchRequest() {
-        $scope.flag = false;
         keyword = $scope.searchString
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
 
@@ -16,8 +21,7 @@ app.controller('mainController', function($scope, $state, localAdvisors, recomme
             '^.laSearch',
             {
                 keyword: keyword,
-                available_date: available_date,
-                flag: false
+                available_date: available_date
             }
         )
 
@@ -84,6 +88,10 @@ app.controller('authNavController', function ($scope, $state, AuthService) {
                 }
             )
     }
+
+    $scope.$on('updateUser', function(event, args) { 
+        $scope.user = AuthService.getUser();
+    })
 });
 
 app.controller('loginController', function($scope, $uibModalInstance, $state, alertFactory, AuthService) {
@@ -178,19 +186,26 @@ app.controller('signupController', function($scope, $uibModalInstance, $rootScop
 );
 
 app.controller('laSearchController', function($scope, localAdvisors, $state, $stateParams, searchHelper, utils){
-  $scope.localAdvisors = localAdvisors
-  $scope.sendSearchRequest = sendSearchRequest;
-  $scope.displayCollection = [].concat($scope.localAdvisors);
+    $scope.localAdvisors = localAdvisors
+    $scope.sendSearchRequest = sendSearchRequest;
+    $scope.displayCollection = [].concat($scope.localAdvisors);
+    $scope.datepicker_placeholder = "Expected Date"
+    $scope.dateOptions = {
+            formatYear: 'yy',
+            maxDate: new Date(2020, 5, 22),
+            minDate: new Date(),
+            startingDay: 1
+    };
 
-  $scope.viewDetails = function(param) {
-      id = param.id;
+    $scope.viewDetails = function(param) {
+        id = param.id;
 
-      $state.go(
-          '^.advisorDetail',
-          {
-              id: id
-          })
-  }
+        $state.go(
+            '^.advisorDetail',
+            {
+                id: id
+            })
+    }
 
   function sendSearchRequest() {
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
@@ -495,13 +510,13 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
     }
 
     $scope.viewAdvisorDetails = function(param) {
-    id = param.id;
+        id = param.id;
 
-    $state.go(
-        '^.advisorDetail',
-        {
-            id: id
-        })
+        $state.go(
+            '^.advisorDetail',
+            {
+                id: id
+            })
     }
 
 });
@@ -620,25 +635,33 @@ app.controller('recCreationController', function($scope, cities, recommendation_
     }
 })
 
-app.controller('editProfileController', function($scope, utils, fileManager, AuthService, alertFactory) {
+app.controller('editProfileController', function($scope, utils, fileManager, AuthService, alertFactory, $rootScope) {
     $scope.alerts = [];
     $scope.addAlert = addAlert;
     $scope.closeAlert = closeAlert;
-    console.log('here2')
     $scope.user = AuthService.getUser();
     $scope.datepicker_placeholder = "Choose Your Birthday"
+    $scope.dateOptions = {
+        formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22)
+    };
 
     $scope.first_name = $scope.user.first_name
     $scope.last_name = $scope.user.last_name
     $scope.email = $scope.user.email
-    $scope.dt = new Date($scope.user.birthday.date)
+    birthday = new Date($scope.user.birthday.date)
+    $scope.dt = new Date()
+    $scope.dt.setDate(birthday.getDate() + 1)
     $scope.phone_number = $scope.user.phone_number
 
-    $scope.displayed_profile_photo = $scope.user.profile_photo_url
+    $scope.displayed = $scope.user
+    utils.replaceInvalidImages($scope.displayed, 'profile_photo_url')
+
+    $scope.submitEditProfileRequest = submitEditProfileRequest
     
     $scope.doUpload = function() {
         fileManager.uploadFile(event.target.files[0]).then(function(data){
-            $scope.displayed_profile_photo = data.download_link
+            $scope.displayed.profile_photo_url = data.download_link
             $scope.current_photo = data
             utils.requestEnd();
         })
@@ -650,6 +673,29 @@ app.controller('editProfileController', function($scope, utils, fileManager, Aut
 
     function closeAlert(index) {
         alertFactory.closeAlert($scope, index);
+    }
+
+    function submitEditProfileRequest() {
+        if($scope.recCrtForm.$valid)
+        {
+            AuthService.updateUser({
+                user_id : $scope.user.id,
+                first_name : $scope.first_name,
+                last_name : $scope.last_name,
+                phone_number : $scope.phone_number,
+                email : $scope.email,
+                birthday : $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined,
+                file_id : $scope.current_photo? $scope.current_photo.id:undefined
+            }).then(function(data){
+                utils.requestEnd();
+                $scope.current_photo = null
+                $rootScope.$broadcast('updateUser');
+                $scope.addAlert('success', "Your profile has been updated")
+            }).catch(function (response) {
+                utils.requestEnd();
+                addAlert('danger', response.data.message)
+            })
+        }
     }
 })
 

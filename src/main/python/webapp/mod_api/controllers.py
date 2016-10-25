@@ -287,6 +287,63 @@ class User(flask_restful.Resource):
         except AttributeError as err:
             return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
 
+    def put(self, user_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('phone_number', type=str)
+        parser.add_argument('birthday', type=str)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('first_name', type=str, required=True)
+        parser.add_argument('last_name', type=str, required=True)
+        parser.add_argument('file_id', type=int)
+        args = parser.parse_args()
+
+        phone_number= args['phone_number']
+        birthday = args['birthday']
+        email = args['email']
+        first_name = args['first_name']
+        last_name = args['last_name']
+        file_id = args['file_id']
+
+        existing_entity = Entity.query.filter(and_(Entity.email==email, Entity.id!=user_id)).first()
+        if(existing_entity):
+            return {"message" :"Email already used"}, HTTP_BAD_REQUEST
+
+        try:
+            entity = Entity.query.get(user_id)
+
+            entity.email = email
+            entity.first_name = first_name
+            entity.last_name = last_name
+            entity.phone_number = phone_number
+            birthday= datetime.datetime.strptime(args['birthday'], "%Y-%m-%d")
+            birthday_date = Date.query.filter(Date.date==birthday).first()
+            if(not birthday_date):
+                birthday_date = Date(date=birthday)
+                birthday_date.add(birthday_date)
+    
+            entity.birthday = birthday_date
+            print entity.birthday
+
+            if(file_id):
+                old_profile_picture = EntityPhoto.query.filter(and_(EntityPhoto.entity_id==user_id, EntityPhoto.is_profile_picture==True)).first()
+                if(old_profile_picture):
+                    old_profile_picture.is_profile_picture = False
+                    old_profile_picture.update()
+
+                entity_photo = EntityPhoto(file_id=file_id, entity_id=user_id, is_profile_picture=True)
+                entity_photo.add(entity_photo)
+
+            entity.update()
+
+            entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username",     "birthday", "phone_number", "profile_photo_url"))
+            entity_json = entity_schema.dump(entity).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add use during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+        except ValueError as err:
+             return {"message" : {"birthday": format(err)}}, HTTP_BAD_REQUEST
+
+        return entity_json
+
 api.add_resource(User, '/users/<int:user_id>')
 
 class Users(flask_restful.Resource):

@@ -13,6 +13,7 @@ app.factory('AuthService',
       getUser: getUser,
       openLoginModal : openLoginModal,
       openSignupModal : openSignupModal,
+      updateUser: updateUser,
     }
 
     // return available functions for use in controllers
@@ -99,25 +100,20 @@ app.factory('AuthService',
 	}
 
 	function loadCurrentUser() {
-		utils.requestStart()
-
 		var deferred = $q.defer();
 
 		$http.get('/auth/current_user')
 			.success(function (data, status) {
-				utils.requestEnd()
-
 			    if(status === 200){
-			      utils.replaceInvalidImages(data, 'profile_photo_url')
-			      user = data;
-			      deferred.resolve();
+			        utils.replaceInvalidImages(data, 'profile_photo_url')
+			        user = data;
+			        deferred.resolve();
 			    } else {
 			      user = null;
 			      deferred.reject();
 			    }
 		    })
 		    .error(function (data) {
-		    	utils.requestEnd()
 		        user = null;
 		        deferred.reject();
 	  	    });
@@ -159,6 +155,20 @@ app.factory('AuthService',
                 factory.openLoginModal();
             }
         });
+    }
+
+    function updateUser(params){
+    	utils.requestStart()
+
+		return $http({
+			method: 'PUT',
+			url : '/api/users/' + params.user_id,
+			params: params
+		}).then(function(data, status){
+			utils.replaceInvalidImages(data.data, 'profile_photo_url')
+			user = data.data
+			return data.data
+		})
     }
 
 });
