@@ -539,23 +539,20 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 			list = list.concat({})
 		}
 
-		if(fillList.length > fallbackSize)
-		{
-			for(i = 0; i < fallbackSize; i++)
-			{
-				list[i] = fillList[i]
-			}
+		if(fillList != null) {
+			if (fillList.length > fallbackSize) {
+				for (i = 0; i < fallbackSize; i++) {
+					list[i] = fillList[i]
+				}
 
-			for(i = fallbackSize; i < fillList.length; i++)
-			{
-				list = list.concat(fillList[i])
+				for (i = fallbackSize; i < fillList.length; i++) {
+					list = list.concat(fillList[i])
+				}
 			}
-		}
-		else
-		{
-			for(i = 0 ; i < fillList.length; i++)
-			{
-				list[i] = fillList[i]
+			else {
+				for (i = 0; i < fillList.length; i++) {
+					list[i] = fillList[i]
+				}
 			}
 		}
 
@@ -567,7 +564,9 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 })
 
 app.factory('socketService', function (socketFactory) {
-  return socketFactory();
+    var mySocket = socketFactory();
+    mySocket.forward('message');
+    return mySocket;
 });
 
 app.factory('fileManager', function($q, $timeout, utils, $http) {
