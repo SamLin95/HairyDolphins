@@ -419,6 +419,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
     $scope.displayCollection = [].concat($scope.recommendation.reviews)
     $scope.submitPostReviewRequest = submitPostReviewRequest
     $scope.recommendPlaceRequest = recommendPlaceRequest
+    $scope.provideRecommendationRequest = provideRecommendationRequest
     $scope.newReview = null
 
     $scope.map = { center: { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }, zoom: 8 };
@@ -441,6 +442,16 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
         $scope.recommend_already = false
     } else {
         $scope.recommend_already = true
+    }
+
+    if( 
+        $scope.user &&
+        $scope.user.role.id == 2 &&
+        $scope.recommendation.local_advisor_profiles.map(function(local_advisor_profile) {return local_advisor_profile.entity[0].id}).indexOf($scope.user.id) != -1
+    ){
+        $scope.provide_already = true
+    } else {
+        $scope.provide_already = false
     }
 
     function addAlert(type, message) {
@@ -489,7 +500,6 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 recommendation_id : $scope.recommendation.id
             }).then(function(entity_recommendation){
                 utils.requestEnd();
-                $scope.addAlert('success', "Your review has been successfully submitted")
                 $scope.recommendation.entity_recommendations.push(entity_recommendation)
                 $scope.recommendation.recommenders.push(entity_recommendation.entity)
                 pageChanged1()
@@ -499,6 +509,22 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 addAlert('danger', response.data.message)
             })
         }
+    }
+
+
+    function provideRecommendationRequest() {
+        reviewManager.createNewLocalAdvisorProfileRec({
+            user_id : $scope.user.id,
+            recommendation_id : $scope.recommendation.id
+        }).then(function(local_advisor_profile){
+            utils.requestEnd();
+            $scope.recommendation.local_advisor_profiles.push(local_advisor_profile)
+            pageChanged2()
+            $scope.provide_already = true
+        }).catch(function (response) {
+            utils.requestEnd();
+            addAlert('danger', response.data.message)
+        })
     }
 
     function pageChanged1() {
