@@ -230,6 +230,8 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
 
     $scope.messageHistory = messageHistory
 
+    console.log($scope.messageHistory);
+
     $scope.send_message = send_message
 
     //$scope.$on('socket:message', function(ev, data) {
