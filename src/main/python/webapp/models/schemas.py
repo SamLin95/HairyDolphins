@@ -10,6 +10,7 @@ class EntitySchema(ModelSchema):
     role = fields.Nested(RoleSchema, exclude=('entities',))
     local_advisor_profile = fields.Nested('LocalAdvisorProfileSchema', exclude=('entity',))
     entity_photos = fields.Nested('EntityPhotoSchema', many=True, exclude=('entity',))
+    birthday = fields.Nested('DateSchema')
     average_rating = fields.Float()
     profile_photo_url = fields.String()
     contacts = fields.Nested('EntitySchema', only=('id','first_name','last_name', 'profile_photo_url'), many=True)
@@ -20,13 +21,15 @@ class EntitySchema(ModelSchema):
 class LocalAdvisorProfileSchema(ModelSchema):
     reviews = fields.Nested('ReviewSchema', many=True, exclude=('local_advisor_profile',))
     city = fields.Nested('CitySchema')
+    entity = fields.Nested(EntitySchema, only=('id', 'first_name', 'last_name', 'profile_photo_url'), many=True)
     available_dates = fields.Nested('DateSchema', many=True)
+    recommendations = fields.Nested('RecommendationSchema', only=('id', 'title', 'description', 'primary_picture', 'average_rating'), many=True)
     class Meta:
         model = LocalAdvisorProfile
         exclude = ('search_vector',)
 
 class ReviewSchema(ModelSchema):
-    reviewer = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    reviewer = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
     class Meta:
         model = Review
 
@@ -66,12 +69,15 @@ class DateSchema(ModelSchema):
         model = Date
 
 class RecommendationSchema(ModelSchema):
-    recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
-    reviews = fields.Nested(ReviewSchema, exclude=('recommendation',))
+    recommender = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
+    reviews = fields.Nested(ReviewSchema, exclude=('recommendation',), many=True)
     entity_recommendations = fields.Nested('EntityRecommendationSchema', many=True, exclude=('recommendation',))
     recommendation_photos = fields.Nested('RecommendationPhotoSchema', many=True, exclude=('recommendation',))
     recommendation_category = fields.Nested('RecommendationCategorySchema', exclude=('recommendations',))
+    local_advisor_profiles = fields.Nested('LocalAdvisorProfileSchema', only=('id', 'entity', 'average_rating'), many=True) 
     city = fields.Nested('CitySchema', exclude=('recommendations',))
+    average_rating = fields.Float()
+    primary_picture = fields.String()
     class Meta:
         model = Recommendation
 
@@ -80,15 +86,10 @@ class RecommendationCategorySchema(ModelSchema):
         model = RecommendationCategory
 
 class EntityRecommendationSchema(ModelSchema):
-    entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))
+    entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name', 'profile_photo_url'))
     recommendation = fields.Nested(RecommendationSchema, only=('id', 'title', 'description', 'address_line_one', 'address_line_two', 'city', 'zip_code', 'is_draft'))
-    entity_recommendation_type = fields.Nested('EntityRecommendationTypeSchema', exclude=('entity_recommendations'))
     class Meta:
         model = EntityRecommendation
-
-class EntityRecommendationTypeSchema(ModelSchema):
-    class Meta:
-        model = EntityRecommendationType
 
 class RecommendationPhotoSchema(ModelSchema):
     entity = fields.Nested(EntitySchema, only=('id', 'role', 'username', 'email', 'first_name', 'last_name'))

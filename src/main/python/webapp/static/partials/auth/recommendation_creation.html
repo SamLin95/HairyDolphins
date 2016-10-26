@@ -1,0 +1,87 @@
+<div style="height:50px"></div>
+<div class="panel panel-default" style="border-bottom:transparent;">
+<div class="panel-heading">
+    <h3 style="margin-top:10px;">Edit Recommendation</h3>
+</div>
+<div class="panel-body">
+	<div class="row" style="margin-top:3em">
+      <!-- left column -->
+      <div class="col-md-3" style="margin-left:6%">
+        <div class="text-center">
+            <div class="squareImgContainer">
+              <img ng-src="{{displayed_recommendation_photo}}" class="img-thumbnail squareImg"  alt="loading image...">
+            </div>
+          <h6>Upload a photo...</h6>
+          
+          <form>
+            <div class="form-group">
+              <input class="form-control" type="file" custom-on-change="doUpload"/>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- edit form column -->
+      <div class="col-md-8">
+        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+        
+        <form class="form-horizontal" role="form" name="recCrtForm">
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Title:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="title" required maxlength="64">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Description:</label>
+            <div class="col-md-8">
+              <textarea class="form-control" rows="5" type="text" ng_model="description" required maxlength="512">
+              </textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Address Line 1:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="address_line_one" required maxlength="64">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Address Line 2:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="address_line_two" maxlength="64">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Zip Code:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" ng_model="zip_code" required maxlength="6" style="width: 6em">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">City:</label>
+            <div class="col-lg-8">
+                <select class="form-control" ng-model="selected_city" ng-options="city as city.label for city in cities track by city.id" required>
+                    <option value="">-- choose city --</option>
+                </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Category:</label>
+            <div class="col-md-8">
+              <select class="form-control" ng-model="selected_recommendation_category" ng-options="recommendation_category as recommendation_category.label for recommendation_category in recommendation_categories track by recommendation_category.id" required>
+                <option value="">-- choose category --</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+              <input type="submit" class="btn btn-success" value="Submit" ng-click="submitRecCreationRequest()">
+              <span></span>
+              <input type="reset" class="btn btn-default" value="Cancel">
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>

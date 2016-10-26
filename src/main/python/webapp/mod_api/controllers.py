@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, Flask, jsonify
+import werkzeug
 import flask_restful
-from sqlalchemy import and_, or_, exc
+from sqlalchemy import and_, or_, exc, func
 from flask_restful import reqparse
 from flask_restful_swagger import swagger
 from datetime import datetime
@@ -8,6 +9,7 @@ from sqlalchemy_searchable import search, parse_search_query
 
 from ..models.models import *
 from ..models.schemas import *
+from ..lib.s3_lib import *
 
 API_VERSION = 1
 
@@ -47,12 +49,191 @@ api.init_app(mod_api)
 api = swagger.docs(api, apiVersion=API_VERSION, api_spec_url='/spec')
 
 class Recommendations(flask_restful.Resource):
+    "A list of recommendations"
+
+    @swagger.operation(
+        summary = "Returns the information of a list of recommendations which meet all given criteria",
+        nickname = "Search Recommendatons",
+        parameters=[
+            {
+              "name": "recommendation_id",
+              "description": "Primary key of the expected recommendation. Cannot put retriction on any other fields of a recommendation if this parameter is being used",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "recommendation_category_id",
+              "description": "The primary key of the category of recommendations in the expected recommendation list",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "city_id",
+              "description": "The primary key of city that the recommendationthat belongs to",
+              "required": False,
+              "allowMultiple": False,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "request_fields",
+              "description": "Names of the fields of each recommendation that are required to be returned",
+              "required": False,
+              "allowMultiple": True,
+              "dataType": "string",
+              "paramType": "query"
+            },
+       ]
+    )
     def get(self):
-        recommendations = Recommendation.query.all()
-        recommendation_schema=RecommendationSchema();
-        return recommendation_schema.dump(recommendations, many=True).data
+        parser = reqparse.RequestParser()
+        parser.add_argument('recommendation_id', type=int)
+        parser.add_argument('recommendation_category_id', type=int)
+        parser.add_argument('city_id', type=int)
+        parser.add_argument('limit', type=int)
+        parser.add_argument('request_fields', type=str, action='append')
+        args = parser.parse_args()
+        recommendation_query = Recommendation.query
+
+        if(args['request_fields']):
+            request_fields = tuple(args['request_fields'])
+            recommendation_schema = RecommendationSchema(only=request_fields)
+        else:
+            recommendation_schema = RecommendationSchema()
+
+        if args['recommendation_id']:
+            recommendation_id = args['recommendation_id']
+            recommendation = recommendation_query.get(recommendation_id)
+
+            if(not recommendation):
+                return {"message" :"Recommendation not found"}, HTTP_NOT_FOUND
+
+            try:
+                recommendation_json = recommendation_schema.dump(recommendation).data
+                return recommendation_json
+            except AttributeError as err:
+                return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
+        else:
+            if(args['recommendation_category_id']):
+                recommendation_category_id = args['recommendation_category_id']
+                recommendation_query = recommendation_query.filter_by(recommendation_category_id=recommendation_category_id)
+
+            if(args['city_id']):
+                city_id = args['city_id']
+                recommendation_query = recommendation_query.filter_by(city_id=city_id)
+
+            if(args['limit']):
+                limit = args['limit']
+                recommendation_query = recommendation_query.limit(limit)
+
+            recommendations = recommendation_query.all()
+
+            if(not recommendations):
+                return {"message" :"No expected recommendation found"}, HTTP_NOT_FOUND
+
+            try:
+                recommendation_json = recommendation_schema.dump(recommendations, many=True).data
+                return recommendation_json
+            except AttributeError as err:
+                return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('title', type=str, required=True)
+        parser.add_argument('description', type=str, required=True)
+        parser.add_argument('address_line_one', type=str, required=True)
+        parser.add_argument('address_line_two', type=str)
+        parser.add_argument('zip_code', type=str, required=True)
+        parser.add_argument('city_id', type=int, required=True)
+        parser.add_argument('recommender_id', type=int, required=True)
+        parser.add_argument('recommendation_category_id', type=int, required=True)
+        parser.add_argument('file_id', type=int, required=True)
+        args = parser.parse_args()
+
+        title = args['title']
+        description = args['description']
+        address_line_one = args['address_line_one']
+        address_line_two = args['address_line_two']
+        zip_code = args['zip_code']
+        city_id = args['city_id']
+        recommendation_category_id = args['recommendation_category_id']
+        recommender_id = args['recommender_id']
+        file_id = args['file_id']
+
+        try:
+            new_recommendation = Recommendation(title=title, description=description, address_line_one=address_line_one, address_line_two=address_line_two, zip_code=zip_code, recommender_id=recommender_id, city_id=city_id, recommendation_category_id=recommendation_category_id,is_draft=False)
+
+            new_recommendation.add(new_recommendation)
+
+            new_recommendation_photo = RecommendationPhoto(recommendation=new_recommendation, file_id=file_id, uploader_id=recommender_id)
+            new_recommendation_photo.add(new_recommendation_photo)
+
+            recommendation_schema = RecommendationSchema()
+            recommendation_json = recommendation_schema.dump(new_recommendation).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add recommendation during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return recommendation_json 
 
 api.add_resource(Recommendations, '/recommendations')
+
+class RecommendationResource(flask_restful.Resource):
+    """A Recommendation"""
+
+    def __init__(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('request_fields', type=str, action='append')
+
+        self.parser = parser
+
+    @swagger.operation(
+        summary = "Returns the information of the recommendation with given id",
+        nickname = "Get Recommendation",
+        parameters=[
+            {
+              "name": "recommendation_id",
+              "description": "Primary key of the expected recommendation.",
+              "required": True,
+              "allowMultiple": False,
+              "dataType": "integer",
+              "paramType": "path"
+            },
+            {
+              "name": "request_fields",
+              "description": "Names of the fields of the recommnendation that are required to be returned",
+              "required": False,
+              "allowMultiple": True,
+              "dataType": "string",
+              "paramType": "query"
+            },
+       ]
+    )
+    def get(self, recommendation_id):
+        args = self.parser.parse_args()
+        recommendation_query = Recommendation.query
+
+        if(args['request_fields']):
+            request_fields = tuple(args['request_fields'])
+            recommendation_schema = RecommendationSchema(only=request_fields)
+        else:
+            recommendation_schema = RecommendationSchema()
+
+        recommendation = recommendation_query.get(recommendation_id)
+
+        if(not recommendation):
+            return {"message" :"Recommendation not found"}, HTTP_NOT_FOUND
+
+        try:
+            recommendation_json = recommendation_schema.dump(recommendation).data
+            return recommendation_json
+        except AttributeError as err:
+            return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
+
+api.add_resource(RecommendationResource, '/recommendations/<int:recommendation_id>')
 
 class User(flask_restful.Resource):
     """An User"""
@@ -105,6 +286,63 @@ class User(flask_restful.Resource):
             return entity_json
         except AttributeError as err:
             return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
+
+    def put(self, user_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('phone_number', type=str)
+        parser.add_argument('birthday', type=str)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('first_name', type=str, required=True)
+        parser.add_argument('last_name', type=str, required=True)
+        parser.add_argument('file_id', type=int)
+        args = parser.parse_args()
+
+        phone_number= args['phone_number']
+        birthday = args['birthday']
+        email = args['email']
+        first_name = args['first_name']
+        last_name = args['last_name']
+        file_id = args['file_id']
+
+        existing_entity = Entity.query.filter(and_(Entity.email==email, Entity.id!=user_id)).first()
+        if(existing_entity):
+            return {"message" :"Email already used"}, HTTP_BAD_REQUEST
+
+        try:
+            entity = Entity.query.get(user_id)
+
+            entity.email = email
+            entity.first_name = first_name
+            entity.last_name = last_name
+            entity.phone_number = phone_number
+            birthday= datetime.datetime.strptime(args['birthday'], "%Y-%m-%d")
+            birthday_date = Date.query.filter(Date.date==birthday).first()
+            if(not birthday_date):
+                birthday_date = Date(date=birthday)
+                birthday_date.add(birthday_date)
+    
+            entity.birthday = birthday_date
+            print entity.birthday
+
+            if(file_id):
+                old_profile_picture = EntityPhoto.query.filter(and_(EntityPhoto.entity_id==user_id, EntityPhoto.is_profile_picture==True)).first()
+                if(old_profile_picture):
+                    old_profile_picture.is_profile_picture = False
+                    old_profile_picture.update()
+
+                entity_photo = EntityPhoto(file_id=file_id, entity_id=user_id, is_profile_picture=True)
+                entity_photo.add(entity_photo)
+
+            entity.update()
+
+            entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username",     "birthday", "phone_number", "profile_photo_url"))
+            entity_json = entity_schema.dump(entity).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add use during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+        except ValueError as err:
+             return {"message" : {"birthday": format(err)}}, HTTP_BAD_REQUEST
+
+        return entity_json
 
 api.add_resource(User, '/users/<int:user_id>')
 
@@ -182,7 +420,6 @@ class Users(flask_restful.Resource):
                 return {"message" :"User not found"}, HTTP_NOT_FOUND
 
             try:
-                entity.load_hybrid_properties();
                 entity_json = entity_schema.dump(entity).data
                 return entity_json
             except AttributeError as err:
@@ -203,9 +440,9 @@ class Users(flask_restful.Resource):
             if(args['keyword']):
                 keyword = args['keyword']
 
-                combined_search_vector = ( Entity.search_vector | LocalAdvisorProfile.search_vector | City.search_vector | State.search_vector | Country.search_vector )
+                combined_search_vector = ( Entity.search_vector | func.coalesce(LocalAdvisorProfile.search_vector, u'') | func.coalesce(City.search_vector, u'') | func.coalesce(State.search_vector, u'') | func.coalesce(Country.search_vector, u'') )
 
-                entity_query = entity_query.join((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).join(City).join(State).join(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
+                entity_query = entity_query.outerjoin((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).outerjoin(City).outerjoin(State).outerjoin(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
 
             if(args['limit']):
                 limit = args['limit']
@@ -217,8 +454,6 @@ class Users(flask_restful.Resource):
                 return {"message" :"No expected user found"}, HTTP_NOT_FOUND
 
             try:
-                for entity in entities:
-                    entity.load_hybrid_properties()
                 entity_json = entity_schema.dump(entities, many=True).data
                 return entity_json
             except AttributeError as err:
@@ -340,3 +575,128 @@ class Messages(flask_restful.Resource):
         return message_json
         
 api.add_resource(Messages, '/messages')
+
+class Cities(flask_restful.Resource):
+    def get(self):
+        cities = City.query.all()
+        city_schema = CitySchema()
+        return city_schema.dump(cities, many=True).data
+
+api.add_resource(Cities, '/cities')
+
+class RecommendationCategories(flask_restful.Resource):
+    def get(self):
+        recommendation_categories = RecommendationCategory.query.all()
+        recommendation_category_schema = RecommendationCategorySchema()
+        return recommendation_category_schema.dump(recommendation_categories, many=True).data
+
+api.add_resource(RecommendationCategories, '/recommendation_categories')
+
+class Files(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('photo', type=werkzeug.datastructures.FileStorage, location='files')
+
+        args = parser.parse_args()
+        photo = args['photo']
+        photo_basename = photo.filename.rsplit('.', 1)[0]
+        photo_ext = photo.filename.rsplit('.', 1)[1]
+
+        #Recompose filename to include current datetime
+        photo_filename = '{0}_{1}.{2}'.format(photo_basename, datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S'), photo_ext)
+        photo_tmp_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        photo.save(photo_tmp_path)
+
+        upload_error = None
+        try:
+            s3_helper = S3Helper()
+            s3_helper.upload_file(photo_tmp_path, photo_filename)
+        except:
+            upload_error = True
+        finally:
+            os.remove(photo_tmp_path)
+
+        if(upload_error):
+            return {"message" : "Failed to upload profile picture"}, HTTP_INTERNAL_SERVER_ERROR
+
+        photo_s3_url = 'https://s3.amazonaws.com/hairydolphins/{0}'.format(photo_filename)
+        photo_file = File(name = photo_filename, checksum = 0, download_link = photo_s3_url, file_type_id = 1)
+        photo_file.add(photo_file)
+        file_schema = FileSchema()
+
+        return file_schema.dump(photo_file).data
+        
+api.add_resource(Files, '/files')
+
+class Reviews(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('title', type=str, required=True)
+        parser.add_argument('content', type=str, required=True)
+        parser.add_argument('rating', type=str, required=True)
+        parser.add_argument('reviewer_id', type=int, required=True)
+        parser.add_argument('local_advisor_profile_id', type=int)
+        parser.add_argument('recommendation_id', type=int)
+        args = parser.parse_args()
+
+        title = args['title']
+        content = args['content']
+        rating = args['rating']
+        reviewer_id = args['reviewer_id']
+        local_advisor_profile_id = args['local_advisor_profile_id']
+        recommendation_id = args['recommendation_id']
+
+        if(local_advisor_profile_id):
+            existing_local_advisor_review = Review.query.filter(and_(Review.local_advisor_profile_id==local_advisor_profile_id, Review.reviewer_id==reviewer_id)).first()
+            if(existing_local_advisor_review):
+                return {"message" :"You cannot twice on the same local advisor."}, HTTP_BAD_REQUEST
+
+        if(recommendation_id):
+            existing_recommendation_review = Review.query.filter(and_(Review.recommendation_id==recommendation_id, Review.reviewer_id==reviewer_id)).first()
+            if(existing_recommendation_review):
+                return {"message" :"You cannot twice on the same recommendation."}, HTTP_BAD_REQUEST
+
+        try:
+            new_review = Review(title=title, content=content, rating=rating, reviewer_id=reviewer_id, recommendation_id=recommendation_id, local_advisor_profile_id=local_advisor_profile_id)
+
+            new_review.add(new_review)
+
+            review_schema = ReviewSchema()
+            review_json = review_schema.dump(new_review).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add review during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return review_json 
+
+api.add_resource(Reviews, '/reviews')
+
+class EntityRecommendations(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('recommendation_id', type=int, required=True)
+        parser.add_argument('user_id', type=int, required=True)
+        parser.add_argument('reason', type=str)
+        args = parser.parse_args()
+
+        recommendation_id = args['recommendation_id']
+        entity_id = args['user_id']
+        reason = args['reason']
+
+        existing_entity_recommendation = EntityRecommendation.query.join(Recommendation).filter(and_(EntityRecommendation.recommendation_id==recommendation_id, and_(EntityRecommendation.entity_id==entity_id, Recommendation.recommender_id==entity_id))).first()
+
+        if(existing_entity_recommendation):
+            return {"message" :"You have already recommended this place!"}, HTTP_BAD_REQUEST
+
+        try:
+            new_entity_recommendation = EntityRecommendation(entity_id=entity_id, recommendation_id=recommendation_id, reason=reason)
+
+            new_entity_recommendation.add(new_entity_recommendation)
+
+            entity_recommendation_schema = EntityRecommendationSchema()
+            entity_recommendation_json = entity_recommendation_schema.dump(new_entity_recommendation).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add entity_recommendation during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return entity_recommendation_json 
+
+api.add_resource(EntityRecommendations, '/entity_recommendations')

@@ -4,8 +4,10 @@
 	<h3 style="margin-top:10px;">Search Local Advisors</h3>
 </div>
 <div class="panel-body smart-table-container">
+
 	<form class="form-inline">
-	    <div class="row">
+
+		<div class="row">
 	        <div class='col-md-2 form-group' datepicker></div>
 	        <div class='col-md-8 form-group'>
 	            <input type="text" class="form-control" placeholder="What do you expect?" style="width:100%" ng-model='searchString'>
@@ -15,25 +17,36 @@
 	        </div>
 	    </div>
     </form>
+
 	<table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="localAdvisors" class="table smart-table">
 		<tbody ng-if="!isLoading">
 			<tr ng-if="displayCollection.length == 0">
 				<td class="text-center">No local advisor found.</td>
 			</tr>
 			<tr ng-repeat="localAdvisor in displayCollection">
-				<td style="width: 25%">
+				<td style="width:25%">
 					<div class="squareImgContainer">
-						<img ng-click="alert()" style="height: 100%;" ng-src="{{localAdvisor.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="No image">
-						</div>
+						<img ng-click="viewDetails(localAdvisor)" style="width: 80%; height: 80%;" ng-src="{{localAdvisor.profile_photo_url}}" class="img-rounded img-thumbnail squareImg"  alt="loading image...">
 					</div>
 				</td>
-				<td>
+				<td style="width:70%">
 					<div>
-						<p>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</p>
-						<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>
-						<p>{{localAdvisor.local_advisor_profile.description}}</p>
+						<div>
+		                    <h3>{{localAdvisor.first_name}} {{localAdvisor.last_name}}</h3>
+		                    <h5 style="color:#aaa">From {{localAdvisor.local_advisor_profile.city.label}}, {{localAdvisor.local_advisor_profile.city.state.label}}, {{localAdvisor.local_advisor_profile.city.state.country.label}}</h5>
+		                    <div>
+                            	<span uib-rating max="5" ng-model="localAdvisor.average_rating" read-only="true"></span>
+                            	<b>(<i>{{localAdvisor.local_advisor_profile.reviews.length}} review{{localAdvisor.local_advisor_profile.reviews.length>1?'s':''}}</i>)</b>
+                        	</div>
+                        	<div style="margin-top: 2em">
+		                    	<p>{{localAdvisor.local_advisor_profile.description}}</p>
+		              		</div>
+            			</div>
 					</div>
 				</td>
+				<td style="width:15%; vertical-align: middle">
+					<button class="btn btn-primary" ng-click="viewDetails(localAdvisor)">View Details</button>
+                </td>
 			</tr>
 		</tbody>
 		<tfoot>

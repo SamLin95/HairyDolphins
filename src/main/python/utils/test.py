@@ -2,7 +2,7 @@ if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, EntityRecommendationType, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
+from webapp.models.models import Date, RecommendationPhoto, AdminProfile, EntityPhoto, Review, Message, EntityRecommendation, RecommendationCategory, Recommendation, File, FileType, Role, Entity, db, City, State, Country, LocalAdvisorProfile
 import datetime
 # amazon s3
 import boto
@@ -33,8 +33,8 @@ def createEntity(label, email, username, password, first_name, last_name, phone_
     print '------ user added -----'
     return user
 
-def createMessage(body, receiver):
-    message = Message(message_body=body, receiver=receiver)
+def createMessage(body, sender, receiver):
+    message = Message(message_body=body, sender=sender, receiver=receiver)
     message.add(message)
     print '----- message sent ------'
     return message
@@ -50,28 +50,8 @@ def checkCategory(label):
     print '------ category checked -----'
     return recommendation_category
 
-def checkType(label):
-    recommendation_type = EntityRecommendationType.query.filter_by(label=label).first()
-    if recommendation_type == None:
-        print '----- new recommendation type, updating ------'
-        recommendation_type = EntityRecommendationType(label=label)
-        recommendation_type.add(recommendation_type)
-    else:
-        print recommendation_type
-    print '------ recommendation type checked -----'
-    return recommendation_type
-
-def createEntityRecommendation(entity, entity_recommendation_type, recommend):
-    types = EntityRecommendationType.query.filter_by(label=entity_recommendation_type).first()
-    if types == None:
-        print '----- new type, updating -----'
-        types = EntityRecommendationType(label=entity_recommendation_type)
-        types.add(types)
-    else:
-        print types
-    print '------ recommendation type checked -----'
-
-    entity_recommendation = EntityRecommendation(entity=entity, entity_recommendation_type=types, recommendation=recommend)
+def createEntityRecommendation(entity, reason , recommend):
+    entity_recommendation = EntityRecommendation(entity=entity, reason=reason, recommendation=recommend)
     entity_recommendation.add(entity_recommendation)
     print '----- entity recommendation updated -----'
     return entity_recommendation
@@ -125,8 +105,8 @@ def createAdvisorProfile(description, city=None, dates=None):
     print '------ advisor checked -----'
     return advisor
 
-def createReview(rating, title, reviewer, advisor_profile=None, posted=None, recommend=None):
-    review = Review(rating=rating, title=title, reviewer=reviewer)
+def createReview(rating, title, content, reviewer, advisor_profile=None, posted=None, recommend=None):
+    review = Review(rating=rating, title=title, content=content, reviewer=reviewer)
     if posted != None:
         review.posted = posted
     if advisor_profile != None:
@@ -158,8 +138,14 @@ def createFile(name, checksum, photo, format, type_name):
 
 def createEntityPhoto(entity, name, checksum, photo, format):
     files = createFile(name, checksum, photo, format, 'entity_photo')
-    photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
-    photo.add(photo)
+    photo = EntityPhoto.query.filter_by(entity=entity).first()
+    if photo == None:
+        photo = EntityPhoto(entity=entity, file=files, is_profile_picture=True)
+        photo.add(photo)
+    else:
+        print 'entity exists!! updating profile'
+        photo.file = files
+        photo.update()
     print photo
     print '----- entity photo checked -----'
     return photo
@@ -172,6 +158,14 @@ def createRecommendationPhoto(uploader, recommendation, name, checksum, photo, f
     print '----- recommendation photo checked -----'
     return photo
 
+def createLocalAdvisorRecommendation(advisor_profile, recommendation):
+    advisor_profile.recommendations.append(recommendation)
+    advisor_profile.update()
+
+    print advisor_profile
+    print '----- local advisor recommendation checked -----'
+    return advisor_profile
+
 def uploadPhoto(type_name, photo_name, photo):
     bucket = boto.connect_s3().get_bucket('hairydolphins')
     link = type_name + '/' + photo_name
@@ -179,4 +173,4 @@ def uploadPhoto(type_name, photo_name, photo):
     key = bucket.new_key(link)
     key.set_contents_from_filename(photo)
     key.set_acl('public-read')
-    return link   
+    return 'https://s3.amazonaws.com/hairydolphins/' + link   

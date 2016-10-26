@@ -1,0 +1,173 @@
+<div style="height:50px"></div>
+<div class="panel panel-default" style="border-bottom:transparent;">
+    <div class="panel-body smart-table-container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="squareImgContainer" style="padding-bottom:65%">
+                    <img ng-src="{{recommendation.primary_picture}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                </div>
+                <div style="margin-top:5%; margin-left:20%">
+                    <span uib-rating max="5" state-on="'star_on'" state-off="'star_off'" ng-model="recommendation.average_rating" read-only="true"></span>
+                    <b style="font-size: 3em; padding-left: 4%">{{recommendation.average_rating|number:1}}</b>
+                </div>
+                <div class="text-center">
+                    <p>{{review_count}} reviews</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div style="height:15em">
+                    <h3>{{recommendation.title}}</h3>
+                    <hr>
+                    <p>{{recommendation.description}}</p>
+                </div>
+                <div style="height:10em">
+                    <h3>Address</h3>
+                    <hr>
+                    <p>{{recommendation.complete_address}}</p>
+                </div>
+                <div>
+                    <h3>Map</h3>
+                    <hr>
+                        <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+                            <ui-gmap-marker coords="geo" idkey="0">
+                        </ui-gmap-marker>
+                    </ui-gmap-google-map>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div style="height:10em">
+                    <h3>Category</h3>
+                    <hr>
+                    <div>{{recommendation.recommendation_category.label}}</div>
+                </div>
+                <div>
+                    <h3>Recommended By <em style="color:green">{{recommendation.recommenders.length}}</em> People</h3>
+                    <hr>
+                    <div>
+                        <div class="row well well-sm" style="margin-left:1em; margin-right:1em; border: none">
+                            <div class="col-md-3" ng-repeat="recommender_to_show in recommenders_to_show">
+                                <div class="squareImgContainer" uib-popover="{{recommender_to_show.first_name}} {{recommender_to_show.last_name}}" popover-trigger="'mouseenter'">
+                                    <img ng-src="{{recommender_to_show.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                                </div>
+                            </div> 
+                        </div>
+                        <ul uib-pagination boundary-links="true" total-items="recommendation.recommenders.length" ng-model="currentPage1" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged1()" max-size="3" items-per-page="numPerPage1" style="margin-left: 30%"></ul>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" ng-show="!recommend_already" ng-click="recommendPlaceRequest()" style="margin-top:2em; margin-left:10em">Also recommend this place!</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary disabled" ng-show="recommend_already" style="margin-top:2em; margin-left:10em">Already Recommended</button>
+                    </div>
+                </div>
+            </div>
+                <hr>
+            </div>
+        </div>
+        <hr ng-show="local_advisors_to_show.length">
+        <div ng-show="local_advisors_to_show.length">
+            <h2 style="margin-left:1em">Book A Tour!</h2>
+            <div>
+                <div class="row">
+                    <div class="col-md-2" ng-repeat="local_advisor_to_show in local_advisors_to_show">
+                        <div class="squareImgContainer">
+                            <img ng-src="{{local_advisor_to_show.entity[0].profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image..." style="width:90%; height: 90%" ng-click="viewAdvisorDetails(local_advisor_to_show.entity[0])">
+                        </div>
+                        <div class="text-center">
+                                <b>{{local_advisor_to_show.entity[0].first_name}} {{local_advisor_to_show.entity[0].last_name}}</b>
+                        </div>
+                        <div>
+                            <span uib-rating max="5" ng-model="local_advisor_to_show.average_rating" read-only="true" style="margin-left:4.5em"></span>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" style="margin-top:2em; margin-left:25%; width:50%">Book</button>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <ul uib-pagination boundary-links="true" total-items="recommendation.local_advisor_profiles.length" ng-model="currentPage2" class="pagination-md" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged2()" max-size="5" items-per-page="numPerPage2" style="margin-left:50em"></ul>
+        </div>
+        <hr>
+        <div>
+            <table ng-if="$root.isLoading == false" st-table="displayCollection" st-safe-src="recommendation.reviews" class="table smart-table table-striped" style="margin-top: 2em">
+                <tbody ng-if="!isLoading">
+                <h2 style="margin-left:1em">Reviews ({{review_count}})</h2>
+                <tr ng-if="displayCollection.length == 0">
+                    <td class="text-center">No review found.</td>
+                </tr>
+                <tr ng-repeat="review in displayCollection">
+                    <div>
+                        <td style="width: 10%">
+                            <div class="squareImgContainer">
+                                <img style="width: 70%; height: 70%" ng-src="{{review.reviewer.profile_photo_url}}" class="pull-xs-left img-rounded img-thumbnail squareImg"  alt="loading image...">
+                            </div>
+                            <div class="text-center">
+                                <p>{{review.reviewer.first_name}} {{review.reviewer.last_name}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span uib-rating max="5" ng-model="review.rating" read-only="true"></span>
+                            </div>
+                            <div style="padding-top: 1em">
+                                <b>{{review.title}}</b>
+                                <p>{{review.content}}</p>
+                            </div>
+                        </td>
+                    </div>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div st-pagination st-items-by-page="5" st-displayed-pages="5">
+                        </div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <hr>
+        <div>
+            <h3 style="margin-left:1em">Add Your Comment</h3>
+            <div ng-show="!user" class="well bottom text-center" style="margin-top:2em;margin-left:2em;margin-right:2em">
+                <div>
+                You need to log in to comment. <a ng-click="openLoginModal()"><b>Login Now</b></a>
+                </div>
+            </div>
+            <div ng-show="user">
+                <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
+                <form class="form-horizontal" style="margin-top:3em" role="form" name="reviewForm"> 
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label">Select a Rating:</label>
+                        <div class="col-md-8" style="margin-top:0.6em">
+                            <span uib-rating max="5" ng-model="newReview.rating" required></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label">Title:</label>
+                        <div class="col-md-8">
+                          <input class="form-control" type="text" ng_model="newReview.title" required maxlength="64">
+                        </div>
+                     </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label">Comment:</label>
+                        <div class="col-md-8">
+                          <textarea class="form-control" rows="5" type="text" ng_model="newReview.content" required maxlength="1024">
+                          </textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4 control-label"></label>
+                        <div class="col-md-6">
+                          <span style="margin-left:45%">
+                              <input type="submit" class="btn btn-success" value="Submit" ng-click="submitPostReviewRequest()" style="width: 25%; margin-right: 1em">
+                              <input type="reset" class="btn btn-default" value="Cancel" style="width: 25%">
+                          </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
