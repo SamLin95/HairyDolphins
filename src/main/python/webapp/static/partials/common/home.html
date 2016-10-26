@@ -4,11 +4,14 @@
   <form class="form-inline">
     <div class="row" style="margin-left:15%; margin-right:15%; margin-top:50px">
         <div class='col-md-3 form-group' datepicker></div>
-        <div class='col-md-6 form-group'>
-            <input type="text" class="form-control" placeholder="What do you expect?" style="width:100%" ng-model='searchString'>
+        <div class='col-md-2 form-group'>
+            <input type="text" ng-model="selected_city" placeholder="Where to go?" uib-typeahead="city as city.label + ', ' + city.state.label + ', ' + city.state.country.label for city in cities | limitTo: 8"class="form-control" style="width: 100%">
         </div>
-        <div class='col-md-3 form-group'>
-            <button type="button" class="btn btn-primary pull-left" style="width:50%" ng-click="sendSearchRequest()">
+        <div class='col-md-5 form-group'>
+            <input type="text" class="form-control" placeholder="What are you interested in? ( attraction, food...)" style="width:100%" ng-model='searchString'>
+        </div>
+        <div class='col-md-2 form-group'>
+            <button type="button" class="btn btn-primary pull-left" style="width:70%" ng-click="sendSearchRequest()">
               Search
             </button>
         </div>

@@ -399,6 +399,7 @@ class Users(flask_restful.Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id', type=int)
         parser.add_argument('role_id', type=int)
+        parser.add_argument('city_id', type=int)
         parser.add_argument('available_date', type=str)
         parser.add_argument('keyword', type=str)
         parser.add_argument('limit', type=int)
@@ -433,9 +434,12 @@ class Users(flask_restful.Resource):
                 try:
                     available_date = datetime.datetime.strptime(args['available_date'], "%Y-%m-%d")
                     entity_query = entity_query.join(LocalAdvisorProfile, aliased=True).join(LocalAdvisorProfile.available_dates, aliased=True).filter_by(date=available_date)
-
                 except ValueError as err:
                     return {"message" : {"available_date": format(err)}}, HTTP_BAD_REQUEST
+
+            if(args['city_id']):
+                city_id = args['city_id']
+                entity_query = entity_query.join(LocalAdvisorProfile, aliased=True).filter_by(city_id=city_id)
 
             if(args['keyword']):
                 keyword = args['keyword']

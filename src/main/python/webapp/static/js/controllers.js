@@ -1,8 +1,9 @@
 var app = angular.module('HairyDolphinsApp');
 
-app.controller('mainController', function($scope, $state, localAdvisors, recommendations) {
+app.controller('mainController', function($scope, $state, localAdvisors, recommendations, cities) {
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.localAdvisors = localAdvisors;
+    $scope.cities = cities;
     $scope.recommendations = recommendations;
     $scope.datepicker_placeholder = "Expected Date"
     $scope.dateOptions = {
@@ -16,10 +17,12 @@ app.controller('mainController', function($scope, $state, localAdvisors, recomme
     function sendSearchRequest() {
         keyword = $scope.searchString
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
+        city_id = $scope.selected_city ? $scope.selected_city.id:undefined
 
         $state.go(
             '^.laSearch',
             {
+                city_id: city_id,
                 keyword: keyword,
                 available_date: available_date
             }
@@ -185,8 +188,9 @@ app.controller('signupController', function($scope, $uibModalInstance, $rootScop
     }
 );
 
-app.controller('laSearchController', function($scope, localAdvisors, $state, $stateParams, searchHelper, utils){
+app.controller('laSearchController', function($scope, localAdvisors, cities, $state, $stateParams, searchHelper, utils){
     $scope.localAdvisors = localAdvisors
+    $scope.cities = cities
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.displayCollection = [].concat($scope.localAdvisors);
     $scope.datepicker_placeholder = "Expected Date"
@@ -210,10 +214,12 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
   function sendSearchRequest() {
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
         keyword = $scope.searchString? $scope.searchString:undefined
-,
+        city_id = $scope.selected_city ? $scope.selected_city.id:undefined
+
         searchHelper.searchLocalAdvisors({
                 keyword: keyword,
                 available_date: available_date,
+                city_id : city_id,
                 request_fields: [
                     'first_name',
                     'local_advisor_profile',

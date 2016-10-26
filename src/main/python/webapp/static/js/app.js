@@ -54,12 +54,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
         },
         recommendations: function(searchHelper){
           return searchHelper.searchRecommendations({"limit":3, "request_fields":["id","title", "description", "primary_picture"]})
-        }
+        },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
       },
       auth_redirect: "auth.home"
     })
     .state('unauth.laSearch', {
-      url: '/laSearch?keyword&available_date&limit',
+      url: '/laSearch?keyword&city_id&available_date&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
@@ -84,7 +87,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
           ]
 
           return searchHelper.searchLocalAdvisors($stateParams)
-        }
+        },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
       }
     })
     .state('auth', {
@@ -114,12 +120,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
         },
         recommendations: function(searchHelper){
           return searchHelper.searchRecommendations({"limit":3, "request_fields":["id", "title", "description", "primary_picture"]})
-        }
+        },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
       },
       unauth_redirect: "unauth.home"
     })
     .state('auth.laSearch', {
-      url: '/laSearch?keyword&available_date&limit',
+      url: '/laSearch?keyword&available_date&city_id&limit',
       views: {
         'content@' : {
           templateUrl: '/static/partials/common/laSearch.html',
@@ -143,7 +152,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
             'profile_photo_url'
           ]
           return searchHelper.searchLocalAdvisors($stateParams)
-        }
+        },
+        cities: function(searchHelper){
+          return searchHelper.getCityOptions()
+        },
       }
     })
     .state('auth.messenger', {
