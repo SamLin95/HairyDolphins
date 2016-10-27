@@ -26,12 +26,11 @@
 				<div class="panel-body smart-table-container">
 					<table ng-if="$root.isLoading == false" st-table="displayContacts" st-safe-src="userContacts" class="table smart-table table-striped" style="margin-bottom: 0px">
 						<tbody ng-if="!isLoading">
-							<tr ng-repeat="user in displayContacts" style="height:45px">
-								<td class="btn-default" ng-if="user.id "ui-sref="auth.messenger.chatpanel({user_id:{{user.id}}, first_name:'{{user.first_name}}', last_name:'{{user.last_name}}', profile_photo_url:'{{user.profile_photo_url}}'})">
-									<p class="text-center">{{user.first_name}} {{user.last_name}}</p>
+							<tr ng-repeat="contact in displayContacts" style="height:45px">
+								<td class="btn-default" ng-if="contact.user.id "ui-sref="auth.messenger.chatpanel({user_id:{{contact.user.id}}, first_name:'{{contact.user.first_name}}', last_name:'{{contact.user.last_name}}', profile_photo_url:'{{contact.user.profile_photo_url}}'})">
+									<p class="text-center">{{contact.user.first_name}} {{contact.user.last_name}}<span class="badge" ng-show="contact.unread_count" style="margin-left:1em; background-color:red">{{contact.unread_count}}</span></p>	
 								</td>
-
-								<td ng-if="!user.id">
+								<td ng-show="!contact.user">
 								</td>
 							</tr>
 						</tbody>

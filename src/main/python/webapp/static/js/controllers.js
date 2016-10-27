@@ -580,12 +580,12 @@ app.controller('messengerController', function($scope, searchHelper, userContact
 
     function onContactSelect(item, model, label) {
         contact_id_list = userContacts.map(function(contact){
-            return contact.id
+            return contact.user.id
         })
 
         if(contact_id_list.indexOf(model.id) == -1 && model.id != self_user.id) 
         {
-            userContacts.unshift(model)
+            userContacts.unshift({"user":model, "unread_count":0})
             $scope.userContacts = utils.fillFallbackList(userContacts, 10)
             $scope.displayContacts = [].concat($scope.userContacts)
         }

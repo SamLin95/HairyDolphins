@@ -13,10 +13,14 @@ class EntitySchema(ModelSchema):
     birthday = fields.Nested('DateSchema')
     average_rating = fields.Float()
     profile_photo_url = fields.String()
-    contacts = fields.Nested('EntitySchema', only=('id','first_name','last_name', 'profile_photo_url'), many=True)
+    contacts = fields.Nested('ContactSchema', many=True)
     class Meta:
         model = Entity
         exclude = ('search_vector',)
+
+class ContactSchema(ModelSchema):
+    user = fields.Nested('EntitySchema', only=('id','first_name','last_name', 'profile_photo_url'))
+    unread_count = fields.Integer()
 
 class LocalAdvisorProfileSchema(ModelSchema):
     reviews = fields.Nested('ReviewSchema', many=True, exclude=('local_advisor_profile',))
