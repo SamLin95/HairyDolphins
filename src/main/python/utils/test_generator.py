@@ -324,11 +324,11 @@ def createTest():
 	test.createEntityPhoto(visitor8, 'visitor8.jpg', 32, src + '/visitors/visitor8.jpg', 'jpg')
 	test.createEntityPhoto(visitor9, 'visitor9.jpg', 32, src + '/visitors/visitor9.jpg', 'jpg')
 
-	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/recommendations/atl1.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/recommendations/atl2.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/recommendations/atl3.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/recommendations/atl4.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.jpg', 32, src + '/recommendations/atl5.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/recommendations/recommendation1.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/recommendations/recommendation2.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/recommendations/recommendation3.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/recommendations/recommendation4.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.png', 32, src + '/recommendations/recommendation5.png', 'png')
 
 	print '\ncreating recommendations provided by advisors!!!'
 	test.createLocalAdvisorRecommendation(advisor_profile1, recommend1)
