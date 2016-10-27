@@ -5,6 +5,7 @@ if __name__ == '__main__' and __package__ is None:
 import test
 from datetime import date
 import random
+import testdata
 
 def createTest():
 	dates1 = []
@@ -14,7 +15,7 @@ def createTest():
 
 	dates2 = []
 	for i in range(0, 20):
-		dates = date(random.choice(range(2017, 2020)), random.choice(range(1, 13)), random.choice(range(1, 29)))
+		dates = date(2016, random.choice(range(12, 13)), random.choice(range(1, 29)))
 		dates2.append(test.Date(date=dates))
 
 	# generating entities
@@ -180,11 +181,11 @@ def createTest():
 
 	# generating entity recommendations
 	print '\nvisitor dun recommends an attraction'
-	recommend1 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend1 = test.createRecommendation('ATLANTA CYCLORAMA & CIVIL WAR MUSEUM', testdata.atl_museum, '800 Cherokee Ave., C', '30315', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor2)
 	print '\njing and kelvin I really love this place this recommendation!!'
-	test.createEntityRecommendation(visitor1, 'I really love this place', recommend1)
-	test.createEntityRecommendation(visitor5, 'I really love this place', recommend1)
+	test.createEntityRecommendation(visitor1, 'This museum is amazing!', recommend1)
+	test.createEntityRecommendation(visitor5, 'I really love this museum', recommend1)
 
 	print '\nkyrsten and sam I highly recommend this place this recommendation!!'
 	test.createEntityRecommendation(visitor3, 'I highly recommend this place', recommend1)
@@ -194,7 +195,7 @@ def createTest():
 	test.createReview(5, 'I love the atlanta', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor2, recommend=recommend1)
 
 	print '\nvisitor sam recommends an attraction'
-	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend2 = test.createRecommendation('ATLANTA BOTANICAL GARDEN', testdata.atl_garden, '1345 Piedmont Ave. NE', '30309', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
 	print '\nI really love this place!'
 	test.createEntityRecommendation(visitor1, 'I really love this place', recommend2)
@@ -221,7 +222,7 @@ def createTest():
 	test.createReview(5, 'I love gt', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor3, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
-	recommend3 = test.createRecommendation('Jia is a great restaurant', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend3 = test.createRecommendation('BACCHANALIA', testdata.atl_bacchanalia, '1198 Howell Mill Rd.', '30318', test.createCity('Atlanta', 'GA', 'USA'),
 										   'restaurant', visitor1)
 	test.createEntityRecommendation(visitor2, 'I really love this place', recommend3)
 	test.createEntityRecommendation(visitor3, 'I really love this place', recommend3)
@@ -247,7 +248,7 @@ def createTest():
 	test.createReview(5, 'I love the shan city chicken', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor1, recommend=recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
-	recommend4 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend4 = test.createRecommendation('CENTENNIAL OLYMPIC PARK', testdata.atl_park, '265 Park Ave. West, Marietta St. and Centennial Olympic Park Dr', '30313', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor5)
 	test.createEntityRecommendation(visitor1, 'I really love this place', recommend4)	
 	test.createEntityRecommendation(visitor2, 'I highly recommend this place', recommend4)
@@ -273,7 +274,7 @@ def createTest():
 	test.createReview(5, 'Atlanta is so great and i love it', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.',  visitor5, recommend=recommend4)
 
 	print '\nvisitor jing recommends an attraction'
-	recommend5 = test.createRecommendation('Suzhou is a great place', 'Suzhou is so beautiful', 'Suzhou', '215400', test.createCity('Suzhou', 'Jiangsu', 'China'),
+	recommend5 = test.createRecommendation('The Forbidden City', testdata.pk_city, '4 Jingshan Front St', '100000', test.createCity('Dongcheng', 'Beijing', 'China'),
 										   'attraction', visitor1)
 
 	test.createEntityRecommendation(visitor2, 'I really love this place', recommend5)
@@ -297,7 +298,7 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I really love this place', recommend5)
 
 	print '\nvisitor jing write a review for an attraction'
-	test.createReview(5, 'suzhou is so beautiful', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.',  visitor1, recommend=recommend5)
+	test.createReview(5, 'beijing tis so beautiful', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.',  visitor1, recommend=recommend5)
 
 	# generating photoes
 	print '\ncreating photoes for advisors and recommendations!!!'
