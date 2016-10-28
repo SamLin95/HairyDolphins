@@ -192,8 +192,10 @@ def createTest():
 	test.createEntityRecommendation(visitor4, 'I highly recommend this place', recommend1)
 
 	print '\nvisitor dun write a review for a place'
-	test.createReview(5, 'Awesome Experience', testdata.atl_museum_review, visitor2, recommend=recommend1)
-
+	test.createReview(4, 'a great experience', testdata.atl_museum_review1, visitor2, recommend=recommend1)
+	test.createReview(3, 'not as knowledgeable as I would have liked', testdata.atl_museum_review2, visitor4, recommend=recommend1)
+	test.createReview(5, 'Awesome Experience', testdata.atl_museum_review3, visitor6, recommend=recommend1)
+	
 	print '\nvisitor sam recommends an attraction'
 	recommend2 = test.createRecommendation('Atlanta Botanical Garden', testdata.atl_garden, '1345 Piedmont Ave. NE', '30309', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
@@ -219,7 +221,10 @@ def createTest():
 	test.createEntityRecommendation(visitor19, 'I highly recommend this place', recommend2)
 
 	print '\nvisitor sam write a review for a place'
-	test.createReview(5, 'The Botanical Garden is great', testdata.atl_garden_review, visitor3, recommend=recommend2)
+	test.createReview(5, 'The Botanical Garden is great', testdata.atl_garden_review1, visitor3, recommend=recommend2)
+	test.createReview(4, 'terrific', testdata.atl_garden_review2, visitor5, recommend=recommend2)
+	test.createReview(5, 'impressive place', testdata.atl_garden_review3, visitor7, recommend=recommend2)
+	test.createReview(5, 'love this garden', testdata.atl_garden_review4, visitor9, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
 	recommend3 = test.createRecommendation('Bacchanalia', testdata.atl_bacchanalia, '1198 Howell Mill Rd.', '30318', test.createCity('Atlanta', 'GA', 'USA'),
@@ -245,7 +250,15 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I really love this place', recommend3)
 
 	print '\nvisitor jing write a review for a restaurant'
-	test.createReview(5, 'An Uncommon Dining Experience', testdata.atl_bacchanalia_review, visitor1, recommend=recommend3)
+	test.createReview(4, 'An Uncommon Dining Experience', testdata.atl_bacchanalia_review1, visitor1, recommend=recommend3)
+	test.createReview(5, 'Had a fantastic meal here', testdata.atl_bacchanalia_review2, visitor3, recommend=recommend3)
+	test.createReview(5, 'my favorite restaurant in Atlanta', testdata.atl_bacchanalia_review3, visitor2, recommend=recommend3)
+	test.createReview(5, 'a wonderful meal', testdata.atl_bacchanalia_review4, visitor4, recommend=recommend3)
+	test.createReview(4, 'Expensive!', testdata.atl_bacchanalia_review5, visitor8, recommend=recommend3)
+	test.createReview(5, 'a lovely experience', testdata.atl_bacchanalia_review6, visitor7, recommend=recommend3)
+	test.createReview(5, 'one of the best in Atlanta', testdata.atl_bacchanalia_review7, visitor6, recommend=recommend3)
+	test.createReview(3, 'not really upscale', testdata.atl_bacchanalia_review8, visitor5, recommend=recommend3)
+	test.createReview(5, 'the nicest place to eat in Atlanta', testdata.atl_bacchanalia_review9, visitor9, recommend=recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
 	recommend4 = test.createRecommendation('Centennial Olympic Park', testdata.atl_park, '265 Park Ave. West, Marietta St. and Centennial Olympic Park Dr', '30313', test.createCity('Atlanta', 'GA', 'USA'),
@@ -271,7 +284,11 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I highly recommend this place', recommend4)
 
 	print '\nvisitor kelvin write a review for an attraction'
-	test.createReview(5, 'Love this place', testdata.atl_park_review,  visitor5, recommend=recommend4)
+	test.createReview(5, 'Love this place', testdata.atl_park_review1,  visitor5, recommend=recommend4)
+	test.createReview(4, 'Centennial Olympic Park is a great place to go', testdata.atl_park_review2,  visitor4, recommend=recommend4)
+	test.createReview(5, 'Awesome Experience', testdata.atl_park_review3,  visitor3, recommend=recommend4)
+	test.createReview(5, 'Beautiful Park', testdata.atl_park_review4,  visitor2, recommend=recommend4)
+	test.createReview(5, 'Centennial Olympic Park is amazing', testdata.atl_park_review5,  visitor1, recommend=recommend4)
 
 	print '\nvisitor jing recommends an attraction'
 	recommend5 = test.createRecommendation('The Forbidden City', testdata.pk_city, '4 Jingshan Front St', '100000', test.createCity('Dongcheng', 'Beijing', 'China'),
@@ -298,7 +315,12 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I really love this place', recommend5)
 
 	print '\nvisitor jing write a review for an attraction'
-	test.createReview(5, 'The Forbidden City is AMAZING', testdata.pk_city_review,  visitor1, recommend=recommend5)
+	test.createReview(5, 'The Forbidden City is AMAZING', testdata.pk_city_review1,  visitor1, recommend=recommend5)
+	test.createReview(5, 'Worth the visit', testdata.pk_city_review2,  visitor2, recommend=recommend5)
+	test.createReview(5, 'One of the must visit in Beijing', testdata.pk_city_review3,  visitor4, recommend=recommend5)
+	test.createReview(5, 'a must do', testdata.pk_city_review4,  visitor7, recommend=recommend5)
+	test.createReview(5, 'so impressive', testdata.pk_city_review5,  visitor9, recommend=recommend5)
+	test.createReview(4, 'Walk into the history', testdata.pk_city_review6,  visitor5, recommend=recommend5)
 
 	# generating photoes
 	print '\ncreating photoes for advisors and recommendations!!!'
