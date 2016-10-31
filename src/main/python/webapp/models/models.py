@@ -222,6 +222,9 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
         else:
             return None
 
+    def load_hybrid_properties(self):
+        self.average_rating
+
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
 

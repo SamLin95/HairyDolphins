@@ -28,6 +28,7 @@ class LocalAdvisorProfileSchema(ModelSchema):
     entity = fields.Nested(EntitySchema, only=('id', 'first_name', 'last_name', 'profile_photo_url'), many=True)
     available_dates = fields.Nested('DateSchema', many=True)
     recommendations = fields.Nested('RecommendationSchema', only=('id', 'title', 'description', 'primary_picture', 'average_rating'), many=True)
+    average_rating = fields.Float()
     class Meta:
         model = LocalAdvisorProfile
         exclude = ('search_vector',)

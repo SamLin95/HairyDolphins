@@ -66,9 +66,9 @@
         </div>
         <hr>
         <div >
-            <h2 style="margin-left:1em; display: inline">Book A Tour!</h2>
-            <button class="btn btn-primary" ng-show="user.role.id==2&&provide_already===false" style="margin-bottom:1em; margin-left:1em" ng-click="provideRecommendationRequest()">I can provide!</button>
-            <button class="btn btn-primary disabled" ng-show="user.role.id==2&&provide_already===true" style="margin-bottom:1em; margin-left:1em">Already provided</button>
+            <h2 style="margin-left:1em; display: inline">Meetup</h2>
+            <button class="btn btn-primary" ng-show="user.role.id==2&&provide_already===false" style="margin-bottom:1em; margin-left:1em" ng-click="provideRecommendationRequest()">I can meetup!</button>
+            <button class="btn btn-primary disabled" ng-show="user.role.id==2&&provide_already===true" style="margin-bottom:1em; margin-left:1em">Already in list</button>
             <div ng-show="local_advisors_to_show.length">
                 <div>
                     <div class="row">
@@ -83,7 +83,7 @@
                                 <span uib-rating max="5" ng-model="local_advisor_to_show.average_rating" read-only="true" style="margin-left:4.5em"></span>
                             </div>
                             <div>
-                                <button class="btn btn-primary" style="margin-top:2em; margin-left:25%; width:50%">Book</button>
+                                <button class="btn btn-primary" style="margin-top:2em; margin-left:25%; width:50%">Meetup</button>
                             </div>
                         </div>
                     </div> 
@@ -92,7 +92,7 @@
             </div>
             <div ng-show="!local_advisors_to_show.length" class="well bottom text-center" style="margin-top:2em;margin-left:2em;margin-right:2em">
                 <div>
-                No local advisor provides it yet.
+                No local advisor to meetup yet.
                 </div>
             </div>
         </div>
