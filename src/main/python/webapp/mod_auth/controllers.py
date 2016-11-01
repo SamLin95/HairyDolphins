@@ -3,6 +3,7 @@ from webapp import login_manager
 from flask_login import login_required, login_user, logout_user, current_user, login_url
 from ..models.models import Entity
 from ..models.schemas import EntitySchema
+from ..mod_socket.utils import ChatroomTable
 
 
 mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -32,8 +33,10 @@ def sign_in():
 
 @mod_auth.route("/logout", methods = ["GET"])
 def sign_out():
+    ChatroomTable.get_instance().leave_room(str(current_user.id))
     logout_user()
     session.clear()
+
     return redirect("/")
 
 @mod_auth.route("/current_user", methods = ["GET"])
