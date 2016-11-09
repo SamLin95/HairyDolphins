@@ -13,24 +13,42 @@ chatroom_table = ChatroomTable.get_instance()
 
 @socketio.on('send message')
 def handle_send_message(data):
-    room_id = data.get('room')
-    msg = MessageWrapper(
-        body=data.get('body'),
-        sender=data.get('sender'),
-        room_id = room_id,
-        receiver=data.get('receiver'))
-    msg.save_to_db()
+    global chatroom_table
+    room_id = str(data.get('room')) if data.get('room') is not None else chatroom_table.get_current_room(str(data.get('sender')))
+    if chatroom_table.is_in_room(data.get("receiver"), room_id):
+        msg = MessageWrapper(
+            body=data.get('body'),
+            sender=str(data.get('sender')),
+            room_id = room_id,
+            type=MessageWrapper.MESSAGE_TYPE,
+            receiver=data.get('receiver'))
+    else:
+        print "another user is not in table..."
+        msg = MessageWrapper(
+            body=data.get('body'),
+            sender=data.get('sender'),
+            room_id = room_id,
+            type=MessageWrapper.OFFLINE_TYPE,
+            receiver=data.get('receiver'))
     send(msg.get_dict(), room=room_id)
+    msg.save_to_db()
+
 
 @socketio.on('join')
 def on_join(data):
+    global chatroom_table
     if current_user.is_authenticated:
-        room_id = str(max(data.get('currentUser'), data.get('targetUser'))) \
-            + str(min(data.get('currentUser'), data.get('targetUser'))) + str(int(time.time() * 100))
+        current_user_id = str(data.get('currentUser'))
+        target_user_id = str(data.get('targetUser'))
+        print "current user is %s, target user is %s"%(current_user_id, target_user_id)
+
+        #room id is based on two user id, so two user will always join the same room.
+        room_id = str(max(current_user_id, target_user_id))  + str(min(current_user_id, target_user_id))
         join_room(room_id)
-        chatroom_table.add_room(current_user.id, room_id)
+        chatroom_table.join_to_room(current_user_id, room_id)
         msg = MessageWrapper(body='user %s has entered chatroom %s'%(current_user.username, room_id), room_id=room_id)
         print 'user %s has entered chatroom %s'%(current_user.username, room_id)
+
         send(msg.get_dict(), room=room_id)
         return room_id
 

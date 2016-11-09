@@ -617,31 +617,57 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
 
     $scope.messageHistory = messageHistory
 
-    $scope.send_message = send_message
+    console.log('original history');
+    console.log($scope.messageHistory);
 
-    //$scope.$on('socket:message', function(ev, data) {
-    //    console.log(data);
-    //});
+    $scope.send_message = send_message;
+    $scope.cur_room_id = null;
+
+    //join the chatroom
+    var room = {currentUser: $scope.self_id, targetUser : $scope.contact_id};
+    socketService.emit('join', room);
 
     socketService.on('message', function(msg, str) {
+        if ($scope.cur_room_id == null) {
+            $scope.cur_room_id = msg['room'];
+            console.log("set current room id as :" + $scope.cur_room_id);
+        }
+        if (msg['type'] === 'msg') {
+            var msg_history = $scope.messageHistory;
+            var sender_id = parseInt(msg['sender']);
+            var receiver_id = parseInt(msg['receiver']);
+
+            var newId = msg_history.length == 0 ? 1 : msg_history[msg_history.length - 1]['id'] + 1;
+
+            $scope.messageHistory.push({id: newId,
+                message_body: msg['body'],
+                read_at: null,
+                receiver: receiver_id,
+                sender: sender_id,
+                sent_at: Date.now()
+            });
+        }
+
+    });
+
+    socketService.on('send message', function(msg, str) {
         console.log(msg);
+
     });
 
     socketService.on('join', function(data) {
-        console.log(data)
+        console.log(data);
     });
-
-    var room = {currentUser: $scope.self_id, targetUser : $scope.contact_id}
-
-    socketService.emit('join', room);
 
     function send_message(){
         data = {};
-        data['message'] = $scope.message_to_send;
-        data['userid'] = $scope.contact_id;
+        data['body'] = $scope.message_to_send;
+        data['receiver'] = $scope.contact_id;
+        data['sender'] = $scope.self_id;
+        data['room'] = $scope.cur_room_id;
         socketService.emit('send message', data);
     }
-})
+});
 
 app.controller('recCreationController', function($scope, cities, recommendation_categories, utils, fileManager, AuthService, recManager, alertFactory) {
     $scope.alerts = [];

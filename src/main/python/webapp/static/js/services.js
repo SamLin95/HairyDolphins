@@ -564,6 +564,7 @@ app.factory('utils', function($q, $timeout, $rootScope, $http) {
 })
 
 app.factory('socketService', function (socketFactory) {
+	//TODO: add read message service logic.
     var mySocket = socketFactory();
     mySocket.forward('message');
     return mySocket;
