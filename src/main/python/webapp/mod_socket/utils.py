@@ -42,9 +42,6 @@ class ChatroomTable(object):
                 self.reverse_table[room_id].remove(user_id)
 
     def is_in_room(self, user_id, room_id):
-        print self.table
-        print self.table.get(user_id)
-        print room_id
         return self.table.get(user_id) == room_id
 
     def get_current_room(self, user_id):
