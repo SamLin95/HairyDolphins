@@ -577,6 +577,24 @@ class Messages(flask_restful.Resource):
         message_json.sort(key=lambda message:message['sent_at'])
 
         return message_json
+    
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('messages_to_mark', type=int, action='append', required=True)
+        parser.add_argument('receiver_id', type=int, required=True)
+        
+        args = parser.parse_args()
+        messages_to_mark = args['messages_to_mark']
+        receiver_id = args['receiver_id']
+
+        for message in messages_to_mark:
+            message_to_mark = Message.query.get(message)
+            if(message_to_mark.receiver_id == receiver_id and not message_to_mark.read_at):
+                message_to_mark.read_at = datetime.datetime.now()
+                message_to_mark.update()
+        
+        return {"message": "messages successfully marked"}
+
         
 api.add_resource(Messages, '/messages')
 

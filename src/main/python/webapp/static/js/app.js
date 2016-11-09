@@ -188,6 +188,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
         messageHistory: function(searchHelper, $stateParams) {
           return searchHelper.searchMessageHistory($stateParams.user_id)
         }
+      },
+      onEnter: function(messageHistory, dbUpdater, $rootScope, AuthService, $stateParams){
+        dbUpdater.markMessagesAsRead(
+          messageHistory.map(function(message){
+            return message.id
+          })
+        )
+
+        $rootScope.$broadcast('panelEntered', $stateParams.user_id)
       }
     })
     .state('auth.locRec', {

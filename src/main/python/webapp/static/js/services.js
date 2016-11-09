@@ -615,12 +615,13 @@ app.factory('recManager', function($q, $timeout, utils, $http) {
 	return factory
 })
 
-app.factory('reviewManager', function($q, $timeout, utils, $http) {
+app.factory('dbUpdater', function($q, $timeout, utils, $http, AuthService) {
 	var factory = {};
 
 	factory.createNewReview = createNewReview
 	factory.createNewEntityRecommendation = createNewEntityRecommendation
 	factory.createNewLocalAdvisorProfileRec = createNewLocalAdvisorProfileRec
+	factory.markMessagesAsRead = markMessagesAsRead
 
 	function createNewReview(params) {
 		utils.requestStart()
@@ -657,6 +658,21 @@ app.factory('reviewManager', function($q, $timeout, utils, $http) {
 			params: params
 		}).then(function(data, status){
 			utils.replaceInvalidImages(data.data.entity, 'profile_photo_url')
+			return data.data
+		})
+	}
+
+	function markMessagesAsRead(messages) {
+		utils.requestStart()
+
+		return $http({
+			method: 'PUT',
+			url : '/api/messages',
+			params: {
+				receiver_id: AuthService.getUser().id,
+				messages_to_mark: messages
+			}
+		}).then(function(data, status){
 			return data.data
 		})
 	}

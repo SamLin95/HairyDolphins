@@ -239,7 +239,7 @@ app.controller('laSearchController', function($scope, localAdvisors, cities, $st
 
 });
 
-app.controller('advisorDetailController', function($scope, advisor, $state, $stateParams, utils, alertFactory, AuthService, reviewManager, $uibModal) {
+app.controller('advisorDetailController', function($scope, advisor, $state, $stateParams, utils, alertFactory, AuthService, dbUpdater, $uibModal) {
     $scope.alerts = [];
     $scope.addAlert = addAlert;
     $scope.closeAlert = closeAlert;
@@ -276,7 +276,7 @@ app.controller('advisorDetailController', function($scope, advisor, $state, $sta
         }
 
         if($scope.reviewForm.$valid) {
-            reviewManager.createNewReview({
+            dbUpdater.createNewReview({
                 title : $scope.newReview.title,
                 content : $scope.newReview.content,
                 rating : $scope.newReview.rating,
@@ -406,7 +406,7 @@ app.controller('locRecController', function($scope, recommendations, cities, rec
 
 });
 
-app.controller('recDetailController', function($scope, recommendation, $state, $stateParams, utils, alertFactory, AuthService, reviewManager) {
+app.controller('recDetailController', function($scope, recommendation, $state, $stateParams, utils, alertFactory, AuthService, dbUpdater) {
     $scope.alerts = [];
     $scope.addAlert = addAlert;
     $scope.closeAlert = closeAlert;
@@ -468,7 +468,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
         }
 
         if($scope.reviewForm.$valid) {
-            reviewManager.createNewReview({
+            dbUpdater.createNewReview({
                 title : $scope.newReview.title,
                 content : $scope.newReview.content,
                 rating : $scope.newReview.rating,
@@ -495,7 +495,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
         if(!$scope.user) {
             $scope.openLoginModal()
         }else{
-            reviewManager.createNewEntityRecommendation({
+            dbUpdater.createNewEntityRecommendation({
                 user_id : $scope.user.id,
                 recommendation_id : $scope.recommendation.id
             }).then(function(entity_recommendation){
@@ -513,7 +513,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
 
 
     function provideRecommendationRequest() {
-        reviewManager.createNewLocalAdvisorProfileRec({
+        dbUpdater.createNewLocalAdvisorProfileRec({
             user_id : $scope.user.id,
             recommendation_id : $scope.recommendation.id
         }).then(function(local_advisor_profile){
@@ -590,6 +590,14 @@ app.controller('messengerController', function($scope, searchHelper, userContact
             $scope.displayContacts = [].concat($scope.userContacts)
         }
     }
+
+    $scope.$on('panelEntered', function(event, args) { 
+        $scope.userContacts.forEach(function(contact) {
+            if(contact.user && contact.user.id == args) {
+                contact.unread_count = 0
+            }
+        })
+    })
 })
 
 
