@@ -8,15 +8,12 @@
     <form class="form-inline">
         <div class="row" style="margin-bottom:15px">
             <div class='col-md-4 form-group'>
-                <label>City: </label>
-
-                <select class="form-control" ng-model="selected_city" ng-options="city as city.label for city in cities track by city.id" style="width: 80%">
-                    <option value="">-- choose city --</option>
-                </select>
+                <label>City:</label>
+                <input type="text" ng-model="selected_city" placeholder="Enter and choose a city" uib-typeahead="city as city.label + ', ' + city.state.label + ', ' + city.state.country.label for city in cities | limitTo: 8" class="form-control" style="width:80%; margin-left:1em">
             </div>
             <div class='col-md-4 form-group'>
-                <label>Category: </label>
-                <select class="form-control" ng-model="selected_recommendation_category" ng-options="recommendation_category as recommendation_category.label for recommendation_category in recommendation_categories track by recommendation_category.id" style="width: 80%">
+                <label>Category:</label>
+                <select class="form-control" ng-model="selected_recommendation_category" ng-options="recommendation_category as recommendation_category.label for recommendation_category in recommendation_categories track by recommendation_category.id" style="width: 80%; margin-left:1em">
                     <option value="">-- choose category --</option>
                 </select>
             </div>

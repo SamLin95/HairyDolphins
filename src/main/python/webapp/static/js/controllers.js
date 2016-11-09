@@ -1,8 +1,9 @@
 var app = angular.module('HairyDolphinsApp');
 
-app.controller('mainController', function($scope, $state, localAdvisors, recommendations) {
+app.controller('mainController', function($scope, $state, localAdvisors, recommendations, cities) {
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.localAdvisors = localAdvisors;
+    $scope.cities = cities;
     $scope.recommendations = recommendations;
     $scope.datepicker_placeholder = "Expected Date"
     $scope.dateOptions = {
@@ -16,10 +17,12 @@ app.controller('mainController', function($scope, $state, localAdvisors, recomme
     function sendSearchRequest() {
         keyword = $scope.searchString
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
+        city_id = $scope.selected_city ? $scope.selected_city.id:undefined
 
         $state.go(
             '^.laSearch',
             {
+                city_id: city_id,
                 keyword: keyword,
                 available_date: available_date
             }
@@ -185,8 +188,9 @@ app.controller('signupController', function($scope, $uibModalInstance, $rootScop
     }
 );
 
-app.controller('laSearchController', function($scope, localAdvisors, $state, $stateParams, searchHelper, utils){
+app.controller('laSearchController', function($scope, localAdvisors, cities, $state, $stateParams, searchHelper, utils){
     $scope.localAdvisors = localAdvisors
+    $scope.cities = cities
     $scope.sendSearchRequest = sendSearchRequest;
     $scope.displayCollection = [].concat($scope.localAdvisors);
     $scope.datepicker_placeholder = "Expected Date"
@@ -210,10 +214,12 @@ app.controller('laSearchController', function($scope, localAdvisors, $state, $st
   function sendSearchRequest() {
         available_date = $scope.dt? moment($scope.dt).format("YYYY-MM-DD"):undefined
         keyword = $scope.searchString? $scope.searchString:undefined
-,
+        city_id = $scope.selected_city ? $scope.selected_city.id:undefined
+
         searchHelper.searchLocalAdvisors({
                 keyword: keyword,
                 available_date: available_date,
+                city_id : city_id,
                 request_fields: [
                     'first_name',
                     'local_advisor_profile',
@@ -413,6 +419,7 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
     $scope.displayCollection = [].concat($scope.recommendation.reviews)
     $scope.submitPostReviewRequest = submitPostReviewRequest
     $scope.recommendPlaceRequest = recommendPlaceRequest
+    $scope.provideRecommendationRequest = provideRecommendationRequest
     $scope.newReview = null
 
     $scope.map = { center: { latitude: recommendation.geo.lat, longitude: recommendation.geo.lng }, zoom: 8 };
@@ -435,6 +442,16 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
         $scope.recommend_already = false
     } else {
         $scope.recommend_already = true
+    }
+
+    if( 
+        $scope.user &&
+        $scope.user.role.id == 2 &&
+        $scope.recommendation.local_advisor_profiles.map(function(local_advisor_profile) {return local_advisor_profile.entity[0].id}).indexOf($scope.user.id) != -1
+    ){
+        $scope.provide_already = true
+    } else {
+        $scope.provide_already = false
     }
 
     function addAlert(type, message) {
@@ -483,7 +500,6 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 recommendation_id : $scope.recommendation.id
             }).then(function(entity_recommendation){
                 utils.requestEnd();
-                $scope.addAlert('success', "Your review has been successfully submitted")
                 $scope.recommendation.entity_recommendations.push(entity_recommendation)
                 $scope.recommendation.recommenders.push(entity_recommendation.entity)
                 pageChanged1()
@@ -493,6 +509,22 @@ app.controller('recDetailController', function($scope, recommendation, $state, $
                 addAlert('danger', response.data.message)
             })
         }
+    }
+
+
+    function provideRecommendationRequest() {
+        reviewManager.createNewLocalAdvisorProfileRec({
+            user_id : $scope.user.id,
+            recommendation_id : $scope.recommendation.id
+        }).then(function(local_advisor_profile){
+            utils.requestEnd();
+            $scope.recommendation.local_advisor_profiles.push(local_advisor_profile)
+            pageChanged2()
+            $scope.provide_already = true
+        }).catch(function (response) {
+            utils.requestEnd();
+            addAlert('danger', response.data.message)
+        })
     }
 
     function pageChanged1() {
@@ -548,12 +580,12 @@ app.controller('messengerController', function($scope, searchHelper, userContact
 
     function onContactSelect(item, model, label) {
         contact_id_list = userContacts.map(function(contact){
-            return contact.id
+            return contact.user.id
         })
 
         if(contact_id_list.indexOf(model.id) == -1 && model.id != self_user.id) 
         {
-            userContacts.unshift(model)
+            userContacts.unshift({"user":model, "unread_count":0})
             $scope.userContacts = utils.fillFallbackList(userContacts, 10)
             $scope.displayContacts = [].concat($scope.userContacts)
         }

@@ -620,6 +620,7 @@ app.factory('reviewManager', function($q, $timeout, utils, $http) {
 
 	factory.createNewReview = createNewReview
 	factory.createNewEntityRecommendation = createNewEntityRecommendation
+	factory.createNewLocalAdvisorProfileRec = createNewLocalAdvisorProfileRec
 
 	function createNewReview(params) {
 		utils.requestStart()
@@ -640,6 +641,19 @@ app.factory('reviewManager', function($q, $timeout, utils, $http) {
 		return $http({
 			method: 'POST',
 			url : '/api/entity_recommendations',
+			params: params
+		}).then(function(data, status){
+			utils.replaceInvalidImages(data.data.entity, 'profile_photo_url')
+			return data.data
+		})
+	}
+
+	function createNewLocalAdvisorProfileRec(params) {
+		utils.requestStart()
+
+		return $http({
+			method: 'POST',
+			url : '/api/local_advisor_profile_recommendations',
 			params: params
 		}).then(function(data, status){
 			utils.replaceInvalidImages(data.data.entity, 'profile_photo_url')

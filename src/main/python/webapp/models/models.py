@@ -107,60 +107,67 @@ class Entity(TableTemplate, db.Model, CRUD):
             for message in self.received_messages:
                 duplicate = False
                 replacable = False
-                repalce_index = None
+                replace_index = None
+                #For every messsage recieved, check if its sender is in the current list
                 for i in range(len(messages)):
                     checked_message = messages[i]
                     if(checked_message['user_id'] == message.sender.id):
                         duplicate = True
+                        replace_index = i
                         if(checked_message['sent_at'] < message.sent_at):
                             replacable = True
-                            replace_index = i
 
                 if(duplicate):
+                    messages[replace_index]['unread_count'] += (0 if message.read_at else 1)
+
                     if(replacable):
                         messages[replace_index] = \
                         {\
-                            'sent_at':message.sent_at,\
-                            'user_id': message.sender.id\
+                            'sent_at': message.sent_at,\
+                            'user_id': message.sender.id,\
+                            'unread_count' : messages[replace_index]['unread_count']
                         }
                 else:
                     messages.append(\
                     {\
-                        'sent_at':message.sent_at,\
-                        'user_id': message.sender.id\
+                        'sent_at': message.sent_at,\
+                        'user_id': message.sender.id,\
+                        'unread_count' :  (0 if message.read_at else 1)
                     })
 
             for message in self.sent_messages:
                 duplicate = False
                 replacable = False
-                repalce_index = None
+                replace_index = None
                 for i in range(len(messages)):
                     checked_message = messages[i]
                     if(checked_message['user_id'] == message.receiver.id):
                         duplicate = True
+                        replace_index = i
                         if(checked_message['sent_at'] < message.sent_at):
                             replacable = True
-                            replace_index = i
 
                 if(duplicate):
                     if(replacable):
                         messages[replace_index] =\
                         {\
                             'sent_at': message.sent_at,\
-                            'user_id': message.receiver.id\
+                            'user_id': message.receiver.id,\
+                            'unread_count' :  messages[replace_index]['unread_count']
                         }
                 else:
                     messages.append(\
                     {\
-                            'sent_at': message.sent_at,\
-                            'user_id': message.receiver.id\
+                        'sent_at': message.sent_at,\
+                        'user_id': message.receiver.id,\
+                        'unread_count' : 0
                     })
 
             messages.sort(key=lambda message:message['sent_at'], reverse=True)
 
             contacts = []
             for message in messages:
-                contacts.append(Entity.query.get(message['user_id']))
+                contacts.append({ 'user': Entity.query.get(message['user_id']), 'unread_count': message['unread_count'] if 'unread_count' in message else 0})
                 
             return contacts
         else:
@@ -214,6 +221,9 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
             return float(sum(review.rating for review in self.reviews))/float(len(self.reviews))
         else:
             return None
+
+    def load_hybrid_properties(self):
+        self.average_rating
 
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)

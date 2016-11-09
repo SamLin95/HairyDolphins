@@ -25,7 +25,7 @@ def sign_in():
     match = user.password == password
     if match:
         result = login_user(user)
-        entity_schema = EntitySchema(only=("id", "first_name", "last_name", "profile_photo_url"))
+        entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username", "birthday", "phone_number", "profile_photo_url", "role"))
         return  jsonify(entity_schema.dump(user).data)
     else:
         return jsonify({"message" : "Incorrect username or password"}), 400
@@ -39,7 +39,7 @@ def sign_out():
 @mod_auth.route("/current_user", methods = ["GET"])
 def get_current_user():
     if(current_user.get_id()):
-        entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username", "birthday", "phone_number", "profile_photo_url"))
+        entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username", "birthday", "phone_number", "profile_photo_url", "role"))
         return  jsonify(entity_schema.dump(current_user).data)
     else:
         return jsonify({"message" : "User not logged in"}), 401

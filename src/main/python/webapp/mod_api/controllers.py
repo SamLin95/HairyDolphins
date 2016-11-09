@@ -335,7 +335,7 @@ class User(flask_restful.Resource):
 
             entity.update()
 
-            entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username",     "birthday", "phone_number", "profile_photo_url"))
+            entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username",     "birthday", "phone_number", "profile_photo_url", "role"))
             entity_json = entity_schema.dump(entity).data
         except exc.IntegrityError as err:
             return{"message" : "Failed to add use during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
@@ -399,6 +399,7 @@ class Users(flask_restful.Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id', type=int)
         parser.add_argument('role_id', type=int)
+        parser.add_argument('city_id', type=int)
         parser.add_argument('available_date', type=str)
         parser.add_argument('keyword', type=str)
         parser.add_argument('limit', type=int)
@@ -433,9 +434,12 @@ class Users(flask_restful.Resource):
                 try:
                     available_date = datetime.datetime.strptime(args['available_date'], "%Y-%m-%d")
                     entity_query = entity_query.join(LocalAdvisorProfile, aliased=True).join(LocalAdvisorProfile.available_dates, aliased=True).filter_by(date=available_date)
-
                 except ValueError as err:
                     return {"message" : {"available_date": format(err)}}, HTTP_BAD_REQUEST
+
+            if(args['city_id']):
+                city_id = args['city_id']
+                entity_query = entity_query.join(LocalAdvisorProfile, aliased=True).filter_by(city_id=city_id)
 
             if(args['keyword']):
                 keyword = args['keyword']
@@ -700,3 +704,28 @@ class EntityRecommendations(flask_restful.Resource):
         return entity_recommendation_json 
 
 api.add_resource(EntityRecommendations, '/entity_recommendations')
+
+class LocalAdvisorProfileRecommendations(flask_restful.Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('recommendation_id', type=int, required=True)
+        parser.add_argument('user_id', type=int, required=True)
+        args = parser.parse_args()
+
+        recommendation_id = args['recommendation_id']
+        entity_id = args['user_id']
+
+        try:
+            recommendation = Recommendation.query.get(recommendation_id)
+            local_advisor_profile = Entity.query.get(entity_id).local_advisor_profile
+            recommendation.local_advisor_profiles.append(local_advisor_profile)
+            recommendation.update()
+
+            local_advisor_profile_schema = LocalAdvisorProfileSchema()
+            local_advisor_profile_json = local_advisor_profile_schema.dump(local_advisor_profile).data
+        except exc.IntegrityError as err:
+            return{"message" : "Failed to add entity_recommendation during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
+
+        return local_advisor_profile_json 
+
+api.add_resource(LocalAdvisorProfileRecommendations, '/local_advisor_profile_recommendations')

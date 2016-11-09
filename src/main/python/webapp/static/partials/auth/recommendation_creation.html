@@ -60,9 +60,7 @@
           <div class="form-group">
             <label class="col-lg-3 control-label">City:</label>
             <div class="col-lg-8">
-                <select class="form-control" ng-model="selected_city" ng-options="city as city.label for city in cities track by city.id" required>
-                    <option value="">-- choose city --</option>
-                </select>
+                <input type="text" ng-model="selected_city" placeholder="Enter and choose a city" uib-typeahead="city as city.label + ', ' + city.state.label + ', ' + city.state.country.label for city in cities | limitTo: 8" class="form-control" style="width:80%;">
             </div>
           </div>
           <div class="form-group">
