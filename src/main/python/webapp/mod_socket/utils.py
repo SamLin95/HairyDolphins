@@ -42,7 +42,10 @@ class ChatroomTable(object):
                 self.reverse_table[room_id].remove(user_id)
 
     def is_in_room(self, user_id, room_id):
-        return self.table.get(user_id) is room_id
+        print self.table
+        print self.table.get(user_id)
+        print room_id
+        return self.table.get(user_id) == room_id
 
     def get_current_room(self, user_id):
         return self.table[user_id]
@@ -65,7 +68,7 @@ class MessageWrapper(object):
     def save_to_db(self):
         if self._type is MessageWrapper.MESSAGE_TYPE:
             msg = Message(message_body=self._body, sender_id=self._sender,
-                receiver_id=self._receiver, read_at=datetime.datetime.now)
+                receiver_id=self._receiver, read_at=datetime.datetime.now())
             db.session.add(msg)
             db.session.commit()
         elif self._type is MessageWrapper.OFFLINE_TYPE:
