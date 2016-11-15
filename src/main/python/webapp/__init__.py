@@ -32,3 +32,6 @@ Triangle(app)
 @app.route("/", methods=["GET", "POST"])
 def index():
     return send_file('templates/index.html')
+
+if __name__ == '__main__':
+    socketio.run(app)
