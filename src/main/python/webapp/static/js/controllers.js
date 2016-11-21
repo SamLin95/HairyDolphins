@@ -639,13 +639,15 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
 
         var newId = msg_history.length == 0 ? 1 : msg_history[msg_history.length - 1]['id'] + 1;
 
-        $scope.messageHistory.push({id: newId,
-            message_body: msg['body'],
-            read_at: null,
-            receiver: receiver_id,
-            sender: sender_id,
-            sent_at: new Date()
-        });
+        if(msg['type'] === 'msg' || msg['type'] === 'offline'){
+            $scope.messageHistory.push({id: newId,
+                message_body: msg['body'],
+                read_at: null,
+                receiver: receiver_id,
+                sender: sender_id,
+                sent_at: new Date()
+            })
+        };
 
     });
 
