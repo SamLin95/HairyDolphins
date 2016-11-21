@@ -167,7 +167,7 @@ python runserver.py
 ```
 
 Now you should be able to browse HairyDolphins website through url localhost:8080 in the browser.
-
+![alt text](https://github.com/SamLin95/HairyDolphins/blob/master/repo_resources/success_installed.png "Installed Successfully")
 To know more about how HairyDolphins can be hosted on a real server, users can continue to read the following section below. 
 
 <a name="deploy"/>
