@@ -260,10 +260,3 @@ sudo apt-get install postgresql-server-dev-9.5
 If you have other problems when installing psycopg2 using pip, you will be able to find more details on the package’s offical site: http://initd.org/psycopg/docs/install.html#requirements
 
 If you have any question about this installation guide, please contact huangdun@gatech.edu.
-
-I
-
-
-
-
-
