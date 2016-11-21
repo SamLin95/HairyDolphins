@@ -12,6 +12,8 @@ HairyDolphins is a web app that connects travellers with local people, who are w
 
 [Dependencies](#dependencies)
 
+[Downloads](#downloads)
+
 [Build](#build)
 
 [Installation](#installation)
@@ -115,6 +117,10 @@ List of all dependencies required:
 * eventlet==0.19.0
 * boto==2.42.0
 * Werkzeug==0.11.11
+
+<a name="downloads"/>
+### Downloads
+https://github.com/SamLin95/HairyDolphins/archive/master.zip
 
 <a name="build"/>
 ### Build
