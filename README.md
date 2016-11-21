@@ -12,9 +12,11 @@ HairyDolphins is a web app that connects travellers with local people, who are w
 
 [Dependencies](#dependencies)
 
-[installation](#installation)
-
 [Build](#build)
+
+[Installation](#installation)
+
+[Running Application](#running)
 
 [Deploy HairyDolphins To A Real Server (Optional)](#deploy)
 
@@ -33,9 +35,9 @@ The website needs to be hosted on a server machine which is running Linux, MacOS
 
 #### Connect To the Internet
 The installation of website requires the Internet connection to download necessary tools and packages. Verify a connection was established, for example with ping:
-````
+```
 ping www.google.com
-````
+```
 
 #### Install Python 2.7 (The version matters)
 The website is implemented in python 2.7 so the machine to host is required to have python 2.7 installed. There are a lot of ways to install python 2.7. The proper ways to install python 2.7 on different platforms can be found on:
@@ -44,9 +46,9 @@ http://docs.python-guide.org/en/latest/starting/installation/
 
 To verify if python 2.7 has been installed, use command:
 
-````
+```
 python --version
-````
+```
 
 The version of current python on your machine should be returned if installed successfully.
 
@@ -54,9 +56,9 @@ The version of current python on your machine should be returned if installed su
 #### Install python-pip
 The website uses a lot of python packages. The installation of those packages needs python-pip, which is a package management system used to install and manage software packages written in Python. The offical way to install python-pip is provided on https://pip.pypa.io/en/stable/installing/. To verify if python-pip has been installed, use command:
 
-````
+```
 pip --version
-````
+```
 
 The version of python-pip on your machine should be returned if installed successfully
 
@@ -67,15 +69,15 @@ Although HairyDolphins store data on a database on Amazon RDS rather than on the
 
 If you are working on the Ubuntu system, you should be able to easily install PostgreSQL 9.5 by the following command:
 
-````
+```
 sudo apt-get install postgresql-9.5
-````
+```
 
 MacOS Users can easily install PostgreSQL 9.5 through brew (To know how to install brew, users can go to http://brew.sh/):
 
-````
+```
 sudo brew install postgresql-9.5
-````
+```
 
 PostgreSQL as a community supported database supports almost all popular operating systems and has provided very detailed directions about how to install PostgrSQL on different platforms, which can be found on: https://wiki.postgresql.org/wiki/Detailed_installation_guides.
 
@@ -87,15 +89,15 @@ HariyDolphins store files on Amazon Simple Storage Service(S3). A Amazon S3 buck
 ### Dependencies
 To run the website on any kind of server, all python packages below need to be installed through python-pip, the dependencies are provided in form of ‘package-name==packageversion’, which can be directly used by python pip. The way to install a dependency is using command:
 
-````
+```
 pip install package-name==packageversion
-````
+```
 
 All requirements are listed in HairyDolphins/src/main/python/requirement.txt, and you can install them all at once through command: 
 
-````
+```
 pip install -r requirement.txt
-````
+```
 
 List of all dependencies required: 
 
@@ -114,14 +116,18 @@ List of all dependencies required:
 * boto==2.42.0
 * Werkzeug==0.11.11
 
+<a name="build"/>
+### Build
+No build necessary for this app.
+
 <a name="installation"/>
 ### Installation
 #### Step 1. Clone Source Code From Github
 Firstly, users need to download the source code from Github to proceed. Users can either download the source code using git clone:
 
-````
+```
 git clone https://github.com/SamLin95/HairyDolphins.git
-````
+```
 
 (If you have not installed git yet, you can follow steps on this link to install git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
@@ -135,9 +141,9 @@ As mentioned in [Dependencies](#dependencies) section above, users then need to 
 
 After successfully installed all dependencies, users will be able to view all already installed packages using command:
 
-````
+```
 pip freeze
-````
+```
 
 #### Step 3. Set S3 Credentials
 Python package boto will lookup your S3 credentials automatically so all users have to do is to export credentials as environment variables on the host machine or store S3 credentials in a specific file.
@@ -148,22 +154,17 @@ Boto will check environment variables below for credentials:
 * AWS_ACCESS_KEY_ID: The access key for your AWS account.
 * AWS_SECRET_ACCESS_KEY: The secret key for your AWS account.
 
-
-
 Users can follow instructions on https://www.cyberciti.biz/faq/set-environment-variable-linux/ To set environment variables on Linux http://www.computerhope.com/issues/ch000549.htm on Windows.
-
 
 Besides environment variables, users can also choose to store credentials in some specific files such as .aws/credentials. To know more options about where to store S3 credentials , users can read http://boto3.readthedocs.io/en/latest/guide/configuration.html
 
-<a name="build"/>
-### Build
-No build necessary for this app.
-Running Application
+<a name="running"/>
+### Running Application
 Everything has already been set if the website is to be hosted locally. Users now need to go to HairyDolphins/src/main/python folder and run command:
 
-````
+```
 python runserver.py 
-````
+```
 
 Now you should be able to browse HairyDolphins website through url localhost:8080 in the browser.
 
@@ -180,9 +181,9 @@ Here we will take latest Apache2 server as an example to introduce a very basic 
 #### Step1. Install Apache2
 Users need Apache2 to be installed on the server machine. Installing Apache2 on Ubuntu can be achieved simply by the command:
 
-````
+```
 sudo apt-get apache2
-````
+```
 
 #### Step2. Install HairyDolphins
 Users now need to follow instructions given in the installation section before to install HairyDolphins on the server. The HairyDolphins directory is suggested to be stored to the path /var/www/html according to the custom.
