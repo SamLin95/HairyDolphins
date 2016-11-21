@@ -12,7 +12,7 @@ HairyDolphins is a web app that connects travellers with local people, who are w
 
 [Dependencies](#dependencies)
 
-[Downloads](#downloads)
+[Download](#download)
 
 [Build](#build)
 
@@ -36,7 +36,7 @@ HairyDolphins is a webapp which needs to be eventually hosted on a server. The w
 The website needs to be hosted on a server machine which is running Linux, MacOS or Windows.
 
 #### Connect To the Internet
-The installation of website requires the Internet connection to download necessary tools and packages. Verify a connection was established, for example with ping:
+The installation of website requires the Internet connection to necessary tools and packages. Verify a connection was established, for example with ping:
 ```
 ping www.google.com
 ```
@@ -118,8 +118,8 @@ List of all dependencies required:
 * boto==2.42.0
 * Werkzeug==0.11.11
 
-<a name="downloads"/>
-### Downloads
+<a name="download"/>
+### Download
 https://github.com/SamLin95/HairyDolphins/archive/master.zip
 
 <a name="build"/>
