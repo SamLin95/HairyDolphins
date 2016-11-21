@@ -632,21 +632,20 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
             $scope.cur_room_id = msg['room'];
             console.log("set current room id as :" + $scope.cur_room_id);
         }
-        if (msg['type'] === 'msg') {
-            var msg_history = $scope.messageHistory;
-            var sender_id = parseInt(msg['sender']);
-            var receiver_id = parseInt(msg['receiver']);
 
-            var newId = msg_history.length == 0 ? 1 : msg_history[msg_history.length - 1]['id'] + 1;
+        var msg_history = $scope.messageHistory;
+        var sender_id = parseInt(msg['sender']);
+        var receiver_id = parseInt(msg['receiver']);
 
-            $scope.messageHistory.push({id: newId,
-                message_body: msg['body'],
-                read_at: null,
-                receiver: receiver_id,
-                sender: sender_id,
-                sent_at: Date.now()
-            });
-        }
+        var newId = msg_history.length == 0 ? 1 : msg_history[msg_history.length - 1]['id'] + 1;
+
+        $scope.messageHistory.push({id: newId,
+            message_body: msg['body'],
+            read_at: null,
+            receiver: receiver_id,
+            sender: sender_id,
+            sent_at: new Date()
+        });
 
     });
 
@@ -666,6 +665,8 @@ app.controller('messengerChatPanelController', function($scope, $stateParams, ut
         data['sender'] = $scope.self_id;
         data['room'] = $scope.cur_room_id;
         socketService.emit('send message', data);
+
+        $scope.message_to_send = null;
     }
 });
 

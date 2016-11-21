@@ -17,7 +17,7 @@
 			            <div class="panel-body">
 			              <p style="font-weight:bold">{{self_name}}:</p><br>
 			              <p>{{message.message_body}}</p><br>
-			              <span class="label label-info">{{ message.sent_at }}</span>
+			              <span class="label label-info">{{message.sent_at | dateFormatter}}</span>
 			            </div>
 	          		</div>
 				</div>
@@ -33,7 +33,7 @@
 			            <div class="panel-body">
 			              <p style="font-weight:bold">{{contact_name}}:</p><br>
 			              <p>{{message.message_body}}</p><br>
-			              <span class="label label-info">{{ message.sent_at }}</span>
+			              <span class="label label-info">{{message.sent_at | dateFormatter}}</span>
 			            </div>
 	          		</div>
 				</div>
