@@ -5,6 +5,7 @@ if __name__ == '__main__' and __package__ is None:
 import test
 from datetime import date
 import random
+import testdata
 
 def createTest():
 	dates1 = []
@@ -14,7 +15,7 @@ def createTest():
 
 	dates2 = []
 	for i in range(0, 20):
-		dates = date(random.choice(range(2017, 2020)), random.choice(range(1, 13)), random.choice(range(1, 29)))
+		dates = date(2016, random.choice(range(12, 13)), random.choice(range(1, 29)))
 		dates2.append(test.Date(date=dates))
 
 	# generating entities
@@ -153,48 +154,50 @@ def createTest():
 
 	# generating reviews
 	print '\nreview from visitor kyrsten for advisor sam'
-	review1 = test.createReview(5, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor4, advisor_profile3)
+	test.createReview(5, 'this guide is so nice', testdata.guide_review1, visitor4, advisor_profile3)
 	print '\nreview from visitor jing for advisor kyrsten'
-	review2 = test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor1, advisor_profile4)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review2, visitor1, advisor_profile4)
 	print '\nreview from visitor kelvin for advisor dun'
-	review3 = test.createReview(3, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.',  visitor5, advisor_profile2)
+	test.createReview(3, 'this guide is so nice', testdata.guide_review3,  visitor5, advisor_profile2)
 	print '\nreview from visitor sam for advisor jing'
-	review4 = test.createReview(2, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor3, advisor_profile1)
+	test.createReview(2, 'this guide is so nice', testdata.guide_review4, visitor3, advisor_profile1)
 
 
-	test.createReview(5, 'this guild is so great!', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor20, advisor_profile1)
-	test.createReview(5, 'this guild is soo great!', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor19, advisor_profile1)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor19, advisor_profile1)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor18, advisor_profile4)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor17, advisor_profile4)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor17, advisor_profile7)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor20, advisor_profile7)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor16, advisor_profile7)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor15, advisor_profile5)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor14, advisor_profile5)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor14, advisor_profile5)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor13, advisor_profile6)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor12, advisor_profile6)
-	test.createReview(4, 'this guide is so nice', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor10, advisor_profile6)
+	test.createReview(5, 'this guild is so great!', testdata.guide_review5, visitor20, advisor_profile1)
+	test.createReview(5, 'this guild is soo great!', testdata.guide_review1, visitor19, advisor_profile1)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review2, visitor19, advisor_profile1)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review4, visitor18, advisor_profile4)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review5, visitor17, advisor_profile4)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review4, visitor17, advisor_profile7)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review2, visitor20, advisor_profile7)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review3, visitor16, advisor_profile7)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review4, visitor15, advisor_profile5)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review1, visitor14, advisor_profile5)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review2, visitor14, advisor_profile5)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review3, visitor13, advisor_profile6)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review5, visitor12, advisor_profile6)
+	test.createReview(4, 'this guide is so nice', testdata.guide_review1, visitor10, advisor_profile6)
 
 
 	# generating entity recommendations
 	print '\nvisitor dun recommends an attraction'
-	recommend1 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend1 = test.createRecommendation('Atalant Cyclorama & Civil War Museum', testdata.atl_museum, '800 Cherokee Ave., C', '30315', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor2)
 	print '\njing and kelvin I really love this place this recommendation!!'
-	test.createEntityRecommendation(visitor1, 'I really love this place', recommend1)
-	test.createEntityRecommendation(visitor5, 'I really love this place', recommend1)
+	test.createEntityRecommendation(visitor1, 'This museum is amazing!', recommend1)
+	test.createEntityRecommendation(visitor5, 'I really love this museum', recommend1)
 
 	print '\nkyrsten and sam I highly recommend this place this recommendation!!'
 	test.createEntityRecommendation(visitor3, 'I highly recommend this place', recommend1)
 	test.createEntityRecommendation(visitor4, 'I highly recommend this place', recommend1)
 
 	print '\nvisitor dun write a review for a place'
-	test.createReview(5, 'I love the atlanta', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor2, recommend=recommend1)
-
+	test.createReview(4, 'a great experience', testdata.atl_museum_review1, visitor2, recommend=recommend1)
+	test.createReview(3, 'not as knowledgeable as I would have liked', testdata.atl_museum_review2, visitor4, recommend=recommend1)
+	test.createReview(5, 'Awesome Experience', testdata.atl_museum_review3, visitor6, recommend=recommend1)
+	
 	print '\nvisitor sam recommends an attraction'
-	recommend2 = test.createRecommendation('GT is a great place', 'I love gt', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend2 = test.createRecommendation('Atlanta Botanical Garden', testdata.atl_garden, '1345 Piedmont Ave. NE', '30309', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor3)
 	print '\nI really love this place!'
 	test.createEntityRecommendation(visitor1, 'I really love this place', recommend2)
@@ -218,10 +221,13 @@ def createTest():
 	test.createEntityRecommendation(visitor19, 'I highly recommend this place', recommend2)
 
 	print '\nvisitor sam write a review for a place'
-	test.createReview(5, 'I love gt', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor3, recommend=recommend2)
+	test.createReview(5, 'The Botanical Garden is great', testdata.atl_garden_review1, visitor3, recommend=recommend2)
+	test.createReview(4, 'terrific', testdata.atl_garden_review2, visitor5, recommend=recommend2)
+	test.createReview(5, 'impressive place', testdata.atl_garden_review3, visitor7, recommend=recommend2)
+	test.createReview(5, 'love this garden', testdata.atl_garden_review4, visitor9, recommend=recommend2)
 
 	print '\nvisitor jing recommends a restaurant'
-	recommend3 = test.createRecommendation('Jia is a great restaurant', 'I love jia', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend3 = test.createRecommendation('Bacchanalia', testdata.atl_bacchanalia, '1198 Howell Mill Rd.', '30318', test.createCity('Atlanta', 'GA', 'USA'),
 										   'restaurant', visitor1)
 	test.createEntityRecommendation(visitor2, 'I really love this place', recommend3)
 	test.createEntityRecommendation(visitor3, 'I really love this place', recommend3)
@@ -244,10 +250,18 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I really love this place', recommend3)
 
 	print '\nvisitor jing write a review for a restaurant'
-	test.createReview(5, 'I love the shan city chicken', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.', visitor1, recommend=recommend3)
+	test.createReview(4, 'An Uncommon Dining Experience', testdata.atl_bacchanalia_review1, visitor1, recommend=recommend3)
+	test.createReview(5, 'Had a fantastic meal here', testdata.atl_bacchanalia_review2, visitor3, recommend=recommend3)
+	test.createReview(5, 'my favorite restaurant in Atlanta', testdata.atl_bacchanalia_review3, visitor2, recommend=recommend3)
+	test.createReview(5, 'a wonderful meal', testdata.atl_bacchanalia_review4, visitor4, recommend=recommend3)
+	test.createReview(4, 'Expensive!', testdata.atl_bacchanalia_review5, visitor8, recommend=recommend3)
+	test.createReview(5, 'a lovely experience', testdata.atl_bacchanalia_review6, visitor7, recommend=recommend3)
+	test.createReview(5, 'one of the best in Atlanta', testdata.atl_bacchanalia_review7, visitor6, recommend=recommend3)
+	test.createReview(3, 'not really upscale', testdata.atl_bacchanalia_review8, visitor5, recommend=recommend3)
+	test.createReview(5, 'the nicest place to eat in Atlanta', testdata.atl_bacchanalia_review9, visitor9, recommend=recommend3)
 	
 	print '\nvisitor kelvin recommends an attraction'
-	recommend4 = test.createRecommendation('Atlanta is a great place', 'I love atlanta', 'georgia tech', '30332', test.createCity('Atlanta', 'GA', 'USA'),
+	recommend4 = test.createRecommendation('Centennial Olympic Park', testdata.atl_park, '265 Park Ave. West, Marietta St. and Centennial Olympic Park Dr', '30313', test.createCity('Atlanta', 'GA', 'USA'),
 										   'attraction', visitor5)
 	test.createEntityRecommendation(visitor1, 'I really love this place', recommend4)	
 	test.createEntityRecommendation(visitor2, 'I highly recommend this place', recommend4)
@@ -270,10 +284,14 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I highly recommend this place', recommend4)
 
 	print '\nvisitor kelvin write a review for an attraction'
-	test.createReview(5, 'Atlanta is so great and i love it', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.',  visitor5, recommend=recommend4)
+	test.createReview(5, 'Love this place', testdata.atl_park_review1,  visitor5, recommend=recommend4)
+	test.createReview(4, 'Centennial Olympic Park is a great place to go', testdata.atl_park_review2,  visitor4, recommend=recommend4)
+	test.createReview(5, 'Awesome Experience', testdata.atl_park_review3,  visitor3, recommend=recommend4)
+	test.createReview(5, 'Beautiful Park', testdata.atl_park_review4,  visitor2, recommend=recommend4)
+	test.createReview(5, 'Centennial Olympic Park is amazing', testdata.atl_park_review5,  visitor1, recommend=recommend4)
 
 	print '\nvisitor jing recommends an attraction'
-	recommend5 = test.createRecommendation('Suzhou is a great place', 'Suzhou is so beautiful', 'Suzhou', '215400', test.createCity('Suzhou', 'Jiangsu', 'China'),
+	recommend5 = test.createRecommendation('The Forbidden City', testdata.pk_city, '4 Jingshan Front St', '100000', test.createCity('Dongcheng', 'Beijing', 'China'),
 										   'attraction', visitor1)
 
 	test.createEntityRecommendation(visitor2, 'I really love this place', recommend5)
@@ -297,7 +315,12 @@ def createTest():
 	test.createEntityRecommendation(visitor20, 'I really love this place', recommend5)
 
 	print '\nvisitor jing write a review for an attraction'
-	test.createReview(5, 'suzhou is so beautiful', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget odio.',  visitor1, recommend=recommend5)
+	test.createReview(5, 'The Forbidden City is AMAZING', testdata.pk_city_review1,  visitor1, recommend=recommend5)
+	test.createReview(5, 'Worth the visit', testdata.pk_city_review2,  visitor2, recommend=recommend5)
+	test.createReview(5, 'One of the must visit in Beijing', testdata.pk_city_review3,  visitor4, recommend=recommend5)
+	test.createReview(5, 'a must do', testdata.pk_city_review4,  visitor7, recommend=recommend5)
+	test.createReview(5, 'so impressive', testdata.pk_city_review5,  visitor9, recommend=recommend5)
+	test.createReview(4, 'Walk into the history', testdata.pk_city_review6,  visitor5, recommend=recommend5)
 
 	# generating photoes
 	print '\ncreating photoes for advisors and recommendations!!!'
@@ -323,11 +346,11 @@ def createTest():
 	test.createEntityPhoto(visitor8, 'visitor8.jpg', 32, src + '/visitors/visitor8.jpg', 'jpg')
 	test.createEntityPhoto(visitor9, 'visitor9.jpg', 32, src + '/visitors/visitor9.jpg', 'jpg')
 
-	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/recommendations/atl1.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/recommendations/atl2.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/recommendations/atl3.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/recommendations/atl4.jpg', 'jpg')
-	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.jpg', 32, src + '/recommendations/atl5.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor2, recommend1, 'recommendation1.jpg', 32, src + '/recommendations/recommendation1.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor3, recommend2, 'recommendation2.jpg', 32, src + '/recommendations/recommendation2.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend3, 'recommendation3.jpg', 32, src + '/recommendations/recommendation3.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor5, recommend4, 'recommendation4.jpg', 32, src + '/recommendations/recommendation4.jpg', 'jpg')
+	test.createRecommendationPhoto(visitor1, recommend5, 'recommendation5.png', 32, src + '/recommendations/recommendation5.png', 'png')
 
 	print '\ncreating recommendations provided by advisors!!!'
 	test.createLocalAdvisorRecommendation(advisor_profile1, recommend1)
