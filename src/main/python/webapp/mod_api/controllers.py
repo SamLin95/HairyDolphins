@@ -315,14 +315,14 @@ class User(flask_restful.Resource):
             entity.first_name = first_name
             entity.last_name = last_name
             entity.phone_number = phone_number
-            birthday= datetime.datetime.strptime(args['birthday'], "%Y-%m-%d")
-            birthday_date = Date.query.filter(Date.date==birthday).first()
-            if(not birthday_date):
-                birthday_date = Date(date=birthday)
-                birthday_date.add(birthday_date)
-    
-            entity.birthday = birthday_date
-            print entity.birthday
+            if(args['birthday']):
+                birthday= datetime.datetime.strptime(args['birthday'], "%Y-%m-%d")
+                birthday_date = Date.query.filter(Date.date==birthday).first()
+                if(not birthday_date):
+                    birthday_date = Date(date=birthday)
+                    birthday_date.add(birthday_date)
+        
+                entity.birthday = birthday_date
 
             if(file_id):
                 old_profile_picture = EntityPhoto.query.filter(and_(EntityPhoto.entity_id==user_id, EntityPhoto.is_profile_picture==True)).first()
@@ -439,7 +439,7 @@ class Users(flask_restful.Resource):
 
             if(args['city_id']):
                 city_id = args['city_id']
-                entity_query = entity_query.join(LocalAdvisorProfile, aliased=True).filter_by(city_id=city_id)
+                entity_query = entity_query.join((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id), aliased=True).filter_by(city_id=city_id)
 
             if(args['keyword']):
                 keyword = args['keyword']

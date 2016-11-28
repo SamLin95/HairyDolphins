@@ -737,9 +737,12 @@ app.controller('editProfileController', function($scope, utils, fileManager, Aut
     $scope.first_name = $scope.user.first_name
     $scope.last_name = $scope.user.last_name
     $scope.email = $scope.user.email
-    birthday = new Date($scope.user.birthday.date)
-    $scope.dt = new Date()
-    $scope.dt.setDate(birthday.getDate() + 1)
+    if($scope.user.birthday)
+    {
+        birthday = new Date($scope.user.birthday.date)
+        $scope.dt = new Date()
+        $scope.dt.setDate(birthday.getDate() + 1)
+    }
     $scope.phone_number = $scope.user.phone_number
 
     $scope.displayed = $scope.user
