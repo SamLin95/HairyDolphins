@@ -3,6 +3,18 @@
 HairyDolphins is a web app that connects travellers with local people, who are willing to spend a day (or even a few hours) working as a tourist guide, to help tourists get the best experience of their travel. Until today, tourist guide is a professional occupation and most of the guides are affiliated with travel agencies, so it is very difficult for independent travellers to find a local companion who can travel alongside with. Our idea is that everyone can work as a tourist guide, as long as he/she is a local resident, preferably bilingual, and is enthusiastic about taking visitors to interesting places. Our app is going to change the way of finding a tourist guide to the way that you book a taxi or request a Uber cab -- easy, fast, and reliable.
 
 ##Release Notes
+###New Features
+1. Completed Chat function to allow users to send and receive real time messages
+2. Added a page to allow users to provide their recommendations
+3. Added a page to allow users to edit user profiles
+4. Seperated location from the keyword part to become an indiviual filter for local advisor searching
+5. Allowed a local advisor to add himself/herself to the meetup list of a recommendation
+###Bug Fixes
+1. Clicking on Login no longer redirects the user back to the homepage
+2. Fixed the time display of messages on Chat page
+###Known Bugs
+1. Once an user enters a chatroom with another user, the unread message count cannot be displayed normally for the user who is chatted with
+2. When a chat action is initiated through the "Send Message" button on a local advisor's home page, the contact list will not immediately show the message receiver. 
 
 ## Installation Guide
 ### Quick Links
