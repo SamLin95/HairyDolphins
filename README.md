@@ -4,7 +4,7 @@
 
 [Release Notes](#releasenotes)
 
-[Installation Guide](#installationguid)
+[Installation Guide](#installationguide)
 
 <a name="introduction"/>
 ## Introduction
