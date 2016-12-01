@@ -12,7 +12,7 @@ HairyDolphins is a web app that connects travellers with local people, who are w
 
 <a name="releasenotes"/>
 ##Release Notes
-###<p style='color:grey'>Last Updated: 2016/12/01</p>
+<p style='color:grey'>Last Updated: 2016/12/01</p>
 ###New Features
 1. Completed Chat function to allow users to send and receive real time messages
 2. Added a page to allow users to provide their recommendations
