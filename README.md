@@ -9,9 +9,11 @@ HairyDolphins is a web app that connects travellers with local people, who are w
 3. Added a page to allow users to edit user profiles
 4. Seperated location from the keyword part to become an indiviual filter for local advisor searching
 5. Allowed a local advisor to add himself/herself to the meetup list of a recommendation
+
 ###Bug Fixes
 1. Clicking on Login no longer redirects the user back to the homepage
 2. Fixed the time display of messages on Chat page
+
 ###Known Bugs
 1. Once an user enters a chatroom with another user, the unread message count cannot be displayed normally for the user who is chatted with
 2. When a chat action is initiated through the "Send Message" button on a local advisor's home page, the contact list will not immediately show the message receiver. 
