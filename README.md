@@ -16,7 +16,7 @@ HairyDolphins is a web app that connects travellers with local people, who are w
 
 ###Known Bugs
 1. Once an user enters a chatroom with another user, the unread message count cannot be displayed normally for the user who is chatted with
-2. When a chat action is initiated through the "Send Message" button on a local advisor's home page, the contact list will not immediately show the message receiver. 
+2. When a chat action is initiated through the "Send Message" button on a local advisor's home page, the contact list will not immediately show the message receiver
 
 ## Installation Guide
 ### Quick Links
