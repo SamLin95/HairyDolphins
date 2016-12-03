@@ -5,14 +5,16 @@ from sqlalchemy_searchable import make_searchable
 from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-
 import datetime
 from .. import app
 
-#TODO Hard coded here for now, will be placed somewhere else in the future
+#The Postgres Database URI needs to be set here
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:superjuniors@hairydolphins.c37rymkezk94.us-east-1.rds.amazonaws.com:5432/test'
+
+#Initialze the sqlalchemy database object
 db = SQLAlchemy(app)
 
+#The postgres full-text search setting chosen: simple mode. 
 make_searchable(options={'regconfig': 'pg_catalog.simple'})
 
 #Query classes for full text searching
@@ -44,9 +46,12 @@ class TableTemplate():
     def modified_at(cls):
         return db.Column(db.DateTime, onupdate=datetime.datetime.now)
 
+#Users of the webiste
 class Entity(TableTemplate, db.Model, CRUD):
+    #Changed the default query to self-defined EntityQuery
     query_class = EntityQuery
 
+    #Attrbutes
     id                       = db.Column(db.Integer, primary_key=True)
     username                 = db.Column(db.String(20), unique=True, nullable=False)
     password                 = db.Column(db.String(20), nullable=False)
@@ -70,6 +75,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     #Seach Vector
     search_vector = db.Column(TSVectorType('username', 'first_name', 'last_name'))
 
+    #Four subroutines required by Flask-Login. The id is defined using entity's primary index.
     def is_active(self):
         return self.is_active;
 
@@ -82,8 +88,10 @@ class Entity(TableTemplate, db.Model, CRUD):
     def get_id(self):
         return unicode(self.id)
 
+    #The profile photo url of an Entity
     @hybrid_property
     def profile_photo_url(self):
+        #Among all pictures owned by a user, profile pictures are those whose is_profile_picture attribute is true.
         profile_photos = filter(lambda entity_photo: entity_photo.is_profile_picture  == True, self.entity_photos)
 
         if(profile_photos):
@@ -92,6 +100,7 @@ class Entity(TableTemplate, db.Model, CRUD):
         else:
             return None
 
+    #The average rating of an Entity if the role is local advisor
     @hybrid_property
     def average_rating(self):
         if(self.local_advisor_profile):
@@ -111,6 +120,7 @@ class Entity(TableTemplate, db.Model, CRUD):
                 #For every messsage recieved, check if its sender is in the current list
                 for i in range(len(messages)):
                     checked_message = messages[i]
+                    #If the sender exists, compare the sent time.
                     if(checked_message['user_id'] == message.sender.id):
                         duplicate = True
                         replace_index = i
@@ -135,12 +145,14 @@ class Entity(TableTemplate, db.Model, CRUD):
                         'unread_count' :  (0 if message.read_at else 1)
                     })
 
+            #For every messsage sent, check if its receiver is in the current list
             for message in self.sent_messages:
                 duplicate = False
                 replacable = False
                 replace_index = None
                 for i in range(len(messages)):
                     checked_message = messages[i]
+                    #If the receiver exists, compare the sent time.
                     if(checked_message['user_id'] == message.receiver.id):
                         duplicate = True
                         replace_index = i
@@ -181,6 +193,7 @@ class Entity(TableTemplate, db.Model, CRUD):
     def __repr__(self):
         return '<User %r>' % self.username
 
+#The table stores all possible user roles that exist in the system.
 class Role(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(20), unique=True, nullable=False)
@@ -189,19 +202,21 @@ class Role(db.Model, CRUD):
         return '<Role %r>' % self.label
 
 # revised: delete date_id unique=True
-#Join table of local advisor profile and date
+#Join table of local advisor profile and date which indicates on what dates a local advisor is available.
 local_advisor_available_date = db.Table( 'local_advisor_available_date',
     db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
     db.Column('date_id', db.Integer, db.ForeignKey('date.id')),
     db.UniqueConstraint('local_advisor_profile_id', 'date_id')
 )
 
+#The table stores which recommendations can be provided by which local advisors.
 local_advisor_recommendation = db.Table('local_advisor_recommendation',
     db.Column('local_advisor_profile_id', db.Integer, db.ForeignKey('local_advisor_profile.id')),
     db.Column('recommendation_id', db.Integer, db.ForeignKey('recommendation.id')),
     db.UniqueConstraint('local_advisor_profile_id', 'recommendation_id')
 )
 
+#The additional infomration for a local advisor user.
 class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
     id          = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(1024))
@@ -215,6 +230,7 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
     #Seach Vector
     search_vector = db.Column(TSVectorType('description'))
 
+    #The average rating of a local advisor.
     @hybrid_property
     def average_rating(self):
         if(self.reviews):
@@ -222,12 +238,15 @@ class LocalAdvisorProfile(TableTemplate, db.Model, CRUD):
         else:
             return None
 
+    #Load the hybrid properties so so that they could be initialized
     def load_hybrid_properties(self):
         self.average_rating
 
+#The table reserved to store additional information for a administrator
 class AdminProfile(TableTemplate, db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
 
+#The messages sent among users.
 class Message(db.Model, CRUD):
     id           = db.Column(db.Integer, primary_key=True)
     message_body = db.Column(db.String(1024), nullable=False)
@@ -239,7 +258,7 @@ class Message(db.Model, CRUD):
     #Relationships
     receiver = db.relationship('Entity', foreign_keys=[receiver_id], backref=db.backref('received_messages'))
 
-
+#The table which stores city information
 class City(db.Model, CRUD):
     id       = db.Column(db.Integer, primary_key=True)
     label    = db.Column(db.String(32), nullable=False)
@@ -256,6 +275,7 @@ class City(db.Model, CRUD):
         db.UniqueConstraint('label', 'state_id'),
         {})
 
+#The table which stores state information
 class State(db.Model, CRUD):
     id        = db.Column(db.Integer, primary_key=True)
     label     = db.Column(db.String(32), nullable=False)
@@ -272,6 +292,7 @@ class State(db.Model, CRUD):
         db.UniqueConstraint('label', 'country_id'),
         {})
 
+#The table which stores country information
 class Country(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(32), nullable=False, unique=True)
@@ -279,10 +300,12 @@ class Country(db.Model, CRUD):
     #Seach Vector
     search_vector = db.Column(TSVectorType('label'))
 
+#The table which stores date information
 class Date(db.Model, CRUD):
     id    = db.Column(db.Integer, primary_key=True)
     date  = db.Column(db.Date, nullable=False)
 
+#The table which stores reviews of local advisors or recommendations
 class Review(TableTemplate, db.Model, CRUD):
     id                       = db.Column(db.Integer, primary_key=True)
     rating                   = db.Column(db.Integer, nullable=False)
@@ -304,6 +327,7 @@ class Review(TableTemplate, db.Model, CRUD):
         db.CheckConstraint('(local_advisor_profile_id is null) <> (recommendation_id is null)'),
         {})
 
+#The table which stores recommended places.
 class Recommendation(TableTemplate, db.Model, CRUD):
     id                         = db.Column(db.Integer, primary_key=True)
     title                      = db.Column(db.String(128), nullable=False)
@@ -323,6 +347,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
     entity_recommendations  = db.relationship('EntityRecommendation', backref=db.backref('recommendation'))
     local_advisor_profiles  = db.relationship('LocalAdvisorProfile', secondary=local_advisor_recommendation)
 
+    #The primary picture url of a recommendation to be displayed in the FE
     @hybrid_property
     def primary_picture(self):
         if(self.recommendation_photos):
@@ -330,6 +355,7 @@ class Recommendation(TableTemplate, db.Model, CRUD):
         else:
             return None
 
+    #The average rating of the recommendation
     @hybrid_property
     def average_rating(self):
         if(self.reviews):
@@ -337,10 +363,12 @@ class Recommendation(TableTemplate, db.Model, CRUD):
         else:
             return None
 
+    #Load the hybrid properties so so that they could be initialized
     def load_hybrid_properties(self):
         self.average_rating
         self.primary_picture
 
+#The table which stores which recommendations are liked by which users and reasons behind.
 class EntityRecommendation(TableTemplate, db.Model, CRUD):
     id                = db.Column(db.Integer, primary_key=True)
     entity_id         = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
@@ -350,10 +378,12 @@ class EntityRecommendation(TableTemplate, db.Model, CRUD):
     #Relationships
     entity = db.relationship('Entity', backref=db.backref('entity_recommendations'))
 
+#The table which stores possible categories of a recommendation
 class RecommendationCategory(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     label= db.Column(db.String(32), nullable=False, unique=True)
 
+#The table which stores photos owned by a user
 class EntityPhoto(db.Model, CRUD):
     id                 = db.Column(db.Integer, primary_key=True)
     entity_id          = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
@@ -370,6 +400,7 @@ class EntityPhoto(db.Model, CRUD):
         db.Index('ix_unique_profile_pic', 'entity_id', unique=True, postgresql_where=(is_profile_picture)),
         {})
 
+#The table which stores photos uploaded for a recommendation
 class RecommendationPhoto(db.Model, CRUD):
     id                = db.Column(db.Integer, primary_key=True)
     recommendation_id = db.Column(db.Integer, db.ForeignKey('recommendation.id'), nullable=False)
@@ -386,6 +417,8 @@ class RecommendationPhoto(db.Model, CRUD):
         db.UniqueConstraint('recommendation_id', 'file_id'),
         {})
 
+
+#The table which stores files metadata
 class File(TableTemplate, db.Model, CRUD):
     id             = db.Column(db.Integer, primary_key=True)
     name           = db.Column(db.String(256))
@@ -396,6 +429,7 @@ class File(TableTemplate, db.Model, CRUD):
     #Relationships
     file_type = db.relationship('FileType')
 
+#The table which stores possible file types of a file
 class FileType(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(64), unique=True)

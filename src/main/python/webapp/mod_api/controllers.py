@@ -11,6 +11,7 @@ from ..models.models import *
 from ..models.schemas import *
 from ..lib.s3_lib import *
 
+#API Versions and Conventioanl HTTP Codes Constants
 API_VERSION = 1
 
 HTTP_BAD_REQUEST                     = 400
@@ -42,69 +43,39 @@ HTTP_GATEWAY_TIMEOUT                 = 504
 HTTP_HTTP_VERSION_NOT_SUPPORTED      = 505
 HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511
 
+#Makes the API an Blueprint object.
 mod_api = Blueprint('api', __name__, url_prefix='/api')
 api = flask_restful.Api()
-"""Calling init_app can defer for Blueprint object"""
+#Calling init_app can defer for Blueprint object
 api.init_app(mod_api)
+#The swagger module is a simple way to create API documentation in the future.
 api = swagger.docs(api, apiVersion=API_VERSION, api_spec_url='/spec')
 
 class Recommendations(flask_restful.Resource):
-    "A list of recommendations"
-
-    @swagger.operation(
-        summary = "Returns the information of a list of recommendations which meet all given criteria",
-        nickname = "Search Recommendatons",
-        parameters=[
-            {
-              "name": "recommendation_id",
-              "description": "Primary key of the expected recommendation. Cannot put retriction on any other fields of a recommendation if this parameter is being used",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "integer",
-              "paramType": "query"
-            },
-            {
-              "name": "recommendation_category_id",
-              "description": "The primary key of the category of recommendations in the expected recommendation list",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "integer",
-              "paramType": "query"
-            },
-            {
-              "name": "city_id",
-              "description": "The primary key of city that the recommendationthat belongs to",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "request_fields",
-              "description": "Names of the fields of each recommendation that are required to be returned",
-              "required": False,
-              "allowMultiple": True,
-              "dataType": "string",
-              "paramType": "query"
-            },
-       ]
-    )
+    #Returns the information of a list of recommendations which meet all given criteria
     def get(self):
+        #Define arguments
         parser = reqparse.RequestParser()
         parser.add_argument('recommendation_id', type=int)
         parser.add_argument('recommendation_category_id', type=int)
         parser.add_argument('city_id', type=int)
         parser.add_argument('limit', type=int)
         parser.add_argument('request_fields', type=str, action='append')
+
+        #Parse arguments and store in a dict
         args = parser.parse_args()
+
+        #Initialize the query object to construct query
         recommendation_query = Recommendation.query
 
+        #Only dump required fields
         if(args['request_fields']):
             request_fields = tuple(args['request_fields'])
             recommendation_schema = RecommendationSchema(only=request_fields)
         else:
             recommendation_schema = RecommendationSchema()
 
+        #Ignore all other search criteria and return the specific recommendation if id given.
         if args['recommendation_id']:
             recommendation_id = args['recommendation_id']
             recommendation = recommendation_query.get(recommendation_id)
@@ -118,6 +89,7 @@ class Recommendations(flask_restful.Resource):
             except AttributeError as err:
                 return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
         else:
+            #Add filters if given
             if(args['recommendation_category_id']):
                 recommendation_category_id = args['recommendation_category_id']
                 recommendation_query = recommendation_query.filter_by(recommendation_category_id=recommendation_category_id)
@@ -132,16 +104,20 @@ class Recommendations(flask_restful.Resource):
 
             recommendations = recommendation_query.all()
 
+            #Return error message if no recommnedation found
             if(not recommendations):
                 return {"message" :"No expected recommendation found"}, HTTP_NOT_FOUND
 
+            #Return recommendations as JSON object if found
             try:
                 recommendation_json = recommendation_schema.dump(recommendations, many=True).data
                 return recommendation_json
             except AttributeError as err:
                 return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
 
+    #The route to create a new recommendation
     def post(self):
+        #Define arguments and parse arguments
         parser = reqparse.RequestParser()
         parser.add_argument('title', type=str, required=True)
         parser.add_argument('description', type=str, required=True)
@@ -165,13 +141,17 @@ class Recommendations(flask_restful.Resource):
         file_id = args['file_id']
 
         try:
+            #Create the recommendation object
             new_recommendation = Recommendation(title=title, description=description, address_line_one=address_line_one, address_line_two=address_line_two, zip_code=zip_code, recommender_id=recommender_id, city_id=city_id, recommendation_category_id=recommendation_category_id,is_draft=False)
 
+            #Write to database
             new_recommendation.add(new_recommendation)
 
+            #If recommendation photo file is given, then associate it with the newly created recommendation
             new_recommendation_photo = RecommendationPhoto(recommendation=new_recommendation, file_id=file_id, uploader_id=recommender_id)
             new_recommendation_photo.add(new_recommendation_photo)
 
+            #Dump the newly created recommendation and returns to user.
             recommendation_schema = RecommendationSchema()
             recommendation_json = recommendation_schema.dump(new_recommendation).data
         except exc.IntegrityError as err:
@@ -182,7 +162,6 @@ class Recommendations(flask_restful.Resource):
 api.add_resource(Recommendations, '/recommendations')
 
 class RecommendationResource(flask_restful.Resource):
-    """A Recommendation"""
 
     def __init__(self):
         parser = reqparse.RequestParser()
@@ -190,32 +169,12 @@ class RecommendationResource(flask_restful.Resource):
 
         self.parser = parser
 
-    @swagger.operation(
-        summary = "Returns the information of the recommendation with given id",
-        nickname = "Get Recommendation",
-        parameters=[
-            {
-              "name": "recommendation_id",
-              "description": "Primary key of the expected recommendation.",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "integer",
-              "paramType": "path"
-            },
-            {
-              "name": "request_fields",
-              "description": "Names of the fields of the recommnendation that are required to be returned",
-              "required": False,
-              "allowMultiple": True,
-              "dataType": "string",
-              "paramType": "query"
-            },
-       ]
-    )
+    #Returns the information of the recommendation with given id
     def get(self, recommendation_id):
         args = self.parser.parse_args()
         recommendation_query = Recommendation.query
 
+        #Only dump required fields
         if(args['request_fields']):
             request_fields = tuple(args['request_fields'])
             recommendation_schema = RecommendationSchema(only=request_fields)
@@ -224,9 +183,11 @@ class RecommendationResource(flask_restful.Resource):
 
         recommendation = recommendation_query.get(recommendation_id)
 
+        #Return 404 error if the id is not valid
         if(not recommendation):
             return {"message" :"Recommendation not found"}, HTTP_NOT_FOUND
 
+        #Return the recommendation in JSON formats
         try:
             recommendation_json = recommendation_schema.dump(recommendation).data
             return recommendation_json
@@ -236,40 +197,20 @@ class RecommendationResource(flask_restful.Resource):
 api.add_resource(RecommendationResource, '/recommendations/<int:recommendation_id>')
 
 class User(flask_restful.Resource):
-    """An User"""
-
+    #Initialize the parser and define arguments
     def __init__(self):
         parser = reqparse.RequestParser()
         parser.add_argument('request_fields', type=str, action='append')
 
         self.parser = parser
 
-    @swagger.operation(
-        summary = "Returns the information of the user with given id",
-        nickname = "Get User",
-        parameters=[
-            {
-              "name": "user_id",
-              "description": "Primary key of the expected user.",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "integer",
-              "paramType": "path"
-            },
-            {
-              "name": "request_fields",
-              "description": "Names of the fields of the user that are required to be returned",
-              "required": False,
-              "allowMultiple": True,
-              "dataType": "string",
-              "paramType": "query"
-            },
-       ]
-    )
+    #Returns the information of the user with given id while ignoring all other search criteria
     def get(self, user_id):
         args = self.parser.parse_args()
+        #Initialize the query object for query construction
         entity_query = Entity.query
 
+        #Only dump required fields
         if(args['request_fields']):
             request_fields = tuple(args['request_fields'])
             entity_schema = EntitySchema(exclude='password', only=request_fields)
@@ -287,7 +228,9 @@ class User(flask_restful.Resource):
         except AttributeError as err:
             return {"message" : {"request_fields" : format(err)} }, HTTP_BAD_REQUEST
 
+    #The route to update profile of an existing user.
     def put(self, user_id):
+        #Define arguments and parse arguments
         parser = reqparse.RequestParser()
         parser.add_argument('phone_number', type=str)
         parser.add_argument('birthday', type=str)
@@ -304,11 +247,13 @@ class User(flask_restful.Resource):
         last_name = args['last_name']
         file_id = args['file_id']
 
+        #Make sure that the email doesn't conflict with any existing email
         existing_entity = Entity.query.filter(and_(Entity.email==email, Entity.id!=user_id)).first()
         if(existing_entity):
             return {"message" :"Email already used"}, HTTP_BAD_REQUEST
 
         try:
+            #Get the original entity from the database for modification
             entity = Entity.query.get(user_id)
 
             entity.email = email
@@ -316,6 +261,9 @@ class User(flask_restful.Resource):
             entity.last_name = last_name
             entity.phone_number = phone_number
             if(args['birthday']):
+                #Reformat the birthday to make it legitimate for Postgres. Then
+                #look for the birthday on the Date table. If the date doesn't exist,
+                #the route will add this date to the date table.
                 birthday= datetime.datetime.strptime(args['birthday'], "%Y-%m-%d")
                 birthday_date = Date.query.filter(Date.date==birthday).first()
                 if(not birthday_date):
@@ -324,6 +272,9 @@ class User(flask_restful.Resource):
         
                 entity.birthday = birthday_date
 
+            #If file_id is given, the profile picture has been changed. The old profile
+            #picture needs to be changed to not be the profile picture and the new photo
+            #should be assoicated.
             if(file_id):
                 old_profile_picture = EntityPhoto.query.filter(and_(EntityPhoto.entity_id==user_id, EntityPhoto.is_profile_picture==True)).first()
                 if(old_profile_picture):
@@ -335,6 +286,7 @@ class User(flask_restful.Resource):
 
             entity.update()
 
+            #Dump the modified entity in JSON format
             entity_schema = EntitySchema(only=("id", "first_name", "last_name", "email", "username",     "birthday", "phone_number", "profile_photo_url", "role"))
             entity_json = entity_schema.dump(entity).data
         except exc.IntegrityError as err:
@@ -347,55 +299,9 @@ class User(flask_restful.Resource):
 api.add_resource(User, '/users/<int:user_id>')
 
 class Users(flask_restful.Resource):
-    "A list of users"
-
-    @swagger.operation(
-        summary = "Returns the information of a list of users which meet all given criteria",
-        nickname = "Search Users",
-        parameters=[
-            {
-              "name": "user_id",
-              "description": "Primary key of the expected user. Cannot put retriction on any other fields of a user if this parameter is being used",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "integer",
-              "paramType": "query"
-            },
-            {
-              "name": "role_id",
-              "description": "The primary key of the role of users in the expected user list",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "integer",
-              "paramType": "query"
-            },
-            {
-              "name": "available_date",
-              "description": "The expected avaialble date of local advisors that are required to be returned",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "keyword",
-              "description": "Keyword related to the users (can be user's username, first_name, last_name, description as a local advisor, city, state, or the country the user belongs to or any combination of them) that are required to be returned",
-              "required": False,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "request_fields",
-              "description": "Names of the fields of each user that are required to be returned",
-              "required": False,
-              "allowMultiple": True,
-              "dataType": "string",
-              "paramType": "query"
-            },
-       ]
-    )
+    #Returns the information of a list of users which meet all given criteria
     def get(self):
+        #Define arguments and parse arguments
         parser = reqparse.RequestParser()
         parser.add_argument('user_id', type=int)
         parser.add_argument('role_id', type=int)
@@ -405,14 +311,19 @@ class Users(flask_restful.Resource):
         parser.add_argument('limit', type=int)
         parser.add_argument('request_fields', type=str, action='append')
         args = parser.parse_args()
+
+        #Initialize the entity query for query construction
         entity_query = Entity.query
 
+        #Dump only required fields if defined
         if(args['request_fields']):
             request_fields = tuple(args['request_fields'])
             entity_schema = EntitySchema(exclude=('password',), only=request_fields)
         else:
             entity_schema = EntitySchema(exclude=('password',))
 
+        #If the specific id is given. The route should ignore other searching
+        #criteria and returns the user with the given id.
         if args['user_id']:
             user_id = args['user_id']
             entity = entity_query.get(user_id)
@@ -426,6 +337,7 @@ class Users(flask_restful.Resource):
             except AttributeError as err:
                 return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
         else:
+            #Add any filter that has been specified.
             if(args['role_id']):
                 role_id = args['role_id']
                 entity_query = entity_query.filter_by(role_id=role_id)
@@ -444,6 +356,8 @@ class Users(flask_restful.Resource):
             if(args['keyword']):
                 keyword = args['keyword']
 
+                #The search vector should be combined together. For those tables that a user doesn't necessarily 
+                #relate to (means a left join needs to be used), the coalesce function needs to be used.
                 combined_search_vector = ( Entity.search_vector | func.coalesce(LocalAdvisorProfile.search_vector, u'') | func.coalesce(City.search_vector, u'') | func.coalesce(State.search_vector, u'') | func.coalesce(Country.search_vector, u'') )
 
                 entity_query = entity_query.outerjoin((LocalAdvisorProfile, Entity.local_advisor_profile_id == LocalAdvisorProfile.id)).outerjoin(City).outerjoin(State).outerjoin(Country).filter(combined_search_vector.match(parse_search_query(keyword)))
@@ -463,53 +377,9 @@ class Users(flask_restful.Resource):
             except AttributeError as err:
                 return {"message" : {"request_fields" : format(err)}}, HTTP_BAD_REQUEST
 
-    @swagger.operation(
-        summary = "Create a new User",
-        nickname = "Create User",
-        parameters=[
-            {
-              "name": "username",
-              "description": "The username of the user to be created",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "password",
-              "description": "The password of the user to be created",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "email",
-              "description": "The email of the user to be created",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "first_name",
-              "description" : "The first name of the user to be created",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-            {
-              "name": "last_name",
-              "description" : "The last name of the user to be created",
-              "required": True,
-              "allowMultiple": False,
-              "dataType": "string",
-              "paramType": "query"
-            },
-       ]
-    )
+    #This route is used to create a new User(registration)
     def post(self):
+        #define arguments and parse arguments
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
@@ -524,6 +394,7 @@ class Users(flask_restful.Resource):
         first_name = args['first_name']
         last_name = args['last_name']
 
+        #Check to make sure that the given email doesn't conflict with any existing one
         existing_entity = Entity.query.filter(or_(Entity.email==email, Entity.username==username)).first()
         if(existing_entity):
             return {"message" :"Username or email already used"}, HTTP_BAD_REQUEST
@@ -534,6 +405,7 @@ class Users(flask_restful.Resource):
             return {"message" : "Visitor role not found"}, HTTP_INTERNAL_SERVER_ERROR
 
         try:
+            #Create the new entity and dump the information if success
             new_entity = Entity(username=username, password=password, email=email, first_name=first_name, last_name=last_name, role=visitor_role)
 
             new_entity.add(new_entity)
@@ -547,6 +419,7 @@ class Users(flask_restful.Resource):
 api.add_resource(Users, '/users')
 
 class Roles(flask_restful.Resource):
+    #The route is to get all possible roles of the syste
     def get(self):
         roles = Role.query.all()
         role_schema = RoleSchema()
@@ -557,7 +430,9 @@ api.add_resource(Roles, '/roles')
 
 
 class Messages(flask_restful.Resource):
+    #The route is to get message history between two given users.
     def get(self):
+        #Get ids of two users
         parser = reqparse.RequestParser()
         parser.add_argument('bidirect_user_one', type=int, required=True)
         parser.add_argument('bidirect_user_two', type=int, required=True)
@@ -574,13 +449,16 @@ class Messages(flask_restful.Resource):
 
         message_schema = MessageSchema()
         message_json = message_schema.dump(messages, many=True).data
+        #The messages need to returned in chronical order
         message_json.sort(key=lambda message:message['sent_at'])
 
         return message_json
     
+    #The route to mark messages as read
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('messages_to_mark', type=int, action='append', required=True)
+        #Since messages might be bidirectional, we only mark those whose receiver id matches the given one.
         parser.add_argument('receiver_id', type=int, required=True)
         
         args = parser.parse_args()
@@ -599,6 +477,7 @@ class Messages(flask_restful.Resource):
 api.add_resource(Messages, '/messages')
 
 class Cities(flask_restful.Resource):
+    #The route to return all city options
     def get(self):
         cities = City.query.all()
         city_schema = CitySchema()
@@ -607,6 +486,7 @@ class Cities(flask_restful.Resource):
 api.add_resource(Cities, '/cities')
 
 class RecommendationCategories(flask_restful.Resource):
+    #The route to return all recommendation categories options
     def get(self):
         recommendation_categories = RecommendationCategory.query.all()
         recommendation_category_schema = RecommendationCategorySchema()
@@ -615,34 +495,43 @@ class RecommendationCategories(flask_restful.Resource):
 api.add_resource(RecommendationCategories, '/recommendation_categories')
 
 class Files(flask_restful.Resource):
+    #The route to push the file to the S3 and store the metadata
     def post(self):
         parser = reqparse.RequestParser()
+        #The type is for file transfer
         parser.add_argument('photo', type=werkzeug.datastructures.FileStorage, location='files')
 
         args = parser.parse_args()
         photo = args['photo']
+        #Removed the postfix
         photo_basename = photo.filename.rsplit('.', 1)[0]
+        #Get the file type
         photo_ext = photo.filename.rsplit('.', 1)[1]
 
         #Recompose filename to include current datetime
         photo_filename = '{0}_{1}.{2}'.format(photo_basename, datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S'), photo_ext)
         photo_tmp_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        #Store the photo to the temp file path
         photo.save(photo_tmp_path)
 
         upload_error = None
         try:
+            #Push the file to the S3 repo
             s3_helper = S3Helper()
             s3_helper.upload_file(photo_tmp_path, photo_filename)
         except:
             upload_error = True
         finally:
+            #Remove the temporary file no matter how
             os.remove(photo_tmp_path)
 
         if(upload_error):
             return {"message" : "Failed to upload profile picture"}, HTTP_INTERNAL_SERVER_ERROR
 
+        #Compose the file url
         photo_s3_url = 'https://s3.amazonaws.com/hairydolphins/{0}'.format(photo_filename)
         photo_file = File(name = photo_filename, checksum = 0, download_link = photo_s3_url, file_type_id = 1)
+        #Save the file metadata to the database
         photo_file.add(photo_file)
         file_schema = FileSchema()
 
@@ -651,6 +540,7 @@ class Files(flask_restful.Resource):
 api.add_resource(Files, '/files')
 
 class Reviews(flask_restful.Resource):
+    #The route to post a new review of a recommendation or a local advisor
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('title', type=str, required=True)
@@ -668,17 +558,20 @@ class Reviews(flask_restful.Resource):
         local_advisor_profile_id = args['local_advisor_profile_id']
         recommendation_id = args['recommendation_id']
 
+        #If the review is for a local advisor, we should make sure this user has not previous review on this local advisor
         if(local_advisor_profile_id):
             existing_local_advisor_review = Review.query.filter(and_(Review.local_advisor_profile_id==local_advisor_profile_id, Review.reviewer_id==reviewer_id)).first()
             if(existing_local_advisor_review):
                 return {"message" :"You cannot twice on the same local advisor."}, HTTP_BAD_REQUEST
 
+        #If the review is for a recommendation, we should make sure this user has not previous review on this recommendation
         if(recommendation_id):
             existing_recommendation_review = Review.query.filter(and_(Review.recommendation_id==recommendation_id, Review.reviewer_id==reviewer_id)).first()
             if(existing_recommendation_review):
                 return {"message" :"You cannot twice on the same recommendation."}, HTTP_BAD_REQUEST
 
         try:
+            #Save the review in the database and return the data in JSON format
             new_review = Review(title=title, content=content, rating=rating, reviewer_id=reviewer_id, recommendation_id=recommendation_id, local_advisor_profile_id=local_advisor_profile_id)
 
             new_review.add(new_review)
@@ -693,6 +586,7 @@ class Reviews(flask_restful.Resource):
 api.add_resource(Reviews, '/reviews')
 
 class EntityRecommendations(flask_restful.Resource):
+    #This route is to allow a user to recommendate a existing recommendation
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('recommendation_id', type=int, required=True)
@@ -704,12 +598,14 @@ class EntityRecommendations(flask_restful.Resource):
         entity_id = args['user_id']
         reason = args['reason']
 
+        #Make sure that the recommender has not recommended this recommendation before
         existing_entity_recommendation = EntityRecommendation.query.join(Recommendation).filter(and_(EntityRecommendation.recommendation_id==recommendation_id, and_(EntityRecommendation.entity_id==entity_id, Recommendation.recommender_id==entity_id))).first()
 
         if(existing_entity_recommendation):
             return {"message" :"You have already recommended this place!"}, HTTP_BAD_REQUEST
 
         try:
+            #Save the new entity recommendation to the database and returns data in JSON
             new_entity_recommendation = EntityRecommendation(entity_id=entity_id, recommendation_id=recommendation_id, reason=reason)
 
             new_entity_recommendation.add(new_entity_recommendation)
@@ -724,6 +620,7 @@ class EntityRecommendations(flask_restful.Resource):
 api.add_resource(EntityRecommendations, '/entity_recommendations')
 
 class LocalAdvisorProfileRecommendations(flask_restful.Resource):
+    #This route allows a local advisor to claim that he/she can provide services of certain recommendation
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('recommendation_id', type=int, required=True)
@@ -734,8 +631,10 @@ class LocalAdvisorProfileRecommendations(flask_restful.Resource):
         entity_id = args['user_id']
 
         try:
+            #Post the local advisor recommendation.
             recommendation = Recommendation.query.get(recommendation_id)
             local_advisor_profile = Entity.query.get(entity_id).local_advisor_profile
+            #This is how we add the local advisor to the list through appending on the corresponding relationship
             recommendation.local_advisor_profiles.append(local_advisor_profile)
             recommendation.update()
 
@@ -744,6 +643,7 @@ class LocalAdvisorProfileRecommendations(flask_restful.Resource):
         except exc.IntegrityError as err:
             return{"message" : "Failed to add entity_recommendation during database execution. The error message returned is: {0}".format(err)}, HTTP_BAD_REQUEST
 
+        #Notice that we return the local advisor's profile here for the front end to add the local advisor to the list
         return local_advisor_profile_json 
 
 api.add_resource(LocalAdvisorProfileRecommendations, '/local_advisor_profile_recommendations')

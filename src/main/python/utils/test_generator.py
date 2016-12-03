@@ -7,6 +7,8 @@ from datetime import date
 import random
 import testdata
 
+"""The tool to create test data in the database. The utils is for development use and should never be used on production"""
+
 def createTest():
 	dates1 = []
 	for i in range(0, 20):

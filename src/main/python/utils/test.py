@@ -6,6 +6,11 @@ from webapp.models.models import Date, RecommendationPhoto, AdminProfile, Entity
 import datetime
 # amazon s3
 import boto
+"""
+The library which provides functions for the test generator to create test data.
+Instead of using query, we use the sqlachemy's approach to create those object in Python
+first and then commit them to the database.
+"""
 
 def createEntity(label, email, username, password, first_name, last_name, phone_number=None, is_active=True, birthday=None, local_advisor_profile=None, admin_profile=None, message=None):
     role = Role.query.filter_by(label=label).first()

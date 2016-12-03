@@ -2,6 +2,15 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import ModelSchema, field_for
 from models import *
 
+"""
+A schema defines attributes on a JSON object. By default attributes are
+inherited from sqlalchemy models and foreign keys are index numbers. However,
+they can be explicitly set as nested objects using 'Nested' data type.
+
+Besided nested object, hybrid attributes are also required to be explicitly
+declared here.
+"""
+
 class RoleSchema(ModelSchema):
     class Meta:
         model = Role

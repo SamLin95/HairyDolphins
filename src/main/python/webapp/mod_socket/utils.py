@@ -1,6 +1,7 @@
 __author__ = 'slin'
 from ..models.models import Message, db
 import datetime
+#The chatroom table is a table which records current rooms and users in those rooms
 class ChatroomTable(object):
     INSTANCE = None
 
@@ -13,6 +14,7 @@ class ChatroomTable(object):
 
     @classmethod
     def get_instance(cls):
+        #Singletion pattern. Initialze the table if it doesn't exist.
         if cls.INSTANCE is None:
             cls.INSTANCE = ChatroomTable()
         return cls.INSTANCE
@@ -35,18 +37,23 @@ class ChatroomTable(object):
         self.table[user_id] = room_id
 
     def leave_room(self, user_id):
+        #given the user id, we should find the uuser and remove him from the chatroom
         room_id = self.table.get(user_id)
         if room_id is not None:
             self.table[user_id] = None
             if self.reverse_table.get(room_id) is not None and user_id in self.reverse_table.get(room_id):
                 self.reverse_table[room_id].remove(user_id)
 
+    #Check if a user in in certain room
     def is_in_room(self, user_id, room_id):
         return self.table.get(user_id) == room_id
 
+    #Get which room the user is currently using.
     def get_current_room(self, user_id):
         return self.table[user_id]
 
+#The message wrapper is used to wrap a message, record its type and provide
+#convenient functions.
 class MessageWrapper(object):
     BOARDCAST_TYPE = "boardcast"
     MESSAGE_TYPE = "msg"
@@ -63,37 +70,18 @@ class MessageWrapper(object):
             'body' : self._body, 'room': self._room_id}
 
     def save_to_db(self):
+        #The instant message will be saved and marked as read.
         if self._type is MessageWrapper.MESSAGE_TYPE:
             msg = Message(message_body=self._body, sender_id=self._sender,
                 receiver_id=self._receiver, read_at=datetime.datetime.now())
             db.session.add(msg)
             db.session.commit()
+        #The offline message will be saved and marked as unred
         elif self._type is MessageWrapper.OFFLINE_TYPE:
             msg = Message(message_body=self._body, sender_id=self._sender,
                 receiver_id=self._receiver)
             db.session.add(msg)
             db.session.commit()
+        #Broadcast message will not be saved to db
         elif self._type is MessageWrapper.BOARDCAST_TYPE:
             print "broadcast message is not saved."
-
-if __name__ == "__main__":
-    ct = ChatroomTable.get_instance()
-    user1 = 'sam'
-    user2 = 'billy'
-    user3 = "dick"
-    room1 = 1
-    room2 = 2
-    room3 = 3
-    ct.join_to_room(user1, room1)
-    ct.join_to_room(user2, room2)
-    ct.join_to_room(user1, room1)
-    ct.join_to_room(user1, room1)
-    ct.join_to_room(user1, room1)
-    ct.join_to_room(user1, room1)
-    ct.join_to_room(user1, room2)
-    ct.join_to_room(user2, room1)
-    ct.join_to_room(user3, room3)
-    ct.join_to_room(user3, room1)
-    ct.join_to_room(user2, room1)
-    print ct.table
-    print ct.reverse_table

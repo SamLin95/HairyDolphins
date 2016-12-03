@@ -1,7 +1,7 @@
 if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
+"""Some real life data"""
 atl_museum = 'A building in Grant Park (named for a New England born Confederate colonel, not the U.S. president) houses a huge circular painting depicting the 1864 Battle of Atlanta, during which 90 percent of the city was destroyed. A team of expert European panorama artists completed the painting in Milwaukee, Wisconsin, in 1887; it was donated to the city of Atlanta in 1897.'
 atl_garden = 'Occupying 30 acres inside Piedmont Park, the grounds contain acres of display gardens, including a 2-acre interactive children\'s garden; a hardwood forest with walking trails; the Fuqua Conservatory, which has unusual flora from tropical and desert climates; and the award-winning Fuqua Orchid Center. Check out the view from the Canopy Walk, a 600-foot suspension bridge through Storza Woods. A variety of special exhibits take place throughout the year.'
 atl_bacchanalia = 'Often called the city\'s best restaurant, Bacchanalia has been a destination since it opened in Buckhead in 1993. The current Westside location, a renovated warehouse with 20-foot ceilings, is decorated in deep, inviting tones. The kitchen focuses on locally grown organic produce and seasonal ingredients. Items on the prix-fixe menu change frequently, but could include crab fritters, wood-grilled prime NY strip, and warm chocolate cake.'
