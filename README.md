@@ -1,9 +1,34 @@
 # HairyDolphins
+## Table Of Contents
+[Introduction](#introduction)
+
+[Release Notes](#releasenotes)
+
+[Installation Guide](#installationguide)
+
+<a name="introduction"/>
 ## Introduction
-HairyDolphins is a web app that connects travellers with local people, who are willing to spend a day (or even a few hours) working as a tourist guide, to help tourists get the best experience of their travel. Until today, tourist guide is a professional occupation and most of the guides are affiliated with travel agencies, so it is very difficult for independent travellers to find a local companion who can travel alongside with. Our idea is that everyone can work as a tourist guide, as long as he/she is a local resident, preferably bilingual, and is enthusiastic about taking visitors to interesting places. Our app is going to change the way of finding a tourist guide to the way that you book a taxi or request a Uber cab -- easy, fast, and reliable.
+Traveling should be fun and enjoyable, but sometimes it can be frustrating when you’re unfamiliar with an area. Nobody should let a lack of regional knowledge keep them from enjoying their vacation. HairyDolphins connects travellers with knowledgeable locals, in order to create a more enjoyable travel experience. The application will help aid those traveling to new destinations by providing guidance, suggestions, and advice from locals in the area. HairyDolphins gives you the resources you need to make the most of your time traveling. 
 
+<a name="releasenotes"/>
 ##Release Notes
+<p style='color:grey'>Last Updated: 2016/12/01</p>
+###New Features
+1. Completed Chat function to allow users to send and receive real time messages
+2. Added a page to allow users to provide their recommendations
+3. Added a page to allow users to edit user profiles
+4. Created an indiviual location filter to enhance the previously-existing keyword filter for local advisor searching
+5. Allowed a local advisor to add themselves to the meetup list of a recommendation
 
+###Bug Fixes
+1. Clicking on Login no longer redirects the user back to the homepage
+2. Fixed the time display of messages on Chat page
+
+###Known Bugs
+1. Once an user enters a chatroom with another user, the unread message count cannot be displayed normally for the user who is chatted with
+2. When a chat action is initiated through the "Send Message" button on a local advisor's home page, the contact list will not immediately show the message receiver
+
+<a name="installationguide"/>
 ## Installation Guide
 ### Quick Links
 [Overview](#overview)
@@ -36,13 +61,13 @@ HairyDolphins is a webapp which needs to be eventually hosted on a server. The w
 The website needs to be hosted on a server machine which is running Linux, MacOS or Windows.
 
 #### Connect To the Internet
-The installation of website requires the Internet connection to necessary tools and packages. Verify a connection was established, for example with ping:
+The installation of the website requires the Internet connection to necessary tools and packages. Verify that a connection is established, for example with ping:
 ```
 ping www.google.com
 ```
 
 #### Install Python 2.7 (The version matters)
-The website is implemented in python 2.7 so the machine to host is required to have python 2.7 installed. There are a lot of ways to install python 2.7. The proper ways to install python 2.7 on different platforms can be found on:
+The website is implemented in python 2.7 so the machine to host is required to have python 2.7 installed. There are a lot of ways to install python 2.7. The proper ways to install python 2.7 on different platforms can be found at:
 http://docs.python-guide.org/en/latest/starting/installation/
 
 
@@ -66,7 +91,7 @@ The version of python-pip on your machine should be returned if installed succes
 
 
 #### Install PostgreSQL 9.5 (The version matters)
-Although HairyDolphins store data on a database on Amazon RDS rather than on the server. A critical python package still needs PostgreSQL to be installed on the machine where the website is hosted. The installation is easy on most of Linux systems and MacOS
+Although HairyDolphins stores data on a database on Amazon RDS, rather than on the server. A critical python package still needs PostgreSQL to be installed on the machine where the website is hosted. The installation is easy on most Linux and MacOS systems.
 
 
 If you are working on the Ubuntu system, you should be able to easily install PostgreSQL 9.5 by the following command:
@@ -85,7 +110,7 @@ PostgreSQL as a community supported database supports almost all popular operati
 
 
 #### Setup Amazon S3
-HariyDolphins store files on Amazon Simple Storage Service(S3). A Amazon S3 bucket needs to be created to allow website to run normally. Users should follow instrucions provided on https://aws.amazon.com/s3/getting-started/ to sign up for Amazon S3 and create a bucket named ‘hairydolphins’ to which the webite will upload files.
+HariyDolphins stores files on Amazon Simple Storage Service(S3). An Amazon S3 bucket needs to be created to allow the website to run normally. Users should follow the instrucions provided on https://aws.amazon.com/s3/getting-started/ to sign up for Amazon S3 and create a bucket named ‘hairydolphins’ to which the webite will upload files.
 
 <a name="dependencies"/>
 ### Dependencies
@@ -178,10 +203,10 @@ To know more about how HairyDolphins can be hosted on a real server, users can c
 
 <a name="deploy"/>
 ### Deploy HairyDolphins To A Real Server (Optional)
-HairyDolphins is implemented in Python flask which has its built-in server. However, Flask’s built-in server is not suitable for production as it doesn’t scale well and by default serves only one request at a time. Fortunately,  Flask application object is the actual WSGI application which is able to be deployed to a WSGI server and there are a lot of options available. Some of options and corresponding deployment guidance can be found on http://flask.pocoo.org/docs/0.11/deploying/.
+HairyDolphins is implemented in Python flask which has its built-in server. However, Flask’s built-in server is not suitable for production as it doesn’t scale well and by default serves only one request at a time. Fortunately, the Flask application object is the actual WSGI application which is able to be deployed to a WSGI server and there are a lot of options available. Some of the options and corresponding deployment guidance can be found on http://flask.pocoo.org/docs/0.11/deploying/.
 
 
-Here we will take latest Apache2 server as an example to introduce a very basic approach to hosting HairyDolphins on a server running Ubuntu system.
+Here we will take the latest Apache2 server as an example to introduce a very basic approach to hosting HairyDolphins on a server running Ubuntu system.
 
 
 #### Step1. Install Apache2
@@ -202,7 +227,7 @@ Besides Apache2 itself, an apache2 module named libapache2-mod-wsgi also needs t
 apt-get install libapache2-mod-wsgi
 ```
 
-After installing the module, users need to create a .wsgi file for Apache2 to run the application. The .wsgi file uses the Python syntax and it needs to import the Flask object as application to allow Apache2 to handle. Assume that HairyDolphins directory is stored in /var/www/html/ as mentioned. The content of .wsgi file should look like:
+After installing the module, users need to create a .wsgi file for Apache2 to run the application. The .wsgi file uses the Python syntax and it needs to import the Flask object as an application to allow Apache2 to handle. Assume that HairyDolphins directory is stored in /var/www/html/ as mentioned. The content of .wsgi file should look like:
 
 ```python
 import sys
@@ -215,7 +240,7 @@ from webapp import app as application
 The last thing you have to do is to create an Apache configuration file for the application. The details about Apache2 configuration file can be found on the official website: http://httpd.apache.org/docs/2.0/configuring.html. And mod_wsgi has more configuration options, which can be found on: http://modwsgi.readthedocs.io/en/develop/configuration.html. 
 
 
-A simple configuration file example(which should be created in /etc/apache2/sites-enabled/) is given as below given the fact that the .wsgi file created in the previous step is named hairydolphins.wsgi and its file path is /var/www/html/HairyDolphins/src/main/python/hairydolphins.wsgi.
+A simple configuration file example (which should be created in /etc/apache2/sites-enabled/) is given as below. Assume the .wsgi file created in the previous step is named hairydolphins.wsgi and its file path is /var/www/html/HairyDolphins/src/main/python/hairydolphins.wsgi.
 
 ```apacheconf
 <VirtualHost *:80>
@@ -248,7 +273,7 @@ Apache2 needs to be restarted to make the configuration file effective. The comm
 ```
 sudo service apache2 restart
 ```
-Notice that users still can not access the website through the domain name set in the configuration yet if the domain name is not actually owned. The final step that is required to take is to purchase the domain name and associate the domain with the server IP address.
+Notice that users still can not access the website through the domain name set in the configuration when the domain name is not actually owned. The final step that is required to take is to purchase the domain name and associate the domain with the server IP address.
 
 <a name="troubleshooting"/>
 ### Troubleshooting
@@ -262,7 +287,7 @@ The error message means you have probably not installed the PostgreSQL on your s
 
 ##### Error: You need to install postgresql-server-dev-X.Y for building a server-side extension or libpq-dev for building a client-side application.
 
-You may see this error when libpq header files are lacked. You will need to install the package postgresql-server-dev-9.5 by using command:
+You may see this error when libpq header files are lacking. You will need to install the package postgresql-server-dev-9.5 by using command:
 sudo apt-get install postgresql-server-dev-9.5
 
 
