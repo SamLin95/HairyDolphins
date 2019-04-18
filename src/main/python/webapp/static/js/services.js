@@ -380,7 +380,6 @@ app.factory('searchHelper', function($q, $http, utils, AuthService) {
                 url: 'https://maps.googleapis.com/maps/api/geocode/json',
                 params: {
                     address: data.data.complete_address,
-                    key: 'AIzaSyCe4fuOg-Njod6WBo8P6UPeWhOaOdErsgE'
                 }
             }).then(function(response) {
                 data.data.geo = response.data.results[0].geometry.location
